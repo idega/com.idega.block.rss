@@ -105,7 +105,8 @@ public class RSSBusinessPoller implements IWBundleStartable {
 					}
 				}
 			}
-			// now go through the remaining headlines in existingHeadlines and remove them
+			// now go through the remaining headlines in existingHeadlines (they are the
+			// ones that no longer exists in the rss response) and remove them
 			Iterator oldHeadlineIter = oldHeadlines.iterator();
 			if(oldHeadlineIter.hasNext()) {
 				while (oldHeadlineIter.hasNext()) {

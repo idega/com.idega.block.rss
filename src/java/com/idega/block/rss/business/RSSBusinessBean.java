@@ -45,7 +45,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness {
 	 * @param sourceId The Id of the RSSSource
 	 * @return The RSSSource
 	 */
-	public RSSSource getRSSSourceBySourceId(String sourceId) {
+	public RSSSource getRSSSourceBySourceId(int sourceId) {
 		RSSSource source = null;
 		try {
 			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
@@ -160,22 +160,18 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness {
 	 * @return true if a source definition was successfully removed, 
 	 *         false otherwise
 	 */
-	public boolean removeSourceById(String id) {
-		if(id==null) {
-			return false;
-		} else {
-			try {
-				RSSSource source = getRSSSourceBySourceId(id);
-				if(source!=null) {
-					source.removeHeadlines();
-					// remove source definition
-					source.remove();
-					System.out.println("Removed RSS source: " + source);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
+	public boolean removeSourceById(int id) {
+		try {
+			RSSSource source = getRSSSourceBySourceId(id);
+			if(source!=null) {
+				source.removeHeadlines();
+				// remove source definition
+				source.remove();
+				System.out.println("Removed RSS source: ");
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}

@@ -6,9 +6,7 @@
  */
 package com.idega.block.rss.data;
 
-import java.util.Collection;
-
-import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDORelationshipException;
@@ -70,6 +68,21 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
         setColumn("LINK_URL", url);
     }
     
+    /**
+     * Overloaded to remove relation with RSSSource
+     */
+    public void remove() throws RemoveException {
+    	System.out.println("Removing headline: " + getHeadline());
+    	try {
+    		System.out.println("Removing RSSSource relation");
+    		idoRemoveFrom(RSSSource.class);
+    	} catch(IDORelationshipException e) {
+    		e.printStackTrace();
+    		throw new RemoveException("Could not remove relationship with RSSSource");
+    	}
+    	super.remove();
+    }
+    
     /* (non-Javadoc)
 	 * @see com.idega.data.GenericEntity#equals(java.lang.Object)
 	 */
@@ -80,6 +93,8 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
 			return false;
 		}
 	}
+	
+	
 	
 	public String toString() {
 		return getHeadline();

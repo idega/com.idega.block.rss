@@ -29,12 +29,12 @@ import com.idega.presentation.text.Text;
 public class RSSViewer extends Block {
 	// Member variabels   
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-	private String sourceId = null;
+	private int sourceId = -1;
 	private int maxLinks = 0;
 	private String description = null;
 
 	public void main(IWContext iwc) throws Exception {
-		if(sourceId == null) {
+		if(sourceId == -1) {
 			Text msg = new Text("No RSS source defined!");
 			msg.setBold();
 			add(msg);
@@ -74,7 +74,7 @@ public class RSSViewer extends Block {
 	/**
 	 * @return
 	 */
-	public String getSourceId() {
+	public int getSourceId() {
 		return sourceId;
 	}
 
@@ -83,7 +83,12 @@ public class RSSViewer extends Block {
 	 */
 	public void setSourceId(String id) {
 		System.out.println("setting rss source id to " + id);
-		sourceId = id;
+		try {
+			sourceId = Integer.parseInt(id);
+		} catch(Exception e) {
+			System.out.println("Couldn't save new source id value");
+			e.printStackTrace();
+		}
 	}
 	
 	/**

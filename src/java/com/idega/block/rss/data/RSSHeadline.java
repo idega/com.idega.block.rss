@@ -9,4 +9,5 @@ public interface RSSHeadline extends com.idega.data.IDOEntity
  public void initializeAttributes();
  public void setHeadline(java.lang.String p0);
  public void setLink(java.lang.String p0);
+ public java.lang.String toString();
 }

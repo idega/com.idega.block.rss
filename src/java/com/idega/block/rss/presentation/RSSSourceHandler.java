@@ -38,7 +38,7 @@ public class RSSSourceHandler implements PropertyHandler {
 	
 	private PresentationObject createSourceMenu(String name, String stringValue, IWContext iwc) {
 		DropdownMenu menu = new DropdownMenu( name );
-		menu.addMenuElement( "", "Select :" );
+		menu.addMenuElement( "-1", "Select :" );
 		try {
 			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
 			List sources = business.getAllRSSSources();

@@ -56,13 +56,22 @@ public class RSSSourceDefWindow extends Window {
 				actionMsg = new Text("RSS Source \"" + rssName + "\" added");
 			}
 		 } else if (iwc.isParameterSet(PARAM_REMOVE)) {
-			String rssSourceId = iwc.getParameter(PARAM_REMOVE);
-			System.out.println("Deleting rss source: " + rssSourceId);
-			boolean ok = false;
+			String rssSourceIdStr = iwc.getParameter(PARAM_REMOVE);
+			int rssSourceId = -1;
 			try {
-				ok = business.removeSourceById(rssSourceId);
-			} catch (RemoteException e) {
+				rssSourceId = Integer.parseInt(rssSourceIdStr);
+			} catch(NumberFormatException e) {
+				System.out.println("Could not get id of source from parameter");
 				e.printStackTrace();
+			}
+			boolean ok = false;
+			if(rssSourceId!=-1) {
+				System.out.println("Deleting rss source: " + rssSourceId);
+				try {
+					ok = business.removeSourceById(rssSourceId);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 			if(!ok) {
 				// url incorrect, not an RSS source or other internal error
@@ -76,6 +85,7 @@ public class RSSSourceDefWindow extends Window {
 		PresentationObject addForm = createAddForm();
 		PresentationObject removeForm = createRemoveForm(iwc);
 		add(addForm);
+		addBreak();
 		add(removeForm);
 	}
 	
@@ -93,12 +103,16 @@ public class RSSSourceDefWindow extends Window {
 		Text nameText = new Text("Name for RSS Source");
 		TextInput nameInput = new TextInput(PARAM_NAME);
 		addForm.add(nameText);
+		addForm.addBreak();
 		addForm.add(nameInput);
+		addForm.addBreak();
 
 		Text sourceText = new Text("URL for RSS Source");
 		TextInput sourceInput = new TextInput(PARAM_SOURCE);
 		addForm.add(sourceText);
+		addForm.addBreak();
 		addForm.add(sourceInput);
+		addForm.addBreak();
 		addForm.add(new SubmitButton("Add"));
 		return addForm;
 	}
@@ -112,8 +126,8 @@ public class RSSSourceDefWindow extends Window {
 			for (Iterator loop = sources.iterator(); loop.hasNext();) {
 				RSSSource element = (RSSSource) loop.next();
 				String sourceName = element.getName();
-				String sourceUrl = element.getSourceURL();
-				menu.addMenuElement( sourceUrl, sourceName );
+				Object sourceId = element.getPrimaryKey();
+				menu.addMenuElement( sourceId.toString(), sourceName );
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();

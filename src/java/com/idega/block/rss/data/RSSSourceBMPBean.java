@@ -55,10 +55,12 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 		return super.idoFindPKsByQuery(query);
 	}
 	
-	public Collection ejbFindSourceById(String id) throws FinderException{
-		IDOQuery query = idoQueryGetSelect();
-		query.appendWhereEqualsQuoted(getIDColumnName(), id);
-		return super.idoFindPKsByQuery(query); 
+	public Collection ejbFindSourceById(int id) throws FinderException{
+		/*IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEquals(getIDColumnName(), id);*/
+		Collection result = new ArrayList(1);
+		result.add(idoFindOnePKByColumnBySQL(getIDColumnName(), Integer.toString(id)));
+		return result;
 	}
     
     public Collection getHeadlines() {
