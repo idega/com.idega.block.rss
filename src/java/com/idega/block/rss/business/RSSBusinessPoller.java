@@ -166,7 +166,7 @@ public class RSSBusinessPoller implements IWBundleStartable {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			String msg = e.getMessage();
+			//String msg = e.getMessage();
 			e.printStackTrace();
 		}
 		return theReturn;

@@ -68,7 +68,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 			if(rssSourceId!=-1) {
 				System.out.println("Deleting rss source: " + rssSourceId);
 				try {
-					String name = business.getRSSSourceBySourceId(rssSourceId).getName();
+					//String name = business.getRSSSourceBySourceId(rssSourceId).getName();
 					ok = business.removeSourceById(rssSourceId);
 					actionMsg = "RSS Source deleted";
 				} catch (RemoteException e) {
