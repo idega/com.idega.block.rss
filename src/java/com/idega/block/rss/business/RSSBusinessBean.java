@@ -23,10 +23,9 @@ import com.idega.presentation.IWContext;
 import com.idega.util.ListUtil;
 
 /**
- * @author wmgobom
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * This service bean does all the real rss handling work
+ * 
+ * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness {
 	

@@ -1,8 +1,5 @@
 /*
  * Created on 22.10.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package com.idega.block.rss.business;
 
@@ -32,10 +29,10 @@ import com.idega.util.timer.TimerListener;
 import com.idega.util.timer.TimerManager;
 
 /**
- * @author jonas
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * This bundle starter goes through all defined RSSSources, and updates the RSSHeadlines for them.
+ * It is of course started when the server starts and runs at specific intervals.
+ * 
+ * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSBusinessPoller implements IWBundleStartable {
 	
@@ -53,7 +50,7 @@ public class RSSBusinessPoller implements IWBundleStartable {
 	}
 	
 	/**
-	 * Goes through all defined RSSSources, and updates the RSSHeadlins for them.
+	 * Goes through all defined RSSSources, and updates the RSSHeadlines for them.
 	 * Removes RSSHeadlines that are no longer present in the RSSSource from the
 	 * server. This means that the RSSHeadlines in the database are a time snapshot
 	 * of the response from the RSSSource server.

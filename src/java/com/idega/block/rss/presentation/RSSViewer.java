@@ -1,8 +1,5 @@
 /*
  * Created on 2003-jun-03
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 package com.idega.block.rss.presentation;
 
@@ -14,6 +11,7 @@ import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSHeadline;
 import com.idega.block.rss.data.RSSSource;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -21,13 +19,12 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * @author WMGOBOM
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Displays the current links from a selected RSS source.
+ * 
+ * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSViewer extends Block {
-	// Member variabels   
+	// Member variables   
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
 	private int sourceId = -1;
 	private int maxLinks = 0;
@@ -35,44 +32,61 @@ public class RSSViewer extends Block {
 	private String linkTargetType = Link.TARGET_NEW_WINDOW;
 	private String style = null;
 
+	/**
+	 * This is where everything happens.
+	 */
 	public void main(IWContext iwc) throws Exception {
+		IWResourceBundle iwrb = this.getResourceBundle(iwc);
+		
+		//if no selected rss source display an error message
 		if(sourceId == -1) {
-			Text msg = new Text("No RSS source defined!");
+			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected","No RSS source selected, please select one in the property window."));
 			msg.setBold();
 			add(msg);
 			return;
 		}
-		try {
-			if (description!=null && description.length()!=0) {
-				Text text = new Text(description);
-				add(text);
+		else {
+			try {
+				//get the data with the business bean
+				RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+				RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
+				Collection headlines = business.getRSSHeadlinesByRSSSource(rssSource);
+				
+				//add stuff to the block
+				if (description!=null && description.length()>0) {
+					Text text = new Text(description);
+					add(text);
+				}
+				
+				Table table = new Table();
+				//it does not really matter if this is done here or after adding to the table
+				add(table);
+				
+				int row = 1;
+				int maxLinksTmp = maxLinks;
+				if(maxLinksTmp<1)  {
+					// if maxLinks is zero (or negative), no limit
+					maxLinksTmp = 10000;
+				}
+				for (Iterator loop = headlines.iterator(); row<=maxLinksTmp && loop.hasNext();) {
+					RSSHeadline rssHeadline = (RSSHeadline) loop.next();
+					String headLine = rssHeadline.getHeadline();
+					Link link = new Link(headLine, rssHeadline.getLink());
+					if(style!=null) {
+						link.setStyle(style);
+					}
+					link.setTarget(linkTargetType);
+					table.add(link, 1, row++);
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
-			Table t = new Table();
-			/*if(style!=null) {
-				t.setStyle(style);
-			}*/
-			add(t);
-			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
-			RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
-			Collection headlines = business.getRSSHeadlinesByRSSSource(rssSource);
-			int row = 1;
-			int maxLinksTmp = maxLinks;
-			if(maxLinksTmp<1)  {
-				// if maxLinks is zero (or negative), no limit
-				maxLinksTmp = 10000;
-			}
-			for (Iterator loop = headlines.iterator(); row<=maxLinksTmp && loop.hasNext();) {
-				RSSHeadline rssHeadline = (RSSHeadline) loop.next();
-				String headLine = rssHeadline.getHeadline();
-				Link link = new Link(headLine, rssHeadline.getLink());
-				link.setTarget(linkTargetType);
-				t.add(link, 1, row++);
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * standard overriding to point to the correct bundle
+	 */
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -88,11 +102,11 @@ public class RSSViewer extends Block {
 	 * @param string
 	 */
 	public void setSourceId(String id) {
-		System.out.println("setting rss source id to " + id);
+		//System.out.println("setting rss source id to " + id);
 		try {
 			sourceId = Integer.parseInt(id);
 		} catch(Exception e) {
-			System.out.println("Couldn't save new source id value");
+			System.err.println("Couldn't save new source id value");
 			e.printStackTrace();
 		}
 	}
@@ -111,7 +125,7 @@ public class RSSViewer extends Block {
 		try {
 			maxLinks = Integer.parseInt(string);
 		} catch(Exception e) {
-			System.out.println("Couldn't save new max link value");
+			System.err.println("Couldn't save new max link value");
 			e.printStackTrace();
 		}
 	}
@@ -129,7 +143,7 @@ public class RSSViewer extends Block {
 	}
 	
 	public void setLinkStyle(String str) {
-		System.out.println("Setting link style to " + str);
+		//System.out.println("Setting link style to " + str);
 		style = str;
 	}
 	

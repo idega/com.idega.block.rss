@@ -1,8 +1,5 @@
 /*
  * Created on 21.10.2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package com.idega.block.rss.presentation;
 
@@ -14,6 +11,7 @@ import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.builder.handler.PropertyHandler;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
@@ -21,13 +19,12 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 
 /**
- * @author jonas
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * A property handler for adding rss sources
+ * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSSourceHandler implements PropertyHandler {
-
+	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
+	
 	/* (non-Javadoc)
 	 * @see com.idega.builder.handler.PropertyHandler#getDefaultHandlerTypes()
 	 */
@@ -36,8 +33,10 @@ public class RSSSourceHandler implements PropertyHandler {
 	}
 	
 	private PresentationObject createSourceMenu(String name, String stringValue, IWContext iwc) {
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		
 		DropdownMenu menu = new DropdownMenu( name );
-		menu.addMenuElement( "-1", "Select Source to Show:" );
+		menu.addMenuElement( "-1", iwrb.getLocalizedString("select.rss.source","Select rss source to show:" ));
 		try {
 			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
 			List sources = business.getAllRSSSources();
@@ -58,7 +57,8 @@ public class RSSSourceHandler implements PropertyHandler {
 	 * @see com.idega.builder.handler.PropertyHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
-		System.out.println("Handling property rss source, name=[" + name + "], value=[" + stringValue + "]");
+		//System.out.println("Handling property rss source, name=[" + name + "], value=[" + stringValue + "]");
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		
 		// create view
 		Table result = new Table();
@@ -66,7 +66,8 @@ public class RSSSourceHandler implements PropertyHandler {
 		PresentationObject menu = createSourceMenu(name, stringValue, iwc);
 		result.add(menu, 1, row++);
 		
-		GenericButton editButton = new GenericButton("Edit RSS Sources", "Edit RSS Sources");
+		String textOnButton = iwrb.getLocalizedString("edit.rss.sources","Edit RSS Sources");
+		GenericButton editButton = new GenericButton(textOnButton,textOnButton);
 		editButton.setWindowToOpen(RSSSourceDefWindow.class);
 		result.addBreak();
 		result.add(editButton);

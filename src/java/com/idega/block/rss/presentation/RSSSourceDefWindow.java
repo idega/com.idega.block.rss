@@ -13,6 +13,7 @@ import java.util.List;
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -25,18 +26,18 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 
 /**
- * @author jonas
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * An editor for available rss feeds
+ * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSSourceDefWindow extends IWAdminWindow {
+	//TODO localize all strings
 	public RSSSourceDefWindow() {
 		super();
 	}
 	
 	public void main(IWContext iwc) throws Exception {
-		setTitle("Edit Source Definition");
+		IWResourceBundle iwrb = this.getResourceBundle(iwc);
+		setTitle(iwrb.getLocalizedString("edit.rss.sources.title","Edit Source Definition"));
 		RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
 		// handle add/delete
 		String actionMsg = null;
@@ -51,9 +52,9 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 			}
 			if(!ok) {
 				// url incorrect, not an RSS source or other internal error
-				actionMsg = "Error: RSS Source could not be added";
+				actionMsg = iwrb.getLocalizedString("error.could.not.be.added","Error: RSS Source could not be added");
 			} else {
-				actionMsg = "RSS Source \"" + rssName + "\" added";
+				actionMsg =  iwrb.getLocalizedString("success.added","RSS Source \"" + rssName + "\" added");
 			}
 		 } else if (iwc.isParameterSet(PARAM_REMOVE)) {
 			String rssSourceIdStr = iwc.getParameter(PARAM_REMOVE);
@@ -61,26 +62,26 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 			try {
 				rssSourceId = Integer.parseInt(rssSourceIdStr);
 			} catch(NumberFormatException e) {
-				System.out.println("Could not get id of source from parameter");
+				System.err.println("Could not get id of source from parameter");
 				e.printStackTrace();
 			}
 			boolean ok = false;
 			if(rssSourceId!=-1) {
-				System.out.println("Deleting rss source: " + rssSourceId);
+				//System.out.println("Deleting rss source: " + rssSourceId);
 				try {
 					//String name = business.getRSSSourceBySourceId(rssSourceId).getName();
 					ok = business.removeSourceById(rssSourceId);
-					actionMsg = "RSS Source deleted";
+					actionMsg =  iwrb.getLocalizedString("success.deleted","RSS Source deleted");
 				} catch (RemoteException e) {
 					e.printStackTrace();
-					actionMsg = "Deletion error, RSS Source not deleted";
+					actionMsg =  iwrb.getLocalizedString("error.could.not.delete","Deletion error, RSS Source not deleted");
 				}
 			}
 			if(!ok) {
 				// url incorrect, not an RSS source or other internal error
-				actionMsg = "Error: RSS Source could not be removed";
+				actionMsg = iwrb.getLocalizedString("error.could.not.remove","Error: RSS Source could not be removed");
 			} else {
-				actionMsg = "RSS Source has been removed";
+				actionMsg = iwrb.getLocalizedString("success.removed","RSS Source has been removed");
 			}
 		}
 		
@@ -93,7 +94,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		add(getSyndic8Link());
 		if(actionMsg!=null) {
 			addBreak();
-			add("Result from last action: ");
+			add(iwrb.getLocalizedString("result.from.action","Result from last action: "));
 			Text text = new Text(actionMsg);
 			text.setBold();
 			add(text);
@@ -150,7 +151,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	private PresentationObject getSyndic8Link() {
 		Link link = new Link(new Text("www.Syndic8.com"), "http://www.syndic8.com/");
 		link.setTarget(Link.TARGET_NEW_WINDOW);
-		Text text1 = new Text("To sarch for RSS sources, go to ");
+		Text text1 = new Text("To search for RSS sources, go to ");
 		Text text2 = new Text(" and copy a source URL from there.");
 		PresentationObjectContainer container = new PresentationObjectContainer();
 		container.add(text1);
