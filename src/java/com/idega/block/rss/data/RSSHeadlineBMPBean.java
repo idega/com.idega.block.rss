@@ -88,6 +88,7 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
      * @param string
      */
     public void setSourceURL(String source) {
+    	System.out.println("setSourceUrl called with " + source);
         setColumn("SOURCE_URL", source);
     }
     

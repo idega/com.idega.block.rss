@@ -6,7 +6,9 @@
  */
 package com.idega.block.rss.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.FinderException;
 
@@ -40,7 +42,8 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
     
     public Collection ejbFindSources() throws FinderException {
         IDOQuery query = idoQueryGetSelect();
-        return super.idoFindAllIDsOrderedBySQL("NAME");
+        List result = new ArrayList(super.idoFindAllIDsOrderedBySQL("NAME"));
+        return result;
     }
     
 	public Collection ejbFindSourceByName(String name) throws FinderException{

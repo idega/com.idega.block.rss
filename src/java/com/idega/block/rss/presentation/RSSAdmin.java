@@ -17,6 +17,7 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
@@ -33,7 +34,8 @@ public class RSSAdmin extends Block {
     private static String IW_BUNDLE_IDENTIFIER = 
                                             "com.idega.block.rss";
     private String url = null;
-    private static String PARAM_SOURCE = "rss_src";
+    private static String PARAM_SOURCE = "rss_url";
+	private static String PARAM_NAME = "rss_name";
 
     // Methods
     protected RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
@@ -43,16 +45,32 @@ public class RSSAdmin extends Block {
     public void main(IWContext iwc) throws Exception {
         Form form = new Form();
         add(form);
+        
+		Text nameText = new Text("Name for RSS Source");
+		TextInput nameInput = new TextInput(PARAM_NAME);
+		form.add(nameText);
+		form.add(nameInput);
+        
+        Text sourceText = new Text("URL for RSS Source");
         TextInput sourceInput = new TextInput(PARAM_SOURCE);
+        form.add(sourceText);
         form.add(sourceInput);
-        form.add(new SubmitButton("Fetch"));
+        form.add(new SubmitButton("Add"));
         if (iwc.isParameterSet(PARAM_SOURCE)) {
+        	String name = iwc.getParameter(PARAM_NAME);
             String sourceURL = iwc.getParameter(PARAM_SOURCE);
-            getRSSBusiness(iwc).saveLinksAndHeadlines(sourceURL);
+			if(!getRSSBusiness(iwc).addSource(name, sourceURL)) {
+				// url incorrect, not an RSS source or other internal error
+				Text error = new Text("Source could not be added");
+				error.setBold();
+				add(error);
+			}
         }
         
         // Add a table with existing rss sources
 		try {
+			Text text = new Text("Defined Sources");
+			add(text);
 			Table t = new Table();
 			add(t);
 			RSSBusiness business = getRSSBusiness(iwc);

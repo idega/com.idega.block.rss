@@ -3,6 +3,7 @@ package com.idega.block.rss.data;
 
 public interface RSSSource extends com.idega.data.IDOEntity
 {
+ public boolean equals(java.lang.Object p0);
  public java.lang.String getName();
  public java.lang.String getSourceURL();
  public void initializeAttributes();

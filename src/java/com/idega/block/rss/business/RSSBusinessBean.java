@@ -92,12 +92,15 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 		}
 	}
 
-	public void saveLinksAndHeadlines(String sourceURL) {
+	public boolean saveLinksAndHeadlines(String sourceURL) {
 		try {
 			RSSHeadlineHome hHome = (RSSHeadlineHome) getIDOHome(RSSHeadline.class);
 			/*HashSet newHeadlines = new HashSet(getHeadlinesFromRSS(sourceURL));
 			HashSet existingHeadlines = new HashSet(getHeadlinesFromDB(sourceURL));*/
 			List newHeadlines = getHeadlinesFromRSS(sourceURL);
+			if(newHeadlines.isEmpty()) {
+				return false;
+			}
 			Collection oldHeadlines = getHeadlinesFromDB(sourceURL);
 			Iterator newHeadlineIter = newHeadlines.iterator();
 			if(newHeadlineIter.hasNext()) {
@@ -137,8 +140,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 					}
 				}
 			}
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
         }
 	}
     
@@ -160,13 +165,80 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
         RSSHeadlineHome hHome = (RSSHeadlineHome) getIDOHome(RSSHeadline.class);
         return hHome.findHeadlines(sourceURL);
     }
+    
+	private void updateRSSHeadlines() {
+		try {
+			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
+			Collection sources = sHome.findSources();
+			Iterator sIter = sources.iterator();
+			while(sIter.hasNext()) {
+				RSSSource source = (RSSSource)sIter.next();
+				String url = source.getSourceURL();
+				System.out.println("Updating RSS Headlines for " + source.getName());
+				saveLinksAndHeadlines(url);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+    
+	public List getSources() {
+		List sources = null;
+		try {
+			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
+			sources = new ArrayList(sHome.findSources());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return sources;
+	}
+	
+	public boolean addSource(String name, String url) {
+		if(url!=null && url.trim().length()!=0) {
+			url = url.trim();
+			if(name==null || name.trim().length()==0) {
+				name = url;
+			}
+			name = name.trim();
+		} else {
+			// not added because url was empty
+			return false;
+		}
+		Iterator sourcesIter = getSources().iterator();
+		while(sourcesIter.hasNext()) {
+			RSSSource source = (RSSSource) sourcesIter.next();
+			if(source.getSourceURL().equals(url.trim())) {
+				// not added because it already exists
+				return false;
+			}
+		}
+		try {
+			boolean ok = saveLinksAndHeadlines(url);
+			if(!ok) {
+				System.out.println("Coulnd't fetch and save source, url may be wrong");
+				return false;
+			}
+			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
+			RSSSource source = sHome.create();
+			source.setName(name);
+			source.setSourceURL(url);
+			source.store();
+		} catch(Exception e){
+			System.out.println("Couldn't add RSS source: " + name);
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundleStartable#start(com.idega.idegaweb.IWBundle)
 	 */
 	public void start(IWBundle starterBundle) {
-		try {
-			// Tempcode - to make sure one source is available (slashdot ofcourse)
+		/*try {
+			// Tempcode - to make sure some sources are available
 			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
 			if(sHome.findSources().isEmpty()) {
 				RSSSource source = sHome.create();
@@ -183,7 +255,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 		} catch(Exception e){
 			System.out.println("Couldn't initialize an RSS source");
 			e.printStackTrace();
-		}
+		}*/
 		bundle_ = starterBundle;
 		if (tManager==null) {
 			tManager = new TimerManager();
@@ -201,34 +273,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 			}
 		}
 	}
-	
-	public Collection getSources() {
-		Collection sources = null;
-		try {
-			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
-			sources = sHome.findSources();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return sources;
-	}
-	
-	private void updateRSSHeadlines() {
-		System.out.println("Updating RSS Headlines");
-		try {
-			RSSSourceHome sHome = (RSSSourceHome) getIDOHome(RSSSource.class);
-			Collection sources = sHome.findSources();
-			Iterator sIter = sources.iterator();
-			while(sIter.hasNext()) {
-				RSSSource source = (RSSSource)sIter.next();
-				String url = source.getSourceURL();
-				System.out.println("Updating RSS Headlines for " + source.getName());
-				saveLinksAndHeadlines(url);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundleStartable#stop(com.idega.idegaweb.IWBundle)
@@ -242,7 +286,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 		}
 	}
 	
-	private static final int RSS_POLL_INTERVAL = 3; // polling interval in minutes
+	private static final int RSS_POLL_INTERVAL = 20; // polling interval in minutes
 	private static TimerManager tManager = null;
 	private static TimerEntry pollTimerEntry = null;
 		

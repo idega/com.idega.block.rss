@@ -13,6 +13,13 @@ public class RSSSourceHomeImpl extends com.idega.data.IDOFactory implements RSSS
  }
 
 
+public java.util.Collection findSourceByName(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((RSSSourceBMPBean)entity).ejbFindSourceByName(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findSources()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((RSSSourceBMPBean)entity).ejbFindSources();
