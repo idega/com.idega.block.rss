@@ -37,25 +37,23 @@ public class RSSFetcherBean extends IBOServiceBean implements RSSFetcher {
 		SAXBuilder builder = new SAXBuilder();
 		Collection theReturn = new ArrayList();
 		try {
-			/* http://slashdot.org/slashdot.rss - xml-struktur
-			 * <rss>
-			 *  <channel>
-			 *      <item>
-			 *          <litem>
-			 */
 			URL url = new URL(urlStr);
 			Document doc = builder.build(url);
-			Element root = doc.getRootElement();
-			Element channel = root.getChild("channel");
-			Collection items = channel.getChildren("item");
+			Collection items = new ArrayList(8);
+			collectItems(doc.getRootElement(), items);
 			Iterator iter = items.iterator();
-			//int size = items.size();
 			while (iter.hasNext()) {
 				Element item = (Element) iter.next();
-				Element eTitle = (Element) item.getChild("title");
-				Element eLink = (Element) item.getChild("link");
+				Element eTitle = (Element) item.getChild("title", item.getNamespace());
+				Element eLink = (Element) item.getChild("link", item.getNamespace());
+				if(eTitle==null || eLink==null) {
+					continue;
+				}
 				String sTitle = eTitle.getText();
 				String sLink = eLink.getText();
+				if(sTitle==null || sLink==null) {
+					continue;
+				}
 				RSSHeadline h = new RSSHeadlineBMPBean();
 				h.setHeadline(sTitle);
 				h.setLink(sLink);
@@ -64,11 +62,24 @@ public class RSSFetcherBean extends IBOServiceBean implements RSSFetcher {
 		} catch (MalformedURLException mue) {
 			//String msg = mue.getMessage();
 			mue.printStackTrace();
-		} catch (Exception ioe) {
-			//String msg = ioe.getMessage();
-			ioe.printStackTrace();
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			e.printStackTrace();
 		}
 		return theReturn;
+	}
+	
+	// Collects all elements with name "item" into a collection
+	private void collectItems(Element element, Collection col) {
+		if("item".equals(element.getName())) {
+			col.add(element);
+		}
+		java.util.List children = element.getChildren();
+		Iterator iter = children.iterator();
+		while (iter.hasNext()) {
+			Element item = (Element) iter.next();
+			collectItems(item, col);
+		}
 	}
     
     public Collection getLinksAndHeadlines(String sourceURL) {

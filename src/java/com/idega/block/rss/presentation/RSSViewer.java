@@ -43,18 +43,13 @@ public class RSSViewer extends Block {
 			int row = 1;
 			for (Iterator loop = headlines.iterator(); loop.hasNext();) {
 				RSSHeadline element = (RSSHeadline) loop.next();
-				Link link = new Link(element.getHeadline(), element.getLink());
+				String headLine = element.getHeadline();
+				Link link = new Link(headLine, element.getLink());
 				t.add(link, 1, row++);
 			}
 		} catch (RemoteException e) {
 			add("Länkhämtningsfel");
 		}
-		/*
-		String url = new String("http://www.idega.com");
-		String linkText = new String("idega");
-		Link link = new Link(linkText, url);
-		add(link);
-		*/
 	}
 
 	public String getBundleIdentifier() {
