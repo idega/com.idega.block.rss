@@ -41,7 +41,7 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 	}
     
     public Collection ejbFindSources() throws FinderException {
-        IDOQuery query = idoQueryGetSelect();
+        //IDOQuery query = idoQueryGetSelect();
         List result = new ArrayList(super.idoFindAllIDsOrderedBySQL("NAME"));
         return result;
     }

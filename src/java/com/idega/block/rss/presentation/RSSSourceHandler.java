@@ -85,7 +85,7 @@ public class RSSSourceHandler implements PropertyHandler {
 		try {
 			RSSBusiness business = getRSSBusiness(iwc);
 			List sources = business.getSources();
-			int row = 1;
+			//int row = 1;
 			for (Iterator loop = sources.iterator(); loop.hasNext();) {
 				RSSSource element = (RSSSource) loop.next();
 				String sourceName = element.getName();
