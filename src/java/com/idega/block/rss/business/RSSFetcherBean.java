@@ -63,7 +63,7 @@ public class RSSFetcherBean extends IBOServiceBean implements RSSFetcher {
 			//String msg = mue.getMessage();
 			mue.printStackTrace();
 		} catch (Exception e) {
-			String msg = e.getMessage();
+			//String msg = e.getMessage();
 			e.printStackTrace();
 		}
 		return theReturn;
