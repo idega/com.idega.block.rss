@@ -2,6 +2,66 @@
 <pxml>
   <map>
     <key>
+      <name>iw_components</name>
+      <value>
+        <map>
+          <key>
+            <name>com.idega.block.rss.presentation.RSSViewer</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.block.rss.presentation.RSSViewer.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.block.rss.presentation.RSSSourceHandler</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.block.rss.presentation.RSSSourceHandler.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.block.rss.data.RSSHeadline</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.block.rss.data.RSSHeadline.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.block.rss.data.RSSSource</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.block.rss.data.RSSSource.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+        </map>
+      </value>
+      <type>map</type>
+    </key>
+    <key>
       <name>iw_bundle_identifier</name>
       <type>java.lang.String</type>
       <value>com.idega.block.rss</value>
