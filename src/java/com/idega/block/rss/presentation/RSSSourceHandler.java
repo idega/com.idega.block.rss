@@ -10,7 +10,7 @@ import java.util.List;
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
-import com.idega.core.builder.data.ICPropertyHandler;
+import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
