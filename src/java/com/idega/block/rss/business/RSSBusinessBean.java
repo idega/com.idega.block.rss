@@ -11,7 +11,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, IWBu
 			//String msg = mue.getMessage();
 			mue.printStackTrace();
 		} catch (Exception e) {
-			String msg = e.getMessage();
+			//String msg = e.getMessage();
 			e.printStackTrace();
 		}
 		return theReturn;
