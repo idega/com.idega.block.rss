@@ -9,10 +9,9 @@ package com.idega.block.rss.presentation;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
-
 import com.idega.block.rss.business.RSSBusiness;
-import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
@@ -30,6 +29,11 @@ import com.idega.presentation.ui.TextInput;
  * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSSourceDefWindow extends IWAdminWindow {
+	
+	private final static String PARAM_SOURCE = "rss_url";
+	private final static String PARAM_NAME = "rss_name";
+	private final static String PARAM_REMOVE = "rss_remove";
+	
 	//TODO localize all strings
 	public RSSSourceDefWindow() {
 		super();
@@ -38,7 +42,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		setTitle(iwrb.getLocalizedString("edit.rss.sources.title","Edit Source Definition"));
-		RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+		RSSBusiness business = getRSSBusiness(iwc);
 		// handle add/delete
 		String actionMsg = null;
 		if (iwc.isParameterSet(PARAM_SOURCE)) {
@@ -134,7 +138,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		DropdownMenu menu = new DropdownMenu( name );
 		menu.addMenuElement( "", "Select source to remove:" );
 		try {
-			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+			RSSBusiness business = getRSSBusiness(iwc);
 			List sources = business.getAllRSSSources();
 			for (Iterator loop = sources.iterator(); loop.hasNext();) {
 				RSSSource element = (RSSSource) loop.next();
@@ -159,8 +163,14 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		container.add(text2);
 		return container;
 	}
-
-	private final static String PARAM_SOURCE = "rss_url";
-	private final static String PARAM_NAME = "rss_name";
-	private final static String PARAM_REMOVE = "rss_remove";
+	
+	/**
+	 * Gets a RSSBusiness instance from a IWContext, used by the presentation classes
+	 * @param iwc The IWContext
+	 * @return A RSSBusiness instance
+	 * @throws RemoteException
+	 */
+	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
+		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+	}
 }

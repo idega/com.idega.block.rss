@@ -6,10 +6,9 @@ package com.idega.block.rss.presentation;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
-
 import com.idega.block.rss.business.RSSBusiness;
-import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
+import com.idega.business.IBOLookup;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -38,7 +37,7 @@ public class RSSSourceHandler implements ICPropertyHandler {
 		DropdownMenu menu = new DropdownMenu( name );
 		menu.addMenuElement( "-1", iwrb.getLocalizedString("select.rss.source","Select rss source to show:" ));
 		try {
-			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+			RSSBusiness business = getRSSBusiness(iwc);
 			List sources = business.getAllRSSSources();
 			for (Iterator loop = sources.iterator(); loop.hasNext();) {
 				RSSSource rssSource = (RSSSource) loop.next();
@@ -82,5 +81,15 @@ public class RSSSourceHandler implements ICPropertyHandler {
 			String rssSourceId = values[0];
 			System.out.println("Selected rss source \"" + rssSourceId + "\"");
 		}
+	}
+	
+	/**
+	 * Gets a RSSBusiness instance from a IWContext, used by the presentation classes
+	 * @param iwc The IWContext
+	 * @return A RSSBusiness instance
+	 * @throws RemoteException
+	 */
+	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
+		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
 	}
 }

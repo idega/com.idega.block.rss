@@ -6,11 +6,10 @@ package com.idega.block.rss.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
-
 import com.idega.block.rss.business.RSSBusiness;
-import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSHeadline;
 import com.idega.block.rss.data.RSSSource;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -48,7 +47,7 @@ public class RSSViewer extends Block {
 		else {
 			try {
 				//get the data with the business bean
-				RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+				RSSBusiness business = getRSSBusiness(iwc);
 				RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
 				Collection headlines = business.getRSSHeadlinesByRSSSource(rssSource);
 				
@@ -157,6 +156,16 @@ public class RSSViewer extends Block {
 		} else {
 			linkTargetType = Link.TARGET_SELF_WINDOW;
 		}
+	}
+	
+	/**
+	 * Gets a RSSBusiness instance from a IWContext, used by the presentation classes
+	 * @param iwc The IWContext
+	 * @return A RSSBusiness instance
+	 * @throws RemoteException
+	 */
+	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
+		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
 	}
 
 }

@@ -12,14 +12,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.ejb.FinderException;
-
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
-import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
-import com.idega.presentation.IWContext;
 import com.idega.util.ListUtil;
 
 /**
@@ -28,17 +24,7 @@ import com.idega.util.ListUtil;
  * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness {
-	
-	/**
-	 * Gets a RSSBusiness instance from a IWContext, used by the presentation classes
-	 * @param iwc The IWContext
-	 * @return A RSSBusiness instance
-	 * @throws RemoteException
-	 */
-	public static RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
-	}
-	
+		
 	/**
 	 * Gets an RSSSource by its Id
 	 * @param sourceId The Id of the RSSSource
