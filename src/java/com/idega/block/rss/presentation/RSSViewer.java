@@ -73,7 +73,7 @@ public class RSSViewer extends Block {
 					String headLine = rssHeadline.getHeadline();
 					Link link = new Link(headLine, rssHeadline.getLink());
 					if(style!=null) {
-						link.setStyle(style);
+						link.setFontStyle(style);
 					}
 					link.setTarget(linkTargetType);
 					table.add(link, 1, row++);
