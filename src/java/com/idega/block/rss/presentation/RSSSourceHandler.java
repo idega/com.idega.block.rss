@@ -10,7 +10,7 @@ import java.util.List;
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
-import com.idega.builder.handler.PropertyHandler;
+import com.idega.core.builder.data.ICPropertyHandler;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -22,11 +22,11 @@ import com.idega.presentation.ui.GenericButton;
  * A property handler for adding rss sources
  * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
-public class RSSSourceHandler implements PropertyHandler {
+public class RSSSourceHandler implements ICPropertyHandler {
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
 	
 	/* (non-Javadoc)
-	 * @see com.idega.builder.handler.PropertyHandler#getDefaultHandlerTypes()
+	 * @see com.idega.builder.handler.ICPropertyHandler#getDefaultHandlerTypes()
 	 */
 	public List getDefaultHandlerTypes() {
 		return null;
@@ -54,7 +54,7 @@ public class RSSSourceHandler implements PropertyHandler {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.builder.handler.PropertyHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
+	 * @see com.idega.builder.handler.ICPropertyHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
 		//System.out.println("Handling property rss source, name=[" + name + "], value=[" + stringValue + "]");
@@ -75,7 +75,7 @@ public class RSSSourceHandler implements PropertyHandler {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.builder.handler.PropertyHandler#onUpdate(java.lang.String[], com.idega.presentation.IWContext)
+	 * @see com.idega.builder.handler.ICPropertyHandler#onUpdate(java.lang.String[], com.idega.presentation.IWContext)
 	 */
 	public void onUpdate(String[] values, IWContext iwc) {
 		if(values!=null && values.length>0) {
