@@ -11,8 +11,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.idega.block.rss.business.RSSBusiness;
+import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSHeadline;
-import com.idega.business.IBOLookup;
+import com.idega.block.rss.data.RSSSource;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -28,16 +29,17 @@ import com.idega.presentation.text.Text;
 public class RSSViewer extends Block {
 	// Member variabels   
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-	private String url = null;
+	private String sourceId = null;
 	private int maxLinks = 0;
 	private String description = null;
 
-	// Methods
-	protected RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException {
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);
-	}
-
 	public void main(IWContext iwc) throws Exception {
+		if(sourceId == null) {
+			Text msg = new Text("No RSS source defined!");
+			msg.setBold();
+			add(msg);
+			return;
+		}
 		try {
 			if (description!=null && description.length()!=0) {
 				Text text = new Text(description);
@@ -45,8 +47,9 @@ public class RSSViewer extends Block {
 			}
 			Table t = new Table();
 			add(t);
-			RSSBusiness business = getRSSBusiness(iwc);
-			Collection headlines = business.getLinksAndHeadlines(url);
+			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+			RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
+			Collection headlines = business.getRSSHeadlinesByRSSSource(rssSource);
 			int row = 1;
 			int maxLinksTmp = maxLinks;
 			if(maxLinksTmp<1)  {
@@ -54,9 +57,9 @@ public class RSSViewer extends Block {
 				maxLinksTmp = 10000;
 			}
 			for (Iterator loop = headlines.iterator(); row<=maxLinksTmp && loop.hasNext();) {
-				RSSHeadline element = (RSSHeadline) loop.next();
-				String headLine = element.getHeadline();
-				Link link = new Link(headLine, element.getLink());
+				RSSHeadline rssHeadline = (RSSHeadline) loop.next();
+				String headLine = rssHeadline.getHeadline();
+				Link link = new Link(headLine, rssHeadline.getLink());
 				t.add(link, 1, row++);
 			}
 		} catch (RemoteException e) {
@@ -71,15 +74,16 @@ public class RSSViewer extends Block {
 	/**
 	 * @return
 	 */
-	public String getUrl() {
-		return url;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	/**
 	 * @param string
 	 */
-	public void setUrl(String string) {
-		url = string;
+	public void setSourceId(String id) {
+		System.out.println("setting rss source id to " + id);
+		sourceId = id;
 	}
 	
 	/**

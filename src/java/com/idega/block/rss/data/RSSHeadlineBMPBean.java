@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
-import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 
 /**
  * @author WMGOBOM
@@ -39,15 +39,8 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
         addAttribute("LINK_URL", "Link url", String.class);
         //setUnique("LINK_URL", true); // got keysize to big for index using interbase
         addAttribute("HEADLINE", "Link text", String.class);
-        addAttribute("SOURCE_URL", "Source url", String.class);
+		addManyToManyRelationShip(RSSSource.class);
 	}
-    
-    public Collection ejbFindHeadlines(String sourceURL) throws FinderException{
-        IDOQuery query = idoQueryGetSelect();
-        query.appendWhereEqualsQuoted("SOURCE_URL", sourceURL);
-        query.appendOrderByDescending(getIDColumnName());      
-        return super.idoFindPKsByQuery(query);
-    }
     
     /**
      * @return
@@ -64,13 +57,6 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
     }
 
     /**
-     * @return
-     */
-    public String getSourceURL() {
-        return getStringColumnValue("SOURCE_URL");
-    }
-
-    /**
      * @param string
      */
     public void setHeadline(String headline) {
@@ -84,14 +70,6 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
         setColumn("LINK_URL", url);
     }
     
-    /**
-     * @param string
-     */
-    public void setSourceURL(String source) {
-    	System.out.println("setSourceUrl called with " + source);
-        setColumn("SOURCE_URL", source);
-    }
-    
     /* (non-Javadoc)
 	 * @see com.idega.data.GenericEntity#equals(java.lang.Object)
 	 */
@@ -102,5 +80,8 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
 			return false;
 		}
 	}
-
+	
+	public String toString() {
+		return getHeadline();
+	}
 }

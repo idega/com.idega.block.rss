@@ -11,17 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.block.rss.business.RSSBusiness;
+import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.builder.handler.PropertyHandler;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.GenericButton;
 
 /**
  * @author jonas
@@ -37,71 +35,43 @@ public class RSSSourceHandler implements PropertyHandler {
 	public List getDefaultHandlerTypes() {
 		return null;
 	}
+	
+	private PresentationObject createSourceMenu(String name, String stringValue, IWContext iwc) {
+		DropdownMenu menu = new DropdownMenu( name );
+		menu.addMenuElement( "", "Select :" );
+		try {
+			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
+			List sources = business.getAllRSSSources();
+			for (Iterator loop = sources.iterator(); loop.hasNext();) {
+				RSSSource rssSource = (RSSSource) loop.next();
+				String sourceName = rssSource.getName();
+				String sourceId = rssSource.getPrimaryKey().toString();
+				menu.addMenuElement( sourceId, sourceName );
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		menu.setSelectedElement( stringValue );
+		return menu;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.builder.handler.PropertyHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
 		System.out.println("Handling property rss source, name=[" + name + "], value=[" + stringValue + "]");
+		
+		// create view
 		Table result = new Table();
-		DropdownMenu menu = new DropdownMenu( name );
-		menu.addMenuElement( "", "Select :" );
-		result.add(menu, 1, 1);
-		Form form = new Form();
-		result.add(form, 1, 2);
+		int row = 1;
+		PresentationObject menu = createSourceMenu(name, stringValue, iwc);
+		result.add(menu, 1, row++);
 		
-		// show inputfields for adding a source
-		Text nameText = new Text("Name for RSS Source");
-		TextInput nameInput = new TextInput(PARAM_NAME);
-		form.add(nameText);
-		form.add(nameInput);
-
-		Text sourceText = new Text("URL for RSS Source");
-		TextInput sourceInput = new TextInput(PARAM_SOURCE);
-		form.add(sourceText);
-		form.add(sourceInput);
-		form.add(new SubmitButton("Add"));
-		if (iwc.isParameterSet(PARAM_SOURCE)) {
-			String rssName = iwc.getParameter(PARAM_NAME);
-			String rssSourceURL = iwc.getParameter(PARAM_SOURCE);
-			boolean ok = false;
-			try {
-				ok = getRSSBusiness(iwc).addSource(rssName, rssSourceURL);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			Text msg;
-			if(!ok) {
-				// url incorrect, not an RSS source or other internal error
-				msg = new Text("Error: RSS Source could not be added");
-				msg.setBold();
-			} else {
-				msg = new Text("RSS Source \"" + rssName + "\" added");
-			}
-			result.add(msg, 1, 3);
-		}
-		
-		//	show list of existing sources
-		try {
-			RSSBusiness business = getRSSBusiness(iwc);
-			List sources = business.getSources();
-			//int row = 1;
-			for (Iterator loop = sources.iterator(); loop.hasNext();) {
-				RSSSource element = (RSSSource) loop.next();
-				String sourceName = element.getName();
-				String sourceUrl = element.getSourceURL();
-				menu.addMenuElement( sourceUrl, sourceName );
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		menu.setSelectedElement( stringValue );
-		 
+		GenericButton editButton = new GenericButton("Edit RSS Sources", "Edit RSS Sources");
+		editButton.setWindowToOpen(RSSSourceDefWindow.class);
+		result.addBreak();
+		result.add(editButton);
 		return result;
-	}
-	
-	private RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException {        
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
 	}
 
 	/* (non-Javadoc)
@@ -109,12 +79,8 @@ public class RSSSourceHandler implements PropertyHandler {
 	 */
 	public void onUpdate(String[] values, IWContext iwc) {
 		if(values!=null && values.length>0) {
-			String rssName = values[0];
-			System.out.println("Selected rss source \"" + rssName + "\"");
+			String rssSourceId = values[0];
+			System.out.println("Selected rss source \"" + rssSourceId + "\"");
 		}
 	}
-	
-	private static String PARAM_SOURCE = "rss_url";
-	private static String PARAM_NAME = "rss_name";
-
 }

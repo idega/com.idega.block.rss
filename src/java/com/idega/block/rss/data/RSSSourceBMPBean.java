@@ -8,12 +8,16 @@ package com.idega.block.rss.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 
 /**
  * @author WMGOBOM
@@ -37,7 +41,6 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
         addAttribute(getIDColumnName());
 		addAttribute("NAME", "Name of RSS Source", String.class);
         addAttribute("SOURCE_URL", "RSS Source URL", String.class);
-		//setUnique("SOURCE_URL", true);
 	}
     
     public Collection ejbFindSources() throws FinderException {
@@ -46,12 +49,50 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
         return result;
     }
     
-	public Collection ejbFindSourceByName(String name) throws FinderException{
+	public Collection ejbFindSourceByName(String name) throws FinderException {
 		IDOQuery query = idoQueryGetSelect();
-		query.appendWhereEqualsQuoted("name", name);      
+		query.appendWhereEqualsQuoted("name", name);
 		return super.idoFindPKsByQuery(query);
 	}
+	
+	public Collection ejbFindSourceById(String id) throws FinderException{
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEqualsQuoted(getIDColumnName(), id);
+		return super.idoFindPKsByQuery(query); 
+	}
     
+    public Collection getHeadlines() {
+    	System.out.println("Getting headlines using relationship");
+    	try {
+			return idoGetRelatedEntities(RSSHeadline.class);
+    	} catch(IDORelationshipException e) {
+    		System.out.println("Couldn't find headlines for source " + toString());
+			e.printStackTrace();
+			return Collections.EMPTY_LIST;
+    	}
+    }
+    
+	public void addHeadline(RSSHeadline headline) {
+		try {
+			idoAddTo(headline);
+		} catch(IDOAddRelationshipException e) {
+			System.out.println("Could not add headline to source");
+			e.printStackTrace();
+		} 
+	}
+    public void removeHeadlines() {
+		try {
+			Collection headlines = getHeadlines();
+			Iterator hIter = headlines.iterator();
+			while(hIter.hasNext()) {
+				RSSHeadline headline = (RSSHeadline) hIter.next();
+				headline.remove();
+			}
+			idoRemoveFrom(RSSHeadline.class);
+		} catch(Exception e) {
+			System.out.println("Error deleting RSS source");
+		}
+    }
     /**
      * @return
      */
@@ -77,7 +118,9 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
      * @param string
      */
     public void setSourceURL(String source) {
-        setColumn("SOURCE_URL", source);
+    	if(source!=null && source.trim().length()>0) {
+			setColumn("SOURCE_URL", source);
+    	}
     }
     
 	/* (non-Javadoc)
@@ -89,5 +132,9 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 		} else {
 			return false;
 		}
+	}
+	
+	public String toString() {
+		return "[" + getPrimaryKeyValue() + "]" + getName() + "@" + getSourceURL();
 	}
 }
