@@ -128,7 +128,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness {
 			source.setName(name);
 			source.setSourceURL(url);
 			source.store();
-			boolean ok = RSSBusinessPoller.getInstance().updateRSSHeadlinesForRSSSource(source);
+			boolean ok = RSSBusinessPoller.getInstance(this.getIWApplicationContext()).updateRSSHeadlinesForRSSSource(source);
 			if(!ok) {
 				System.out.println("Coulnd't fetch and save source, url may be wrong");
 				source.remove();

@@ -23,6 +23,7 @@ import com.idega.block.rss.data.RSSHeadlineHomeImpl;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.block.rss.data.RSSSourceHomeImpl;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.util.timer.PastDateException;
@@ -38,11 +39,16 @@ import com.idega.util.timer.TimerManager;
  */
 public class RSSBusinessPoller implements IWBundleStartable {
 	
+	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
+	
 	/**
 	 * Gets an instance of RSSBusinessPoller
 	 * @return An instance of RSSBusinessPoller
 	 */
-	public static RSSBusinessPoller getInstance() {
+	public static RSSBusinessPoller getInstance(IWApplicationContext iwac) {
+		if(_instance == null){
+			(new RSSBusinessPoller()).start(iwac.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER));
+		}
 		return _instance;
 	}
 	
