@@ -34,17 +34,18 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
 	public void initializeAttributes() {
     // Skapa tabellkolumner i db för bönan
         //  Kolumnnamn för primärnyckel
-        addAttribute(getIDColumnName()); 
+        addAttribute(getIDColumnName());
         //      kolumnnamn, kolumnbesk, Kolumntyp(Varchar 255)
         addAttribute("LINK_URL", "Link url", String.class);
-        //setUnique("LINK_URL", true); - got keysize to big for index using interbase
+        //setUnique("LINK_URL", true); // got keysize to big for index using interbase
         addAttribute("HEADLINE", "Link text", String.class);
         addAttribute("SOURCE_URL", "Source url", String.class);
 	}
     
     public Collection ejbFindHeadlines(String sourceURL) throws FinderException{
         IDOQuery query = idoQueryGetSelect();
-        query.appendWhereEqualsQuoted("SOURCE_URL", sourceURL);      
+        query.appendWhereEqualsQuoted("SOURCE_URL", sourceURL);
+        query.appendOrderByDescending(getIDColumnName());      
         return super.idoFindPKsByQuery(query);
     }
     
@@ -66,7 +67,7 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
      * @return
      */
     public String getSourceURL() {
-        return getStringColumnValue("LINK_URL");
+        return getStringColumnValue("SOURCE_URL");
     }
 
     /**
@@ -89,4 +90,16 @@ public class RSSHeadlineBMPBean extends GenericEntity implements RSSHeadline {
     public void setSourceURL(String source) {
         setColumn("SOURCE_URL", source);
     }
+    
+    /* (non-Javadoc)
+	 * @see com.idega.data.GenericEntity#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if(obj instanceof RSSHeadline) {
+			return getLink().equals(((RSSHeadline)obj).getLink());
+		} else {
+			return false;
+		}
+	}
+
 }

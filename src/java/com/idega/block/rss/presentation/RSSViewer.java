@@ -15,7 +15,7 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
-import com.idega.block.rss.business.RSSFetcher;
+import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSHeadline;
 
 /**
@@ -28,20 +28,21 @@ public class RSSViewer extends Block {
 	// Member variabels   
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
 	private String url = null;
+	private int maxLinks = 15;
 
 	// Methods
-	protected RSSFetcher getRSSFetcher(IWContext iwc) throws RemoteException {
-		return (RSSFetcher) IBOLookup.getServiceInstance(iwc, RSSFetcher.class);
+	protected RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException {
+		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);
 	}
 
 	public void main(IWContext iwc) throws Exception {
 		try {
 			Table t = new Table();
 			add(t);
-			RSSFetcher fetcher = getRSSFetcher(iwc);
-			Collection headlines = fetcher.getLinksAndHeadlines(url);
+			RSSBusiness business = getRSSBusiness(iwc);
+			Collection headlines = business.getLinksAndHeadlines(url);
 			int row = 1;
-			for (Iterator loop = headlines.iterator(); loop.hasNext();) {
+			for (Iterator loop = headlines.iterator(); row<=maxLinks && loop.hasNext();) {
 				RSSHeadline element = (RSSHeadline) loop.next();
 				String headLine = element.getHeadline();
 				Link link = new Link(headLine, element.getLink());
@@ -68,6 +69,25 @@ public class RSSViewer extends Block {
 	 */
 	public void setUrl(String string) {
 		url = string;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getMaxLinks() {
+		return Integer.toString(maxLinks);
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setMaxLinks(String string) {
+		try {
+			maxLinks = Integer.parseInt(string);
+		} catch(Exception e) {
+			System.out.println("Couldn't save new max link value");
+			e.printStackTrace();
+		}
 	}
 
 }
