@@ -32,6 +32,8 @@ public class RSSViewer extends Block {
 	private int sourceId = -1;
 	private int maxLinks = 0;
 	private String description = null;
+	private String linkTargetType = Link.TARGET_NEW_WINDOW;
+	private String style = null;
 
 	public void main(IWContext iwc) throws Exception {
 		if(sourceId == -1) {
@@ -46,6 +48,9 @@ public class RSSViewer extends Block {
 				add(text);
 			}
 			Table t = new Table();
+			/*if(style!=null) {
+				t.setStyle(style);
+			}*/
 			add(t);
 			RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
 			RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
@@ -60,10 +65,11 @@ public class RSSViewer extends Block {
 				RSSHeadline rssHeadline = (RSSHeadline) loop.next();
 				String headLine = rssHeadline.getHeadline();
 				Link link = new Link(headLine, rssHeadline.getLink());
+				link.setTarget(linkTargetType);
 				t.add(link, 1, row++);
 			}
 		} catch (RemoteException e) {
-			add("Länkhämtningsfel");
+			e.printStackTrace();
 		}
 	}
 
@@ -116,6 +122,27 @@ public class RSSViewer extends Block {
 	
 	public void setDescription(String str) {
 		description = str;
+	}
+	
+	public boolean getOpenInNewWindow() {
+		return linkTargetType==Link.TARGET_NEW_WINDOW;
+	}
+	
+	public void setLinkStyle(String str) {
+		System.out.println("Setting link style to " + str);
+		style = str;
+	}
+	
+	public String getLinkStyle() {
+		return style;
+	}
+	
+	public void setOpenInNewWindow(boolean b) {
+		if(b) {
+			linkTargetType = Link.TARGET_NEW_WINDOW;
+		} else {
+			linkTargetType = Link.TARGET_SELF_WINDOW;
+		}
 	}
 
 }

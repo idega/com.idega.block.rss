@@ -13,15 +13,16 @@ import java.util.List;
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSBusinessBean;
 import com.idega.block.rss.data.RSSSource;
-import com.idega.business.IBOLookup;
+import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.Window;
 
 /**
  * @author jonas
@@ -29,7 +30,7 @@ import com.idega.presentation.ui.Window;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RSSSourceDefWindow extends Window {
+public class RSSSourceDefWindow extends IWAdminWindow {
 	public RSSSourceDefWindow() {
 		super();
 	}
@@ -38,7 +39,7 @@ public class RSSSourceDefWindow extends Window {
 		setTitle("Edit Source Definition");
 		RSSBusiness business = RSSBusinessBean.getRSSBusiness(iwc);
 		// handle add/delete
-		Text actionMsg = null;
+		String actionMsg = null;
 		if (iwc.isParameterSet(PARAM_SOURCE)) {
 			String rssName = iwc.getParameter(PARAM_NAME);
 			String rssSourceURL = iwc.getParameter(PARAM_SOURCE);
@@ -50,10 +51,9 @@ public class RSSSourceDefWindow extends Window {
 			}
 			if(!ok) {
 				// url incorrect, not an RSS source or other internal error
-				actionMsg = new Text("Error: RSS Source could not be added");
-				actionMsg.setBold();
+				actionMsg = "Error: RSS Source could not be added";
 			} else {
-				actionMsg = new Text("RSS Source \"" + rssName + "\" added");
+				actionMsg = "RSS Source \"" + rssName + "\" added";
 			}
 		 } else if (iwc.isParameterSet(PARAM_REMOVE)) {
 			String rssSourceIdStr = iwc.getParameter(PARAM_REMOVE);
@@ -68,17 +68,19 @@ public class RSSSourceDefWindow extends Window {
 			if(rssSourceId!=-1) {
 				System.out.println("Deleting rss source: " + rssSourceId);
 				try {
+					String name = business.getRSSSourceBySourceId(rssSourceId).getName();
 					ok = business.removeSourceById(rssSourceId);
+					actionMsg = "RSS Source deleted";
 				} catch (RemoteException e) {
 					e.printStackTrace();
+					actionMsg = "Deletion error, RSS Source not deleted";
 				}
 			}
 			if(!ok) {
 				// url incorrect, not an RSS source or other internal error
-				actionMsg = new Text("Error: RSS Source could not be removed");
-				actionMsg.setBold();
+				actionMsg = "Error: RSS Source could not be removed";
 			} else {
-				actionMsg = new Text("RSS Source has been removed");
+				actionMsg = "RSS Source has been removed";
 			}
 		}
 		
@@ -87,6 +89,15 @@ public class RSSSourceDefWindow extends Window {
 		add(addForm);
 		addBreak();
 		add(removeForm);
+		addBreak();
+		add(getSyndic8Link());
+		if(actionMsg!=null) {
+			addBreak();
+			add("Result from last action: ");
+			Text text = new Text(actionMsg);
+			text.setBold();
+			add(text);
+		}
 	}
 	
 	private PresentationObject createRemoveForm(IWContext iwc) {
@@ -97,11 +108,11 @@ public class RSSSourceDefWindow extends Window {
 		return removeForm;
 	}
 
-
 	private PresentationObject createAddForm() {
 		Form addForm = new Form();
 		Text nameText = new Text("Name for RSS Source");
 		TextInput nameInput = new TextInput(PARAM_NAME);
+		nameInput.setSize(25);
 		addForm.add(nameText);
 		addForm.addBreak();
 		addForm.add(nameInput);
@@ -109,6 +120,7 @@ public class RSSSourceDefWindow extends Window {
 
 		Text sourceText = new Text("URL for RSS Source");
 		TextInput sourceInput = new TextInput(PARAM_SOURCE);
+		sourceInput.setSize(50);
 		addForm.add(sourceText);
 		addForm.addBreak();
 		addForm.add(sourceInput);
@@ -133,6 +145,18 @@ public class RSSSourceDefWindow extends Window {
 			e.printStackTrace();
 		}
 		return menu;
+	}
+	
+	private PresentationObject getSyndic8Link() {
+		Link link = new Link(new Text("www.Syndic8.com"), "http://www.syndic8.com/");
+		link.setTarget(Link.TARGET_NEW_WINDOW);
+		Text text1 = new Text("To sarch for RSS sources, go to ");
+		Text text2 = new Text(" and copy a source URL from there.");
+		PresentationObjectContainer container = new PresentationObjectContainer();
+		container.add(text1);
+		container.add(link);
+		container.add(text2);
+		return container;
 	}
 
 	private final static String PARAM_SOURCE = "rss_url";

@@ -193,6 +193,16 @@ public class RSSBusinessPoller implements IWBundleStartable {
 	 * @see com.idega.idegaweb.IWBundleStartable#start(com.idega.idegaweb.IWBundle)
 	 */
 	public void start(IWBundle starterBundle) {
+		String strPollInterval = starterBundle.getProperty(BUNDLE_PROPERTY_NAME_POLL_INTERVAL);
+		if(strPollInterval!=null && strPollInterval.length()>0) {
+			try {
+				pollInterval = Integer.parseInt(strPollInterval.trim());
+				System.out.println("Poll interval set to " + pollInterval + " minutes");
+			} catch(NumberFormatException e) {
+				System.out.println("Could not set rss poll interval to " + strPollInterval);
+				e.printStackTrace();
+			}
+		}
 		_instance = this;
 		bundle_ = starterBundle;
 		if (tManager==null) {
@@ -200,7 +210,7 @@ public class RSSBusinessPoller implements IWBundleStartable {
 		}
 		if(pollTimerEntry==null) {
 			try {
-				pollTimerEntry = tManager.addTimer(RSS_POLL_INTERVAL, true, new TimerListener() {
+				pollTimerEntry = tManager.addTimer(pollInterval, true, new TimerListener() {
 					public void handleTimer(TimerEntry entry) {
 						updateAllRSSHeadlines();
 					}
@@ -242,11 +252,13 @@ public class RSSBusinessPoller implements IWBundleStartable {
 	
 	private RSSBusiness _business = null;
 
-	private static final int RSS_POLL_INTERVAL = 20; // polling interval in minutes
+	private static int pollInterval = 30; // polling interval in minutes
 	private static TimerManager tManager = null;
 	private static TimerEntry pollTimerEntry = null;
 	
 	private static RSSBusinessPoller _instance = null; 
+	
+	private static final String BUNDLE_PROPERTY_NAME_POLL_INTERVAL = "iw_bundle_rss_poll_interval";
 	
 	private IWBundle bundle_;
 }
