@@ -36,7 +36,6 @@ public class RSSViewer extends Block {
 	 */
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
-		
 		//if no selected rss source display an error message
 		if(sourceId == -1) {
 			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected","No RSS source selected, please select one in the property window."));
