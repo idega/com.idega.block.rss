@@ -49,7 +49,7 @@ public class RSSFetcherBean extends IBOServiceBean implements RSSFetcher {
 			Element channel = root.getChild("channel");
 			Collection items = channel.getChildren("item");
 			Iterator iter = items.iterator();
-			int size = items.size();
+			//int size = items.size();
 			while (iter.hasNext()) {
 				Element item = (Element) iter.next();
 				Element eTitle = (Element) item.getChild("title");
@@ -62,10 +62,10 @@ public class RSSFetcherBean extends IBOServiceBean implements RSSFetcher {
 				theReturn.add(h);
 			}
 		} catch (MalformedURLException mue) {
-			String msg = mue.getMessage();
+			//String msg = mue.getMessage();
 			mue.printStackTrace();
 		} catch (Exception ioe) {
-			String msg = ioe.getMessage();
+			//String msg = ioe.getMessage();
 			ioe.printStackTrace();
 		}
 		return theReturn;
