@@ -55,6 +55,7 @@ public class RSSViewer extends Block {
 				Layer layer = new Layer();
 				layer.setStyleClass("rss");
 				layer.setID(layerID);
+				add(layer);
 				
 				//add stuff to the block
 				if (description!=null && description.length()>0) {
