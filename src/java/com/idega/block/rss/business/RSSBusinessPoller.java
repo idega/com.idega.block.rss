@@ -150,8 +150,8 @@ public class RSSBusinessPoller implements IWBundleStartable {
 			int numItems = items.size();
 			for(int i=0; i<numItems; i++) {
 				Element item = (Element) items.get(i);
-				Element eTitle = (Element) item.getChild("title", item.getNamespace());
-				Element eLink = (Element) item.getChild("link", item.getNamespace());
+				Element eTitle = item.getChild("title", item.getNamespace());
+				Element eLink = item.getChild("link", item.getNamespace());
 				if(eTitle==null || eLink==null) {
 					continue;
 				}

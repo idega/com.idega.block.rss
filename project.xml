@@ -53,6 +53,16 @@
         <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://jdom.sourceforge.net/</url>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src/java</sourceDirectory>

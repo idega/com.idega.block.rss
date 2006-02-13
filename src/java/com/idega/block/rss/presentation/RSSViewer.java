@@ -13,8 +13,9 @@ import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Table;
+import com.idega.presentation.Layer;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 
 /**
@@ -27,9 +28,10 @@ public class RSSViewer extends Block {
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
 	private int sourceId = -1;
 	private int maxLinks = 0;
+	
 	private String description = null;
 	private String linkTargetType = Link.TARGET_NEW_WINDOW;
-	private String style = null;
+	private String layerID = "rssViewer";
 
 	/**
 	 * This is where everything happens.
@@ -50,15 +52,17 @@ public class RSSViewer extends Block {
 				RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
 				Collection headlines = business.getRSSHeadlinesByRSSSource(rssSource);
 				
+				Layer layer = new Layer();
+				layer.setStyleClass("rss");
+				layer.setID(layerID);
+				
 				//add stuff to the block
 				if (description!=null && description.length()>0) {
-					Text text = new Text(description);
-					add(text);
+					Paragraph paragraph = new Paragraph();
+					paragraph.setStyleClass("description");
+					paragraph.add(new Text(description));
+					add(paragraph);
 				}
-				
-				Table table = new Table();
-				//it does not really matter if this is done here or after adding to the table
-				add(table);
 				
 				int row = 1;
 				int maxLinksTmp = maxLinks;
@@ -69,12 +73,15 @@ public class RSSViewer extends Block {
 				for (Iterator loop = headlines.iterator(); row<=maxLinksTmp && loop.hasNext();) {
 					RSSHeadline rssHeadline = (RSSHeadline) loop.next();
 					String headLine = rssHeadline.getHeadline();
+					
+					Layer item = new Layer();
+					item.setStyleClass("rssItem");
+					
 					Link link = new Link(headLine, rssHeadline.getLink());
-					if(style!=null) {
-						link.setFontStyle(style);
-					}
 					link.setTarget(linkTargetType);
-					table.add(link, 1, row++);
+					item.add(link);
+					
+					layer.add(item);
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -100,7 +107,6 @@ public class RSSViewer extends Block {
 	 * @param string
 	 */
 	public void setSourceId(String id) {
-		//System.out.println("setting rss source id to " + id);
 		try {
 			sourceId = Integer.parseInt(id);
 		} catch(Exception e) {
@@ -140,15 +146,6 @@ public class RSSViewer extends Block {
 		return linkTargetType==Link.TARGET_NEW_WINDOW;
 	}
 	
-	public void setLinkStyle(String str) {
-		//System.out.println("Setting link style to " + str);
-		style = str;
-	}
-	
-	public String getLinkStyle() {
-		return style;
-	}
-	
 	public void setOpenInNewWindow(boolean b) {
 		if(b) {
 			linkTargetType = Link.TARGET_NEW_WINDOW;
@@ -165,6 +162,11 @@ public class RSSViewer extends Block {
 	 */
 	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
 		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+	}
+
+	
+	public void setLayerID(String layerID) {
+		this.layerID = layerID;
 	}
 
 }
