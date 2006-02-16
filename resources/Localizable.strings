@@ -1,0 +1,4 @@
+edit.rss.sources=Edit RSS Sources
+iw.component.com.idega.block.rss.presentation.RSSViewer.name=RSSViewer
+no.rss.source.selected=No RSS source selected, please select one in the property window.
+select.rss.source=Select rss source to show\:
