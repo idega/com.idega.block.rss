@@ -1,1 +1,15 @@
 /* Quote styles */
+
+div.rss {
+	width: auto;
+	height: auto;
+}
+
+div.rss div.rssItem {
+	padding-bottom: 6px;
+}
+
+div.rss div.rssItem a, div.rss div.rssItem a:hover {
+	font-size: 11px;
+	font-weight: normal;
+}
