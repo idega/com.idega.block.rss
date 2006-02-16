@@ -63,6 +63,26 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
+    <dependency>
+	    <groupId>rome</groupId>
+        <artifactId>rome</artifactId>
+        <version>0.8</version>
+		<type>jar</type>
+	    <url>https://rome.dev.java.net/</url>
+	    <properties>
+		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+    		</properties>
+	</dependency>
+	<dependency>
+	    <groupId>rome</groupId>
+        <artifactId>rome-fetcher</artifactId>
+        <version>0.3</version>
+		<type>jar</type>
+	    <url>https://rome.dev.java.net/</url>
+	    <properties>
+		<idegaweb.bundle.include>true</idegaweb.bundle.include>
+    		</properties>
+	</dependency>
   </dependencies>
   <build>
     <sourceDirectory>src/java</sourceDirectory>
