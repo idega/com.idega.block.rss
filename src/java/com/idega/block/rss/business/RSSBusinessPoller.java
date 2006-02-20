@@ -57,7 +57,7 @@ public class RSSBusinessPoller implements IWBundleStartable {
 	 * time snapshot of the response from the RSSSource server.
 	 * 
 	 */
-	private void updateAllRSSHeadlines() {
+	void updateAllRSSHeadlines() {
 		try {
 			RSSSourceHome sHome = new RSSSourceHomeImpl();
 			Collection sources = sHome.findSources();
