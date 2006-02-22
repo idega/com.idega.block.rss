@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.jdom.Element;
 import com.idega.block.rss.data.RSSHeadline;
 import com.idega.block.rss.data.RSSHeadlineHome;
 import com.idega.block.rss.data.RSSHeadlineHomeImpl;
@@ -184,26 +183,6 @@ public class RSSBusinessPoller implements IWBundleStartable {
 		return theReturn;
 	}
 
-	/**
-	 * Collects all elements with name "item" below an element into a collection
-	 * 
-	 * @param element
-	 *            search this element and its descendants
-	 * @param col
-	 *            The collection to add "item" elements into
-	 */
-	private void collectItems(Element element, List col) {
-		if ("item".equals(element.getName())) {
-			col.add(element);
-		}
-		java.util.List children = element.getChildren();
-		Iterator iter = children.iterator();
-		while (iter.hasNext()) {
-			Element item = (Element) iter.next();
-			collectItems(item, col);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,7 +201,6 @@ public class RSSBusinessPoller implements IWBundleStartable {
 			}
 		}
 		_instance = this;
-		bundle_ = starterBundle;
 		if (tManager == null) {
 			tManager = new TimerManager();
 		}
@@ -280,5 +258,4 @@ public class RSSBusinessPoller implements IWBundleStartable {
 	private static TimerEntry pollTimerEntry = null;
 	private static RSSBusinessPoller _instance = null;
 	private static final String BUNDLE_PROPERTY_NAME_POLL_INTERVAL = "iw_bundle_rss_poll_interval";
-	private IWBundle bundle_;
 }
