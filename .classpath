@@ -11,7 +11,11 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/rome/jars/rome-0.8.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/rome/jars/rome-fetcher-0.3.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/rome/jars/rome-fetcher-0.7.jar">
+  </classpathentry>
+  <classpathentry kind="src" path="/com.idega.slide">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar">
   </classpathentry>

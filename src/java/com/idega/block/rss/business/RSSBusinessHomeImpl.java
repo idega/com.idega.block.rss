@@ -1,8 +1,8 @@
 /*
- * $Id: RSSBusinessHomeImpl.java,v 1.2 2004/09/10 00:07:24 eiki Exp $
- * Created on Sep 9, 2004
+ * $Id: RSSBusinessHomeImpl.java,v 1.3 2006/02/23 18:42:02 eiki Exp $
+ * Created on Feb 22, 2006
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -14,10 +14,10 @@ import com.idega.business.IBOHomeImpl;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/10 00:07:24 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/02/23 18:42:02 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RSSBusinessHomeImpl extends IBOHomeImpl implements RSSBusinessHome {
 

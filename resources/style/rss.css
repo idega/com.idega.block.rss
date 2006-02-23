@@ -1,4 +1,4 @@
-/* Quote styles */
+/* RSSViewer styles */
 
 div.rss {
 	width: auto;
@@ -12,4 +12,49 @@ div.rss div.rssItem {
 div.rss div.rssItem a, div.rss div.rssItem a:hover {
 	font-size: 11px;
 	font-weight: normal;
+}
+
+div.rss div.rssItem div.rssItemPublishedDate {
+	font-size: 9px;
+	font-weight: normal;
+}
+
+/*RSSTicker styles*/
+
+.cnnclass{
+	width: 400px;
+	padding: 5px;
+	background-color: #F3F3F3;
+	border: 1px solid black;
+	margin-bottom: 1em;
+	filter:progid:DXImageTransform.Microsoft.alpha(opacity=80); /*Specify fade effect in IE. Remove if desired.*/
+	-moz-opacity: 0.8; /*Specify fade effect in Firefox. Remove if desired.*/
+}
+
+.cnnclass a{
+	text-decoration: none;
+
+}
+
+.bbcclass{
+	width: 100%;
+	height:100%;
+	background-color: #27445C;
+	filter:progid:DXImageTransform.Microsoft.alpha(opacity=80); /*Specify fade effect in IE. Remove if desired.*/
+	-moz-opacity: 0.8; /*Specify fade effect in Firefox. Remove if desired.*/
+}
+
+.rsstitle{ /*shared class for all title elements in an RSS feed*/
+	font-weight: bold;
+}
+
+.rssdate{ /*shared class for all date elements in an RSS feed*/
+	color: white;
+	font-size: 85%;
+}
+
+.rssdescription{ /*shared class for all description elements in an RSS feed*/
+     color: white;
+     font-size: 90%;
+
 }
