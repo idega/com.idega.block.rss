@@ -1,5 +1,5 @@
 /*
- * $Id: RSSBusiness.java,v 1.6 2006/02/23 18:42:02 eiki Exp $
+ * $Id: RSSBusiness.java,v 1.7 2006/02/24 09:39:34 laddi Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,40 +9,26 @@
  */
 package com.idega.block.rss.business;
 
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.rss.data.RSSSource;
-import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOService;
-import com.idega.business.IBOServiceBean;
-import com.idega.slide.business.IWSlideService;
-import com.idega.util.ListUtil;
-import com.idega.util.StringHandler;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndImage;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.FetcherEvent;
 import com.sun.syndication.fetcher.FetcherListener;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedOutput;
 
 
 /**
  * 
- *  Last modified: $Date: 2006/02/23 18:42:02 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/02/24 09:39:34 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface RSSBusiness extends IBOService, FetcherListener {
 

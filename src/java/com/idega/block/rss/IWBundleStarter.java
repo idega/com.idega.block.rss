@@ -43,8 +43,6 @@ import com.sun.syndication.fetcher.FeedFetcher;
  */
 public class IWBundleStarter implements IWBundleStartable {
 
-	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-	private boolean started = false;	
 	private RSSBusiness _business = null;
 	private static int pollInterval = 20; // polling interval in minutes
 	private static TimerManager tManager = null;

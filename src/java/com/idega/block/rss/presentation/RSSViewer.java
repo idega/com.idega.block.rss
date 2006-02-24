@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
@@ -19,7 +19,6 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWTimestamp;
-import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 /**
@@ -86,15 +85,15 @@ public class RSSViewer extends Block {
 					String entryLink = rssEntry.getLink();
 					String entryTitle = rssEntry.getTitle();
 					// probably a list of SyndContent items
-					List entryAuthors = rssEntry.getAuthors();
-					List entryContributors = rssEntry.getContributors();
-					List entryContents = rssEntry.getContents();
+					//List entryAuthors = rssEntry.getAuthors();
+					//List entryContributors = rssEntry.getContributors();
+					//List entryContents = rssEntry.getContents();
 					Date entryPublishedDate = rssEntry.getPublishedDate();
-					Date entryUpdatedDate = rssEntry.getUpdatedDate();
-					SyndContent entryDescription = rssEntry.getDescription();
-					if (entryDescription != null) {
-						String descriptionType = entryDescription.getType();
-					}
+					//Date entryUpdatedDate = rssEntry.getUpdatedDate();
+					//SyndContent entryDescription = rssEntry.getDescription();
+					//if (entryDescription != null) {
+						//String descriptionType = entryDescription.getType();
+					//}
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
 					if (entryTitle.length() > getMaximumNumberOfLettersInHeadline()
