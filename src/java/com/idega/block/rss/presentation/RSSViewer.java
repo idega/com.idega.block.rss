@@ -113,6 +113,8 @@ public class RSSViewer extends Block {
 						itemPublished.add(new Text(new IWTimestamp().getLocaleDateAndTime(iwc.getCurrentLocale(), IWTimestamp.SHORT, IWTimestamp.SHORT)));
 					}
 					layer.add(item);
+					
+					row++;
 				}
 			}
 			catch (RemoteException e) {
