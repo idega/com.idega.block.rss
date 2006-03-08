@@ -107,7 +107,10 @@ public class RSSViewer extends Block {
 					itemPublished.setStyleClass("rssItemPublishedDate");
 					item.add(itemPublished);
 					if (entryPublishedDate != null) {
-						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
+						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDateAndTime(iwc.getCurrentLocale(), IWTimestamp.SHORT, IWTimestamp.SHORT));
+					}
+					else {
+						itemPublished.add(new Text(new IWTimestamp().getLocaleDateAndTime(iwc.getCurrentLocale(), IWTimestamp.SHORT, IWTimestamp.SHORT)));
 					}
 					layer.add(item);
 				}
