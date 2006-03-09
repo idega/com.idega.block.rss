@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.1 2006/02/23 18:42:02 eiki Exp $
+ * $Id: RSSTicker.java,v 1.2 2006/03/09 12:59:57 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 
 /**
@@ -29,12 +30,20 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/02/23 18:42:02 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/03/09 12:59:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RSSTicker extends RSSViewer {
+	
+	private long tickerIntervalInMS = 5000;
+	private int tickerPollingIntervalInMinutes = 5;
+	private boolean showTitle = true;
+	private boolean showDate = true;
+	private boolean showDescription = true;
+	private String tickerStyleClass = "rssTicker";
+	private String tickerId = null;
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
@@ -46,22 +55,43 @@ public class RSSTicker extends RSSViewer {
 			
 			RSSSource rssSource = getRSSBusiness(iwc).getRSSSourceBySourceId(getSourceId());
 			String rssSourceURL = IWMainApplication.getDefaultIWMainApplication().getTranslatedURIWithContext(rssSource.getLocalSourceURI());
-						
-			//rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, optionalswitch)
-			String scriptString ="new rssticker_ajax('"+rssSourceURL+"',2, 'ddbox', 'bbcclass', 5000, 'date+description');";
+			String options = "title";
+			if(showDate()){
+				options+="+date";
+			}
+			if(showDescription()){
+				options+="+description";
+			}
 			
-			getParentPage().addScriptSource(iwb.getResourcesVirtualPath() +"/javascript/rssticker.js");
 			
 			Layer layer = new Layer();
-			layer.setStyleClass("cnnclass");
-			layer.setId("cnnbox");
+			layer.setStyleClass("rssTicker");
+			if(getTickerId() == null){
+				tickerId = layer.getID();		
+			}
+			
+			//TODO use cachtime in javascript!!
+			//rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, optionalswitch)
+			String scriptString ="new rssticker_ajax('"+rssSourceURL+"',"+getTickerPollingIntervalInMinutes()+", '"+tickerId+"', '"+getTickerStyleClass()+"', "+getTickerIntervalInMS()+", '"+options+"');";
+			String scriptSource = iwb.getResourcesVirtualPath() +"/javascript/rssticker.js";
+			
+			add(layer);
+			
+			Page parentPage = getParentPage();
+			if(parentPage!=null && !iwc.isSafari()){
+				parentPage.addScriptSource(scriptSource);	
+			}
+			else{
+				//in the builder for example
+				Script scriptSourceScript = new Script();
+				scriptSourceScript.setScriptSource(scriptSource);
+				layer.add(scriptSourceScript);
+			}
 			
 			Script script = new Script();
 			script.addFunction("", scriptString);
 			
-			add(layer);
 			layer.add(script);
-			
 	
 			
 	//		document.write("CNN News: (Fade Effect enabled. Title+date shown)")
@@ -72,6 +102,71 @@ public class RSSTicker extends RSSViewer {
 		}
 		
 		
+	}
+	
+	/**
+	 * @return Returns the tickerId.
+	 */
+	public String getTickerId() {
+		return tickerId;
+	}
+
+	
+	/**
+	 * @param tickerId The tickerId to set.
+	 */
+	public void setTickerId(String tickerId) {
+		this.tickerId = tickerId;
+	}
+
+	
+	/**
+	 * @return Returns the tickerIntervalInMS.
+	 */
+	public long getTickerIntervalInMS() {
+		return tickerIntervalInMS;
+	}
+
+	
+	/**
+	 * @param tickerIntervalInMS The tickerIntervalInMS to set.
+	 */
+	public void setTickerIntervalInMS(long tickerIntervalInMS) {
+		this.tickerIntervalInMS = tickerIntervalInMS;
+	}
+
+	
+	/**
+	 * @return Returns the tickerStyleClass.
+	 */
+	public String getTickerStyleClass() {
+		return tickerStyleClass;
+	}
+
+	
+	/**
+	 * @param tickerStyleClass The tickerStyleClass to set.
+	 */
+	public void setTickerStyleClass(String tickerStyleClass) {
+		this.tickerStyleClass = tickerStyleClass;
+	}
+
+
+	
+	/**
+	 * @return Returns the tickerPollingIntervalInMinutes.
+	 */
+	public int getTickerPollingIntervalInMinutes() {
+		return tickerPollingIntervalInMinutes;
+	}
+
+
+	
+	/**
+	 * @param tickerPollingIntervalInMinutes The tickerPollingIntervalInMinutes to set.
+	 */
+	public void setTickerPollingIntervalInMinutes(int tickerPollingIntervalInMinutes) {
+		this.tickerPollingIntervalInMinutes = tickerPollingIntervalInMinutes;
 	}
 		
 }

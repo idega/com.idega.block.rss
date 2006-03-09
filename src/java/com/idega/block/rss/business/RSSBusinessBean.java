@@ -35,10 +35,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/02/24 09:39:34 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/09 12:59:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -280,8 +280,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	protected void processFeed(SyndFeed feed, String feedURL) {
 		try {
 			// upload the xml as a file
-			RSSSource source = getRSSSourceHome().findSourceByURL(feedURL);
-			String localSourceURI = createFileInSlide(feed, feedURL);
+			RSSSource source = (RSSSource) getRSSSourceHome().findSourceByURL(feedURL);
+			String localSourceURI = createFileInSlide(feed, feedURL, source);
 			updateRSSSource(source, feed, feedURL, localSourceURI);
 			
 		}
@@ -316,7 +316,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 //		if (image != null) {
 //			String feedImageURL = image.getUrl();
 //		}
-		source.setName(title);
+		source.setTitle(title);
 		source.setLocalSourceURI(localSourceURI);
 		source.setSourceURL(feedURL);
 		source.store();
@@ -327,8 +327,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param atomXML
 	 * @throws RemoteException
 	 */
-	protected String createFileInSlide(SyndFeed feed, String feedURL) throws RemoteException {
-		String atomXML = convertFeedToAtomXMLString(feed);
+	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
+		//String atomXML = convertFeedToAtomXMLString(feed);
+		String atomXML = convertFeedToRSS2XMLString(feed);
+		
 		String fileName = null;
 		IWSlideService ss = getIWSlideService();
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
@@ -343,7 +345,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
 			fileName = fileName.replaceAll(".rss", ".xml");
 		}
-		else {
+		else if(source!=null){
+			String name = source.getName();
+			fileName = name + ".xml";
+		}
+		else{
 			String title = feed.getTitle();
 			fileName = title + ".xml";
 		}
@@ -368,15 +374,34 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	}
 
 	/**
-	 * Takes a SyndFeed of any type and returns it as an Atom 1.0 xml string/OR
-	 * JDOM DOCUMENT?
-	 * 
+	 * Takes a SyndFeed of any type and returns it as an Atom 1.0 xml string 
 	 * @param feed
 	 * @return
 	 */
 	public String convertFeedToAtomXMLString(SyndFeed feed) {
 		// SyndFeedInput input = new SyndFeedInput();
 		feed.setFeedType("atom_1.0");
+		SyndFeedOutput output = new SyndFeedOutput();
+		String xmlFeed = null;
+		try {
+			xmlFeed = output.outputString(feed);
+			// System.out.println(xmlFeed);
+			// output.output(feed,new PrintWriter(System.out));
+		}
+		catch (FeedException e) {
+			e.printStackTrace();
+		}
+		return xmlFeed;
+	}
+	
+	/**
+	 * Takes a SyndFeed of any type and returns it as an RSS 2.0 xml string 
+	 * @param feed
+	 * @return
+	 */
+	public String convertFeedToRSS2XMLString(SyndFeed feed) {
+		// SyndFeedInput input = new SyndFeedInput();
+		feed.setFeedType("rss_2.0");
 		SyndFeedOutput output = new SyndFeedOutput();
 		String xmlFeed = null;
 		try {

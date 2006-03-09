@@ -117,6 +117,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		Form addForm = new Form();
 		Text nameText = new Text("Name for RSS Source");
 		TextInput nameInput = new TextInput(PARAM_NAME);
+		nameInput.keepStatusOnAction();
 		nameInput.setSize(25);
 		addForm.add(nameText);
 		addForm.addBreak();
@@ -125,6 +126,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 
 		Text sourceText = new Text("URL for RSS Source");
 		TextInput sourceInput = new TextInput(PARAM_SOURCE);
+		sourceInput.keepStatusOnAction();
 		sourceInput.setSize(50);
 		addForm.add(sourceText);
 		addForm.addBreak();

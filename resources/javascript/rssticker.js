@@ -4,22 +4,27 @@
 // IdegaWeb changes and addons by Eirikur S. Hrafnsson, eiki@idega.is
 // -------------------------------------------------------------------
 
-////////////No need to edit beyond here//////////////
+var isIE = false;
 
 function createAjaxObj(){
-var httprequest=false
-if (window.XMLHttpRequest){ // if Mozilla, Safari etc
-	httprequest=new XMLHttpRequest()
-	if (httprequest.overrideMimeType)
-		httprequest.overrideMimeType('text/xml')
+	var httprequest=false
+	if (window.XMLHttpRequest){ // if Mozilla, Safari etc
+		httprequest=new XMLHttpRequest();
+		if (httprequest.overrideMimeType)	{
+			//httprequest.overrideMimeType('text/xml; charset=UTF-8');
+			httprequest.overrideMimeType('text/xml');
+			
+		}
 	}
 	else if (window.ActiveXObject){ // if IE
 		try {
-		httprequest=new ActiveXObject("Msxml2.XMLHTTP");
+			httprequest=new ActiveXObject("Msxml2.XMLHTTP");
+			isIE = true;
 		} 
 		catch (e){
 		try{
-		httprequest=new ActiveXObject("Microsoft.XMLHTTP");
+			httprequest=new ActiveXObject("Microsoft.XMLHTTP");
+			isIE = true;
 		}
 		catch (e){}
 		}
@@ -29,11 +34,11 @@ if (window.XMLHttpRequest){ // if Mozilla, Safari etc
 
 // -------------------------------------------------------------------
 // Main RSS Ticker Object function
-// rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, optionallogicswitch)
+// rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, optionallogicswitch)
 // -------------------------------------------------------------------
 
-function rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, logicswitch){
-	this.RSS_URL = RSS_URL //Array key indicating which RSS feed to display
+function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch){
+	this.RSS_URI = RSS_URI //Array key indicating which RSS feed to display
 	this.cachetime=cachetime //Time to cache feed, in minutes. 0=no cache.
 	this.tickerid=divId //ID of ticker div to display information
 	this.delay=delay //Delay between msg change, in miliseconds.
@@ -50,21 +55,25 @@ function rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, logicswitch)
 }
 
 // -------------------------------------------------------------------
-// getAjaxcontent()- Makes asynchronous GET request to RSS_URL
+// getAjaxcontent()- Makes asynchronous GET request to RSS_URI
 // -------------------------------------------------------------------
 
 rssticker_ajax.prototype.getAjaxcontent=function(){
 	if (this.ajaxobj){
-	var instanceOfTicker=this;
-	//var parameters="id="+encodeURIComponent(this.RSS_id)+"&cachetime="+this.cachetime+"&bustcache="+new Date().getTime()
-	var parameters="";
-	
-	this.ajaxobj.onreadystatechange=function(){instanceOfTicker.initialize()}
-	
-	this.fullURL = "http://"+window.location.hostname + ":"+window.location.port + this.RSS_URL
-	//alert(this.fullURL);
-	this.ajaxobj.open('GET',this.fullURL +"?"+parameters, true);
-	this.ajaxobj.send(null);
+		var instanceOfTicker=this;
+		//var parameters="id="+encodeURIComponent(this.RSS_id)+"&cachetime="+this.cachetime+"&bustcache="+new Date().getTime()		
+		this.ajaxobj.onreadystatechange=function(){
+			instanceOfTicker.initialize()
+		}
+		
+		this.fullURL = "http://"+window.location.hostname + ":"+window.location.port + this.RSS_URI
+		//this.ajaxobj.open('GET',this.fullURL +"?"+parameters, true);
+		this.ajaxobj.open('GET',this.fullURL, true);
+		// safari fix
+   	 	//this.ajaxobj.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1995 00:00:00 GMT');
+    		//this.ajaxobj.send("");
+		
+		this.ajaxobj.send(null);
 	}
 }
 
@@ -112,15 +121,14 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 					this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
 				}
 				else{
-					this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
-					this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].getAttribute("href");	
-					//try{	
-						//may not exist
-					//	this.description[i]=this.feeditems[i].getElementsByTagName("summary")[0].firstChild.nodeValue;
-					//}
-					//catch(e){
-					//}
-					this.pubdate[i]=this.feeditems[i].getElementsByTagName("published")[0].firstChild.nodeValue;
+					this.title[i] = getElementTextNS("", "title", this.feeditems[i], 0);
+					linkTag = this.feeditems[i].getElementsByTagName("link")[0];
+					if(linkTag){
+						this.link[i] = linkTag.getAttribute("href");	
+					}
+					this.pubdate[i] = getElementTextNS("", "published", this.feeditems[i], 0);
+					this.description[i] = getElementTextNS("", "summary", this.feeditems[i],0);
+					
 					//alert(this.title[i] + " "+this.link[i]+" "+this.description[i]+" "+this.pubdate[i]);
 				}
 			}
@@ -138,24 +146,26 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 // -------------------------------------------------------------------
 
 	rssticker_ajax.prototype.rotatemsg=function(){
-	var instanceOfTicker=this
-	if (this.mouseoverBol==1) //if mouse is currently over ticker, do nothing (pause it)
-		setTimeout(function(){instanceOfTicker.rotatemsg()}, 100)
-	else{ //else, construct item, show and rotate it!
-		var tickerDiv=document.getElementById(this.tickerid)
-		var linktitle='<div class="rsstitle"><a href="'+this.link[this.pointer]+'">'+this.title[this.pointer]+'</a></div>'
-		var description='<div class="rssdescription">'+this.description[this.pointer]+'</div>'
-		var feeddate='<div class="rssdate">'+this.pubdate[this.pointer]+'</div>'
-		if (this.logicswitch.indexOf("description")==-1) description=""
-		if (this.logicswitch.indexOf("date")==-1) feeddate=""
-		var tickercontent=linktitle+feeddate+description //STRING FOR FEED CONTENTS 
-		this.fadetransition("reset") //FADE EFFECT- RESET OPACITY
-		tickerDiv.innerHTML=tickercontent
-		this.fadetimer1=setInterval(function(){instanceOfTicker.fadetransition('up', 'fadetimer1')}, 100) //FADE EFFECT- PLAY IT
-		this.pointer=(this.pointer<this.feeditems.length-1)? this.pointer+1 : 0
-		setTimeout(function(){instanceOfTicker.rotatemsg()}, this.delay) //update container every second
+		var instanceOfTicker=this
+		if (this.mouseoverBol==1) //if mouse is currently over ticker, do nothing (pause it)
+			setTimeout(function(){instanceOfTicker.rotatemsg()}, 100)
+		else{ //else, construct item, show and rotate it!
+			var tickerDiv=document.getElementById(this.tickerid)
+			var linktitle='<div class="rsstitle"><a target="_new" href="'+this.link[this.pointer]+'">'+this.title[this.pointer]+'</a></div>'
+			var description='<div class="rssdescription">'+this.description[this.pointer].replace("\\<.*?\\>","")+'</div>'
+			var feeddate='<div class="rssdate">'+this.pubdate[this.pointer]+'</div>'
+			
+			if (this.logicswitch.indexOf("description")==-1) description=""
+			if (this.logicswitch.indexOf("date")==-1) feeddate=""
+			
+			var tickercontent=linktitle+feeddate+description //STRING FOR FEED CONTENTS 
+			this.fadetransition("reset") //FADE EFFECT- RESET OPACITY
+			tickerDiv.innerHTML=tickercontent
+			this.fadetimer1=setInterval(function(){instanceOfTicker.fadetransition('up', 'fadetimer1')}, 100) //FADE EFFECT- PLAY IT
+			this.pointer=(this.pointer<this.feeditems.length-1)? this.pointer+1 : 0
+			setTimeout(function(){instanceOfTicker.rotatemsg()}, this.delay) //update container every second
+		}
 	}
-}
 
 // -------------------------------------------------------------------
 // fadetransition()- cross browser fade method for IE5.5+ and Mozilla/Firefox
@@ -180,4 +190,31 @@ rssticker_ajax.prototype.fadetransition=function(fadetype, timerid){
 	clearInterval(this[timerid])
 }
 
-
+// retrieve text of an XML document element, including
+// elements using namespaces
+function getElementTextNS(prefix, local, parentElem, index) {
+    var result = "";
+    if (prefix && isIE) {
+        // IE/Windows way of handling namespaces
+        result = parentElem.getElementsByTagName(prefix + ":" + local)[index];
+    } else {
+        // the namespace versions of this method 
+        // (getElementsByTagNameNS()) operate
+        // differently in Safari and Mozilla, but both
+        // return value with just local name, provided 
+        // there aren't conflicts with non-namespace element
+        // names
+        result = parentElem.getElementsByTagName(local)[index];
+    }
+    if (result) {
+        // get text, accounting for possible
+        // whitespace (carriage return) text nodes 
+        if (result.childNodes.length > 1) {
+            return result.childNodes[1].nodeValue;
+        } else {
+            return result.firstChild.nodeValue;    		
+        }
+    } else {
+        return "n/a";
+    }
+}

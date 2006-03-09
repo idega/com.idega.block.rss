@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-
+import java.util.List;
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
@@ -15,10 +15,14 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.Page;
+import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringHandler;
+import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 /**
@@ -34,8 +38,12 @@ public class RSSViewer extends Block {
 	private int maxLinks = 0;
 	private String description = null;
 	private String linkTargetType = Link.TARGET_NEW_WINDOW;
-	private String layerID = "rssViewer";
+	private String layerID = null;
 	private int maximumNumberOfLettersInHeadline = 0;
+	private boolean useHiddenLayer = false;
+	private boolean showTitle = true;
+	private boolean showDate = true;
+	private boolean showDescription = true;
 
 	// TODO implement caching and displaying of multiple sources
 	public RSSViewer() {
@@ -64,8 +72,11 @@ public class RSSViewer extends Block {
 				Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
 				Layer layer = new Layer();
 				layer.setStyleClass("rss");
-				layer.setID(layerID);
+				if(layerID!=null){
+					layer.setID(layerID);
+				}
 				add(layer);
+				
 				// add stuff to the block
 				if (description != null && description.length() > 0) {
 					Paragraph paragraph = new Paragraph();
@@ -84,43 +95,112 @@ public class RSSViewer extends Block {
 			
 					String entryLink = rssEntry.getLink();
 					String entryTitle = rssEntry.getTitle();
-					// probably a list of SyndContent items
-					//List entryAuthors = rssEntry.getAuthors();
-					//List entryContributors = rssEntry.getContributors();
-					//List entryContents = rssEntry.getContents();
+					// TODO USE ALL SYNDFEED ITEMS
+//					List entryAuthors = rssEntry.getAuthors();
+//					List entryContributors = rssEntry.getContributors();
+					List entryContents = rssEntry.getContents();
 					Date entryPublishedDate = rssEntry.getPublishedDate();
-					//Date entryUpdatedDate = rssEntry.getUpdatedDate();
-					//SyndContent entryDescription = rssEntry.getDescription();
-					//if (entryDescription != null) {
+//					Date entryUpdatedDate = rssEntry.getUpdatedDate();
+					SyndContent entryDescription = rssEntry.getDescription();
+					String description = "";
+					if (entryDescription != null) {
 						//String descriptionType = entryDescription.getType();
-					//}
+						//todo force pure text if type xhtml?
+						description = entryDescription.getValue();
+					}
+					
+					String content = "";
+					if( entryContents!=null && !entryContents.isEmpty()){
+						for (Iterator iter = entryContents.iterator(); iter.hasNext();) {
+							SyndContent entryContent = (SyndContent) iter.next();
+							String value = entryContent.getValue();
+							if(value!=null && !"null".equals(value) && !value.equals(description)){
+								content+=value;
+							}
+						}
+					}
+					
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
 					if (entryTitle.length() > getMaximumNumberOfLettersInHeadline()
 							&& getMaximumNumberOfLettersInHeadline() != 0) {
 						entryTitle = entryTitle.substring(0, getMaximumNumberOfLettersInHeadline() - 1) + "...";
 					}
+					
 					Link link = new Link(entryTitle, entryLink);
-					link.setTarget(linkTargetType);
+					description = StringHandler.removeHtmlTagsFromString(description);
+					content = StringHandler.removeHtmlTagsFromString(content);
+					
+					if(useHiddenLayer){
+						
+						String scriptSource = getBundle(iwc).getResourcesVirtualPath() +"/javascript/rss.js";
+						if("".equals(content) && description!=null){
+							content = description;
+						}
+						Layer itemContent = new Layer();
+						itemContent.setStyleClass("rssItemContent");
+					
+						itemContent.add(Text.NON_BREAKING_SPACE);
+						getParentPage().add(itemContent);
+						
+						add(layer);
+						
+						Script script = null;
+						String onClickString = null;	
+						
+						Page parentPage = getParentPage();
+						if(parentPage!=null && !iwc.isSafari()){
+							parentPage.addScriptSource(scriptSource);
+							onClickString = "showRSSContentLayer('"+itemContent.getID()+"','"+content+"');";
+						}
+						else{
+							//in the builder for example
+							Script scriptSourceScript = new Script();
+							scriptSourceScript.setScriptSource(scriptSource);
+							layer.add(scriptSourceScript);
+							
+							script = new Script();
+							layer.add(script);
+							String scriptString = "function showRSSContentLayer"+itemContent.getID()+"(contentLayerID,contentString) {  \n\tsetRSSContentLayerId(contentLayerID);\n\tvar content = findObj(contentLayerID);\n\tcontent.innerHTML = contentString+'<'+'a href=# id=focusLink name=focusLink ><'+'/a>';\n\tcontent.style.visibility='visible';\n\tfindObj('focusLink').focus();\n}";
+							script.addFunction("showRSSContentLayer"+itemContent.getID()+"(contentLayerID,contentString)", scriptString);		
+							onClickString = "showRSSContentLayer"+itemContent.getID()+"('"+itemContent.getID()+"','"+content+"');";
+						}
+						
+						
+						link = new Link(entryTitle, "#");
+						link.setOnClick(onClickString);
+					}
+					else{
+						link = new Link(entryTitle, entryLink);
+						link.setTarget(linkTargetType);
+					}
 					item.add(link);
+					
 					Layer itemPublished = new Layer();
 					itemPublished.setStyleClass("rssItemPublishedDate");
 					item.add(itemPublished);
 					if (entryPublishedDate != null) {
-						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDateAndTime(iwc.getCurrentLocale(), IWTimestamp.SHORT, IWTimestamp.SHORT));
+						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
 					}
-					else {
-						itemPublished.add(new Text(new IWTimestamp().getLocaleDateAndTime(iwc.getCurrentLocale(), IWTimestamp.SHORT, IWTimestamp.SHORT)));
-					}
-					layer.add(item);
 					
-					row++;
+					if(!"".equals(description) && getShowDescription()){
+						Layer itemDescription = new Layer();
+						itemDescription.setStyleClass("rssItemDescription");
+						item.add(itemDescription);	
+					}
+					
+					layer.add(item);
 				}
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private boolean getShowDescription() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/**
@@ -222,4 +302,55 @@ public class RSSViewer extends Block {
 	public void setMaximumNumberOfLettersInHeadline(int maximumNumberOfLettersInHeadline) {
 		this.maximumNumberOfLettersInHeadline = maximumNumberOfLettersInHeadline;
 	}
+	
+	public void setUseOnClickAndHiddenLayerForContent(boolean useHiddenLayer){
+		this.useHiddenLayer  = useHiddenLayer;
+	}
+	
+	/**
+	 * @return Returns the showDescription.
+	 */
+	public boolean showDescription() {
+		return showDescription;
+	}
+
+	
+	/**
+	 * @param showDescription The showDescription to set.
+	 */
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+	
+	
+	/**
+	 * @return Returns the showDate.
+	 */
+	public boolean showDate() {
+		return showDate;
+	}
+
+	
+	/**
+	 * @param showDate The showDate to set.
+	 */
+	public void setShowDate(boolean showDate) {
+		this.showDate = showDate;
+	}
+	
+	/**
+	 * @return Returns the showTitle.
+	 */
+	public boolean showTitle() {
+		return showTitle;
+	}
+
+	
+	/**
+	 * @param showTitle The showTitle to set.
+	 */
+	public void setShowTitle(boolean showTitle) {
+		this.showTitle = showTitle;
+	}
+
 }

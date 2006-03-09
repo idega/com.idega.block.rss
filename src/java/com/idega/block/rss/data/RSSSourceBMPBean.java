@@ -15,14 +15,15 @@ import com.idega.data.GenericEntity;
 /**
  * 
  * 
- * Last modified: $Date: 2006/02/23 18:42:02 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/09 12:59:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 
 	public static final String COLUMN_NAME = "NAME";
+	public static final String COLUMN_TITLE = "TITLE";
 	public static final String COLUMN_LOCAL_SOURCE_URI = "LOCAL_SOURCE_URI";
 	public static final String COLUMN_SOURCE_URL = "SOURCE_URL";
 
@@ -43,6 +44,7 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(COLUMN_NAME, "Name of RSS Source", String.class);
+		addAttribute(COLUMN_TITLE, "Title of RSS Source", String.class);
 		addAttribute(COLUMN_SOURCE_URL, "RSS Source URL", String.class);
 		addAttribute(COLUMN_LOCAL_SOURCE_URI, "RSS Local Source URI (no context) in Slide", String.class);
 	}
@@ -83,6 +85,22 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 	 */
 	public void setName(String name) {
 		setColumn(COLUMN_NAME, name);
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getTitle() {
+		return getStringColumnValue(COLUMN_TITLE);
+	}
+
+
+
+	/**
+	 * @return
+	 */
+	public void setTitle(String title) {
+		setColumn(COLUMN_TITLE, title);
 	}
 
 	/**

@@ -9,6 +9,7 @@
  */
 package com.idega.block.rss;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -43,6 +44,8 @@ import com.sun.syndication.fetcher.FeedFetcher;
  */
 public class IWBundleStarter implements IWBundleStartable {
 
+	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
+	private boolean started = false;	
 	private RSSBusiness _business = null;
 	private static int pollInterval = 20; // polling interval in minutes
 	private static TimerManager tManager = null;
@@ -83,7 +86,10 @@ public class IWBundleStarter implements IWBundleStartable {
 			Iterator sIter = sources.iterator();
 			while (sIter.hasNext()) {
 				RSSSource source = (RSSSource) sIter.next();
-				URL feedUrl = new URL(source.getSourceURL());
+				URL feedUrl;
+				try {
+					feedUrl = new URL(source.getSourceURL());
+				
 				// Feed Poll and then Retrieved event will happen (assuming the
 				// feed is valid)
 				// we do nothing here, all is handled in the event handling in
@@ -91,6 +97,10 @@ public class IWBundleStarter implements IWBundleStartable {
 				SyndFeed feed = getRSSBusiness().getFeedFetcher().retrieveFeed(feedUrl);
 				System.out.println(feedUrl + " has a title: " + feed.getTitle() + " and contains "
 						+ feed.getEntries().size() + " entries.");
+				}
+				catch (MalformedURLException e) {
+					//todo remove
+				}
 			}
 		}
 		catch (Exception e) {
