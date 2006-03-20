@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import javax.ejb.FinderException;
 import com.idega.block.rss.data.RSSSource;
@@ -35,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/03/09 12:59:57 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/20 17:07:58 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -147,22 +146,20 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			// not added because url was empty
 			return false;
 		}
-		Iterator sourcesIter = getAllRSSSources().iterator();
-		while (sourcesIter.hasNext()) {
-			RSSSource source = (RSSSource) sourcesIter.next();
-			if (source.getSourceURL().equals(url.trim())) {
-				// not added because it already exists
-				return false;
-			}
-		}
+		
 		try {
-			RSSSourceHome sHome = getRSSSourceHome();
-			RSSSource source = sHome.create();
+			RSSSource source = null;
+			try {
+				source = getRSSSourceHome().findSourceByURL(url);
+			}
+			catch (FinderException exp) {
+				RSSSourceHome sHome = getRSSSourceHome();
+				source = sHome.create();
+			}
 			source.setName(name);
 			source.setSourceURL(url);
 			source.store();
-			
-			processFeed(getFeedFetcher().retrieveFeed(new URL(url)),url);
+			processFeed(getFeedFetcher().retrieveFeed(new URL(url)), url);
 		}
 		catch (Exception e) {
 			System.out.println("Couldn't add RSS source: " + name);
@@ -182,16 +179,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
-			
-			String translatedURI = IWMainApplication.getDefaultIWMainApplication().getTranslatedURIWithContext(rssSource.getLocalSourceURI());
-			
+			String translatedURI = IWMainApplication.getDefaultIWMainApplication().getTranslatedURIWithContext(
+					rssSource.getLocalSourceURI());
 			String localRSSFileURL = IWContext.getInstance().getServerURL();
-			if(localRSSFileURL.endsWith("/")){
-				localRSSFileURL = localRSSFileURL.substring(0,localRSSFileURL.length()-1);
+			if (localRSSFileURL.endsWith("/")) {
+				localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
 			}
-			
 			localRSSFileURL += translatedURI;
-			
 			return getSyndEntries(getFeedFetcher().retrieveFeed(new URL(localRSSFileURL)));
 		}
 		catch (Exception e) {
@@ -252,10 +246,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		else if (FetcherEvent.EVENT_TYPE_FEED_RETRIEVED.equals(eventType)) {
 			log("RSS feed Retrieved. URL = " + event.getUrlString());
 			SyndFeed feed = event.getFeed();
-			//Only when we are not fetching it locally
+			// Only when we are not fetching it locally
 			processFeed(feed, event.getUrlString());
-			
-			
 			// try {
 			// SyndFeedInfo feedInfo = getFeedFetcherCache().getFeedInfo(new
 			// URL(event.getUrlString()));
@@ -273,7 +265,9 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	}
 
 	/**
-	 * If needed this method creates an Atom 1.0 formatted xml feed from the rss response and stores in Slide and then update RSSSource
+	 * If needed this method creates an Atom 1.0 formatted xml feed from the rss
+	 * response and stores in Slide and then update RSSSource
+	 * 
 	 * @param feed
 	 * @param feedURL
 	 */
@@ -283,13 +277,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			RSSSource source = (RSSSource) getRSSSourceHome().findSourceByURL(feedURL);
 			String localSourceURI = createFileInSlide(feed, feedURL, source);
 			updateRSSSource(source, feed, feedURL, localSourceURI);
-			
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		catch(FinderException ex){
-			//it is most likely a local fetch! no matter just skip the storing in slide part and the updating
+		catch (FinderException ex) {
+			// it is most likely a local fetch! no matter just skip the storing
+			// in slide part and the updating
 		}
 	}
 
@@ -300,22 +294,23 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws FinderException
 	 * @throws RemoteException
 	 */
-	protected void updateRSSSource(RSSSource source ,SyndFeed feed, String feedURL, String localSourceURI) throws FinderException, RemoteException {
+	protected void updateRSSSource(RSSSource source, SyndFeed feed, String feedURL, String localSourceURI)
+			throws FinderException, RemoteException {
 		// TODO add extra column? localizable?
-//			 todo update RSSSource with all data
-		//String subscriptionURL = feed.getLink();
+		// todo update RSSSource with all data
+		// String subscriptionURL = feed.getLink();
 		String title = feed.getTitle();
-//		String author = feed.getAuthor();
-//		String description = feed.getDescription();
-//		String copyright = feed.getCopyright();
-//		String feedType = feed.getFeedType();
-//		String language = feed.getLanguage();
-//		String encoding = feed.getEncoding();
-//		Date publishedDate = feed.getPublishedDate();
-//		SyndImage image = feed.getImage();
-//		if (image != null) {
-//			String feedImageURL = image.getUrl();
-//		}
+		// String author = feed.getAuthor();
+		// String description = feed.getDescription();
+		// String copyright = feed.getCopyright();
+		// String feedType = feed.getFeedType();
+		// String language = feed.getLanguage();
+		// String encoding = feed.getEncoding();
+		// Date publishedDate = feed.getPublishedDate();
+		// SyndImage image = feed.getImage();
+		// if (image != null) {
+		// String feedImageURL = image.getUrl();
+		// }
 		source.setTitle(title);
 		source.setLocalSourceURI(localSourceURI);
 		source.setSourceURL(feedURL);
@@ -328,36 +323,34 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
-		//String atomXML = convertFeedToAtomXMLString(feed);
+		// String atomXML = convertFeedToAtomXMLString(feed);
 		String atomXML = convertFeedToRSS2XMLString(feed);
-		
 		String fileName = null;
 		IWSlideService ss = getIWSlideService();
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
 		if (feedURL.endsWith(".xml")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
 		}
-		else if(feedURL.endsWith(".atom")){
+		else if (feedURL.endsWith(".atom")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
-			fileName =  fileName.replaceAll(".atom", ".xml");
+			fileName = fileName.replaceAll(".atom", ".xml");
 		}
-		else if(feedURL.endsWith(".rss")){
+		else if (feedURL.endsWith(".rss")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
 			fileName = fileName.replaceAll(".rss", ".xml");
 		}
-		else if(source!=null){
+		else if (source != null) {
 			String name = source.getName();
 			fileName = name + ".xml";
 		}
-		else{
+		else {
 			String title = feed.getTitle();
 			fileName = title + ".xml";
 		}
-		//just to be safe
+		// just to be safe
 		fileName = fileName.replaceAll(" ", "");
-		char[] except = {'.'};
-		fileName = StringHandler.stripNonRomanCharacters(fileName,except);
-		
+		char[] except = { '.' };
+		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
 		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, atomXML);
 		return "/content" + RSS_FOLDER_URI + fileName;
 	}
@@ -374,7 +367,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	}
 
 	/**
-	 * Takes a SyndFeed of any type and returns it as an Atom 1.0 xml string 
+	 * Takes a SyndFeed of any type and returns it as an Atom 1.0 xml string
+	 * 
 	 * @param feed
 	 * @return
 	 */
@@ -393,9 +387,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		}
 		return xmlFeed;
 	}
-	
+
 	/**
-	 * Takes a SyndFeed of any type and returns it as an RSS 2.0 xml string 
+	 * Takes a SyndFeed of any type and returns it as an RSS 2.0 xml string
+	 * 
 	 * @param feed
 	 * @return
 	 */

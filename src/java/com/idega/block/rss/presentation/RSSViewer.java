@@ -44,6 +44,10 @@ public class RSSViewer extends Block {
 	private boolean showTitle = true;
 	private boolean showDate = true;
 	private boolean showDescription = true;
+	private boolean stripHTMLFromContent = false;
+	private boolean stripHTMLFromDescription = false;
+	
+	
 
 	// TODO implement caching and displaying of multiple sources
 	public RSSViewer() {
@@ -92,6 +96,7 @@ public class RSSViewer extends Block {
 				}
 				for (Iterator loop = entries.iterator(); row <= maxLinksTmp && loop.hasNext();) {
 					SyndEntry rssEntry = (SyndEntry) loop.next();
+					row++;
 			
 					String entryLink = rssEntry.getLink();
 					String entryTitle = rssEntry.getTitle();
@@ -128,8 +133,14 @@ public class RSSViewer extends Block {
 					}
 					
 					Link link = new Link(entryTitle, entryLink);
-					description = StringHandler.removeHtmlTagsFromString(description);
-					content = StringHandler.removeHtmlTagsFromString(content);
+					
+					if(isSetToStripHTMLFromDescription()){
+						description = StringHandler.removeHtmlTagsFromString(description);	
+					}
+					
+					if(isSetToStripHTMLFromContent()){
+						content = StringHandler.removeHtmlTagsFromString(content);
+					}
 					
 					if(useHiddenLayer){
 						
@@ -139,19 +150,31 @@ public class RSSViewer extends Block {
 						}
 						Layer itemContent = new Layer();
 						itemContent.setStyleClass("rssItemContent");
-					
-						itemContent.add(Text.NON_BREAKING_SPACE);
-						getParentPage().add(itemContent);
 						
-						add(layer);
+						Layer itemHeadline = new Layer();
+						itemHeadline.setStyleClass("rssItemHeadline");
+						itemHeadline.add(entryTitle);
+						
+						itemContent.add(itemHeadline);
+						
+						if(content!=null && !"".equals(content)){
+							itemContent.add(content);
+						}
+						
+						Page parentPage = getParentPage();
+						if(parentPage!=null){
+							parentPage.add(itemContent);
+						}
+						else{
+							this.add(itemContent);
+						}
 						
 						Script script = null;
 						String onClickString = null;	
-						
-						Page parentPage = getParentPage();
+			
 						if(parentPage!=null && !iwc.isSafari()){
 							parentPage.addScriptSource(scriptSource);
-							onClickString = "showRSSContentLayer('"+itemContent.getID()+"','"+content+"');";
+							onClickString = "showRSSContentLayer('"+itemContent.getID()+"');";
 						}
 						else{
 							//in the builder for example
@@ -161,13 +184,17 @@ public class RSSViewer extends Block {
 							
 							script = new Script();
 							layer.add(script);
-							String scriptString = "function showRSSContentLayer"+itemContent.getID()+"(contentLayerID,contentString) {  \n\tsetRSSContentLayerId(contentLayerID);\n\tvar content = findObj(contentLayerID);\n\tcontent.innerHTML = contentString+'<'+'a href=# id=focusLink name=focusLink ><'+'/a>';\n\tcontent.style.visibility='visible';\n\tfindObj('focusLink').focus();\n}";
-							script.addFunction("showRSSContentLayer"+itemContent.getID()+"(contentLayerID,contentString)", scriptString);		
-							onClickString = "showRSSContentLayer"+itemContent.getID()+"('"+itemContent.getID()+"','"+content+"');";
+							String layerId = itemContent.getID();
+							String scriptString = "function showRSSContentLayer"+layerId+"(contentLayerID) {  \n\tsetRSSContentLayerId(contentLayerID);\n\tvar content = findObj(contentLayerID);\n\tcontent.innerHTML = content.innerHTML +'<'+'a href=# style=visibility:hidden;  id=focusLink name=focusLink ><'+'/a>';\n\tcontent.style.visibility='visible';\n\tfindObj('focusLink').focus();\n}";
+							script.addFunction("showRSSContentLayer"+layerId+"(contentLayerID)", scriptString);		
+							onClickString = "showRSSContentLayer"+layerId+"('"+layerId+"');";
 						}
 						
+						//so we have some connection to the hidden layer for javascript to work with
+						item.setName(itemContent.getID());
 						
-						link = new Link(entryTitle, "#");
+						link = new Link(entryTitle, "javascript:"+onClickString);
+						
 						link.setOnClick(onClickString);
 					}
 					else{
@@ -181,9 +208,6 @@ public class RSSViewer extends Block {
 					item.add(itemPublished);
 					if (entryPublishedDate != null) {
 						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
-					}
-					else {
-						itemPublished.add(new Text(new IWTimestamp().getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
 					}
 					
 					if(!"".equals(description) && getShowDescription()){
@@ -236,8 +260,8 @@ public class RSSViewer extends Block {
 	/**
 	 * @return
 	 */
-	public String getMaxLinks() {
-		return Integer.toString(maxLinks);
+	public int getMaxLinks() {
+		return maxLinks;
 	}
 
 	/**
@@ -251,6 +275,10 @@ public class RSSViewer extends Block {
 			System.err.println("Couldn't save new max link value");
 			e.printStackTrace();
 		}
+	}
+	
+	public void setMaxLinks(int maximumNumberOfLinksToDisplay) {
+		maxLinks = maximumNumberOfLinksToDisplay;
 	}
 
 	public String getDescription() {
@@ -354,6 +382,38 @@ public class RSSViewer extends Block {
 	 */
 	public void setShowTitle(boolean showTitle) {
 		this.showTitle = showTitle;
+	}
+
+	
+	/**
+	 * @return Returns the isSetToStripHTMLFromContent.
+	 */
+	public boolean isSetToStripHTMLFromContent() {
+		return stripHTMLFromContent;
+	}
+
+	
+	/**
+	 * @param stripHTMLFromContent The stripHTMLFromContent to set.
+	 */
+	public void setStripHTMLFromContent(boolean stripHTMLFromContent) {
+		this.stripHTMLFromContent = stripHTMLFromContent;
+	}
+
+	
+	/**
+	 * @return Returns the isSetToStripHTMLFromDescription.
+	 */
+	public boolean isSetToStripHTMLFromDescription() {
+		return stripHTMLFromDescription;
+	}
+
+	
+	/**
+	 * @param stripHTMLFromDescription The stripHTMLFromDescription to set.
+	 */
+	public void setStripHTMLFromDescription(boolean stripHTMLFromDescription) {
+		this.stripHTMLFromDescription = stripHTMLFromDescription;
 	}
 
 }
