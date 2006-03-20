@@ -209,6 +209,9 @@ public class RSSViewer extends Block {
 					if (entryPublishedDate != null) {
 						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
 					}
+					else {
+						itemPublished.add(new Text(new IWTimestamp().getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
+					}
 					
 					if(!"".equals(description) && getShowDescription()){
 						Layer itemDescription = new Layer();
