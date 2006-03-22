@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/03/20 17:07:58 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/22 15:35:21 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -241,10 +241,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public void fetcherEvent(FetcherEvent event) {
 		String eventType = event.getEventType();
 		if (FetcherEvent.EVENT_TYPE_FEED_POLLED.equals(eventType)) {
-			log("RSS feed Polled. URL = " + event.getUrlString());
+			logDebug("RSS feed Polled. URL = " + event.getUrlString());
 		}
 		else if (FetcherEvent.EVENT_TYPE_FEED_RETRIEVED.equals(eventType)) {
-			log("RSS feed Retrieved. URL = " + event.getUrlString());
+			logDebug("RSS feed Retrieved. URL = " + event.getUrlString());
 			SyndFeed feed = event.getFeed();
 			// Only when we are not fetching it locally
 			processFeed(feed, event.getUrlString());
@@ -260,7 +260,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			// }
 		}
 		else if (FetcherEvent.EVENT_TYPE_FEED_UNCHANGED.equals(eventType)) {
-			log("Rss feed Unchanged. URL = " + event.getUrlString());
+			logDebug("Rss feed Unchanged. URL = " + event.getUrlString());
 		}
 	}
 
