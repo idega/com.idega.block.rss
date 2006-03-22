@@ -28,7 +28,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 /**
  * Displays the current links from a selected RSS source.
  * 
- * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
+ * @author <a href="mailto:eiki@idega.is>Eirikur S. Hrafnsson</a>
  */
 public class RSSViewer extends Block {
 
@@ -112,6 +112,11 @@ public class RSSViewer extends Block {
 						//String descriptionType = entryDescription.getType();
 						//todo force pure text if type xhtml?
 						description = entryDescription.getValue();
+					}
+					
+					if(entryTitle==null){
+						//rss 0.92 does not require the title
+						entryTitle = description;
 					}
 					
 					String content = "";
@@ -210,6 +215,7 @@ public class RSSViewer extends Block {
 						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
 					}
 					else {
+						//JUST ADD THE CURRENT TIME
 						itemPublished.add(new Text(new IWTimestamp().getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
 					}
 					
