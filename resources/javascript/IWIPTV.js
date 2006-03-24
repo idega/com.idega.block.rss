@@ -68,6 +68,21 @@ var imageGallery;
 var lastGallery;
 var lastHighlighted;
 
+//for faster teardown
+window.onbeforeunload = function(){
+	//alert('working');
+	hideIWIPTVFrame();
+	hideSlideShow();
+	
+	slides = null;
+	KillClock();
+	if(isAmino){
+		AVMedia.Kill();
+		VideoDisplay.SetPIG(false);
+		VideoDisplay.FullScreen(false);
+	}
+}
+
 function startStuff(){
 
 	if(!started){
@@ -111,7 +126,7 @@ function startStuff(){
 	        		imageGalleriesArray.push(e.parentNode.parentNode);
 	        		//alert('found one '+new Date());
 	        },
-	        'div.imageGallery' : function(e){ 
+	        'div.multiImageGallery' : function(e){ 
 	        		imageGallery = e;
 	        }  
 	    }); 
@@ -148,6 +163,15 @@ function showSlideShow(){
 function hideSlideShow(){
 	$('SHOWCASE').style.visibility='hidden';
 }
+
+function hideIWIPTVFrame(){
+	$('IPTV_FRAME').style.visibility = 'hidden';
+}
+
+function showIWIPTVFrame(){
+	$('IPTV_FRAME').style.visibility = 'visible';
+}
+	
 						
 						
 /*
@@ -242,9 +266,9 @@ Highlights the Image gallery ticker and selects and scrolls to the next imageGal
 function selectNextImageGallery(){
 	highlight(imageGallery.parentNode);
 	move = false;
-			
+				
 	if(currentSelectedGallery==-1){
-		currentSelectedGallery = (imageGalleriesArray.length / 2) - 1; 
+		currentSelectedGallery = Math.round(imageGalleriesArray.length / 2) - 1; 
 	}
 	else{
 		move = true;
@@ -256,7 +280,7 @@ function selectNextImageGallery(){
 	else{
 		move = false;
 	}
-
+	
 	highlightImageGallery(imageGalleriesArray[currentSelectedGallery]);
 		
 	if(move){
@@ -272,7 +296,7 @@ function selectPreviousImageGallery(){
 	move = false;
 	
 	if(currentSelectedGallery==-1){
-		currentSelectedGallery = (imageGalleriesArray.length / 2) - 1; 
+		currentSelectedGallery = Math.round(imageGalleriesArray.length / 2) - 1; 
 	}
 	else{
 		move = true;
@@ -418,7 +442,7 @@ function key_event(keycode){
 		break;
 		case KEY_CHANNEL_DOWN:
 			if(isAmino){
-				$('IPTV_FRAME').style.visibility = 'hidden';
+				hideIWIPTVFrame();
 				VideoDisplay.FullScreen(true);
 				VideoDisplay.SetPIGScale(1);
 			}
@@ -463,7 +487,7 @@ function key_event(keycode){
 						VideoDisplay.SetPIG(false);
 						VideoDisplay.FullScreen(false);
 						
-						$('IPTV_FRAME').style.visibility = 'visible';
+						showIWIPTVFrame();
 						showSlideShow();
 						
 					}
