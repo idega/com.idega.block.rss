@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.2 2006/03/09 12:59:57 eiki Exp $
+ * $Id: RSSTicker.java,v 1.3 2006/03/27 11:27:14 gimmi Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -30,18 +30,18 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/03/09 12:59:57 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/03/27 11:27:14 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RSSTicker extends RSSViewer {
 	
 	private long tickerIntervalInMS = 5000;
 	private int tickerPollingIntervalInMinutes = 5;
-	private boolean showTitle = true;
-	private boolean showDate = true;
-	private boolean showDescription = true;
+//	private boolean showTitle = true;
+//	private boolean showDate = true;
+//	private boolean showDescription = true;
 	private String tickerStyleClass = "rssTicker";
 	private String tickerId = null;
 	
