@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/03/22 15:35:21 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/29 09:11:57 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -274,7 +274,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	protected void processFeed(SyndFeed feed, String feedURL) {
 		try {
 			// upload the xml as a file
-			RSSSource source = (RSSSource) getRSSSourceHome().findSourceByURL(feedURL);
+			RSSSource source = getRSSSourceHome().findSourceByURL(feedURL);
 			String localSourceURI = createFileInSlide(feed, feedURL, source);
 			updateRSSSource(source, feed, feedURL, localSourceURI);
 		}
