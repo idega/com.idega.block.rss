@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/03/29 09:11:57 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/04 11:18:09 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -323,8 +323,14 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
-		// String atomXML = convertFeedToAtomXMLString(feed);
-		String atomXML = convertFeedToRSS2XMLString(feed);
+		//String atomXML = convertFeedToAtomXMLString(feed);
+		
+		String xml = convertFeedToRSS2XMLString(feed);
+		if(xml==null){
+			//rss2 failed try atom 1.0
+			xml = convertFeedToAtomXMLString(feed);
+		}
+		
 		String fileName = null;
 		IWSlideService ss = getIWSlideService();
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
@@ -351,7 +357,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		fileName = fileName.replaceAll(" ", "");
 		char[] except = { '.' };
 		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
-		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, atomXML);
+		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, xml);
 		return "/content" + RSS_FOLDER_URI + fileName;
 	}
 
@@ -396,8 +402,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	public String convertFeedToRSS2XMLString(SyndFeed feed) {
 		// SyndFeedInput input = new SyndFeedInput();
+	//	System.out.println("FEED TYPE: "+feed.getFeedType());
 		feed.setFeedType("rss_2.0");
 		SyndFeedOutput output = new SyndFeedOutput();
+		
 		String xmlFeed = null;
 		try {
 			xmlFeed = output.outputString(feed);
