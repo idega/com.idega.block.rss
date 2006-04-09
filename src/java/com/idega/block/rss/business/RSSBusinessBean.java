@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/04/04 11:18:09 $ by $Author: eiki $
+ * Last modified: $Date: 2006/04/09 11:56:54 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -224,15 +224,15 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return An instance of IWSlideService
 	 */
 	protected IWSlideService getIWSlideService() {
-		if (slideService == null) {
+		if (this.slideService == null) {
 			try {
-				slideService = (IWSlideService) getServiceInstance(IWSlideService.class);
+				this.slideService = (IWSlideService) getServiceInstance(IWSlideService.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return slideService;
+		return this.slideService;
 	}
 
 	/**
@@ -422,10 +422,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return a feedfetcher with caching
 	 */
 	public FeedFetcher getFeedFetcher() {
-		if (fetcher == null) {
-			fetcher = new HttpURLFeedFetcher(getFeedFetcherCache());
+		if (this.fetcher == null) {
+			this.fetcher = new HttpURLFeedFetcher(getFeedFetcherCache());
 		}
-		return fetcher;
+		return this.fetcher;
 	}
 
 	/**
@@ -434,10 +434,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 *         to be updated or not
 	 */
 	protected FeedFetcherCache getFeedFetcherCache() {
-		if (feedInfoCache == null) {
-			feedInfoCache = HashMapFeedInfoCache.getInstance();
+		if (this.feedInfoCache == null) {
+			this.feedInfoCache = HashMapFeedInfoCache.getInstance();
 		}
-		return feedInfoCache;
+		return this.feedInfoCache;
 	}
 	/*
 	 * Aggreate many into one! public static void main(String[] args) { boolean

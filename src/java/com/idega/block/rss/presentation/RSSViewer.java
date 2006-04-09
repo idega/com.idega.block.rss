@@ -61,7 +61,7 @@ public class RSSViewer extends Block {
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		// if no selected rss source display an error message
-		if (sourceId == -1) {
+		if (this.sourceId == -1) {
 			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected",
 					"No RSS source selected, please select one in the property window."));
 			msg.setBold();
@@ -72,24 +72,24 @@ public class RSSViewer extends Block {
 			try {
 				// get the data with the business bean
 				RSSBusiness business = getRSSBusiness(iwc);
-				RSSSource rssSource = business.getRSSSourceBySourceId(sourceId);
+				RSSSource rssSource = business.getRSSSourceBySourceId(this.sourceId);
 				Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
 				Layer layer = new Layer();
 				layer.setStyleClass("rss");
-				if(layerID!=null){
-					layer.setID(layerID);
+				if(this.layerID!=null){
+					layer.setID(this.layerID);
 				}
 				add(layer);
 				
 				// add stuff to the block
-				if (description != null && description.length() > 0) {
+				if (this.description != null && this.description.length() > 0) {
 					Paragraph paragraph = new Paragraph();
 					paragraph.setStyleClass("description");
-					paragraph.add(new Text(description));
+					paragraph.add(new Text(this.description));
 					add(paragraph);
 				}
 				int row = 1;
-				int maxLinksTmp = maxLinks;
+				int maxLinksTmp = this.maxLinks;
 				if (maxLinksTmp < 1) {
 					// if maxLinks is zero (or negative), no limit
 					maxLinksTmp = 10000;
@@ -147,7 +147,7 @@ public class RSSViewer extends Block {
 						content = StringHandler.removeHtmlTagsFromString(content);
 					}
 					
-					if(useHiddenLayer){
+					if(this.useHiddenLayer){
 						
 						String scriptSource = getBundle(iwc).getResourcesVirtualPath() +"/javascript/rss.js";
 						if("".equals(content) && description!=null){
@@ -204,7 +204,7 @@ public class RSSViewer extends Block {
 					}
 					else{
 						link = new Link(entryTitle, entryLink);
-						link.setTarget(linkTargetType);
+						link.setTarget(this.linkTargetType);
 					}
 					item.add(link);
 					
@@ -250,7 +250,7 @@ public class RSSViewer extends Block {
 	 * @return
 	 */
 	public int getSourceId() {
-		return sourceId;
+		return this.sourceId;
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class RSSViewer extends Block {
 	 */
 	public void setSourceId(String id) {
 		try {
-			sourceId = Integer.parseInt(id);
+			this.sourceId = Integer.parseInt(id);
 		}
 		catch (Exception e) {
 			System.err.println("Couldn't save new source id value");
@@ -270,7 +270,7 @@ public class RSSViewer extends Block {
 	 * @return
 	 */
 	public int getMaxLinks() {
-		return maxLinks;
+		return this.maxLinks;
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class RSSViewer extends Block {
 	 */
 	public void setMaxLinks(String string) {
 		try {
-			maxLinks = Integer.parseInt(string);
+			this.maxLinks = Integer.parseInt(string);
 		}
 		catch (Exception e) {
 			System.err.println("Couldn't save new max link value");
@@ -287,27 +287,27 @@ public class RSSViewer extends Block {
 	}
 	
 	public void setMaxLinks(int maximumNumberOfLinksToDisplay) {
-		maxLinks = maximumNumberOfLinksToDisplay;
+		this.maxLinks = maximumNumberOfLinksToDisplay;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public void setDescription(String str) {
-		description = str;
+		this.description = str;
 	}
 
 	public boolean getOpenInNewWindow() {
-		return linkTargetType == Link.TARGET_NEW_WINDOW;
+		return this.linkTargetType == Link.TARGET_NEW_WINDOW;
 	}
 
 	public void setOpenInNewWindow(boolean b) {
 		if (b) {
-			linkTargetType = Link.TARGET_NEW_WINDOW;
+			this.linkTargetType = Link.TARGET_NEW_WINDOW;
 		}
 		else {
-			linkTargetType = Link.TARGET_SELF_WINDOW;
+			this.linkTargetType = Link.TARGET_SELF_WINDOW;
 		}
 	}
 
@@ -332,7 +332,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the maximumNumberOfLettersInHeadline.
 	 */
 	public int getMaximumNumberOfLettersInHeadline() {
-		return maximumNumberOfLettersInHeadline;
+		return this.maximumNumberOfLettersInHeadline;
 	}
 
 	/**
@@ -351,7 +351,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the showDescription.
 	 */
 	public boolean showDescription() {
-		return showDescription;
+		return this.showDescription;
 	}
 
 	
@@ -367,7 +367,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the showDate.
 	 */
 	public boolean showDate() {
-		return showDate;
+		return this.showDate;
 	}
 
 	
@@ -382,7 +382,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the showTitle.
 	 */
 	public boolean showTitle() {
-		return showTitle;
+		return this.showTitle;
 	}
 
 	
@@ -398,7 +398,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the isSetToStripHTMLFromContent.
 	 */
 	public boolean isSetToStripHTMLFromContent() {
-		return stripHTMLFromContent;
+		return this.stripHTMLFromContent;
 	}
 
 	
@@ -414,7 +414,7 @@ public class RSSViewer extends Block {
 	 * @return Returns the isSetToStripHTMLFromDescription.
 	 */
 	public boolean isSetToStripHTMLFromDescription() {
-		return stripHTMLFromDescription;
+		return this.stripHTMLFromDescription;
 	}
 
 	

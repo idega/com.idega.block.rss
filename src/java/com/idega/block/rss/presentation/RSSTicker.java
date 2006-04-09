@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.3 2006/03/27 11:27:14 gimmi Exp $
+ * $Id: RSSTicker.java,v 1.4 2006/04/09 11:56:54 laddi Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/03/27 11:27:14 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/04/09 11:56:54 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -67,12 +67,12 @@ public class RSSTicker extends RSSViewer {
 			Layer layer = new Layer();
 			layer.setStyleClass("rssTicker");
 			if(getTickerId() == null){
-				tickerId = layer.getID();		
+				this.tickerId = layer.getID();		
 			}
 			
 			//TODO use cachtime in javascript!!
 			//rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, optionalswitch)
-			String scriptString ="new rssticker_ajax('"+rssSourceURL+"',"+getTickerPollingIntervalInMinutes()+", '"+tickerId+"', '"+getTickerStyleClass()+"', "+getTickerIntervalInMS()+", '"+options+"');";
+			String scriptString ="new rssticker_ajax('"+rssSourceURL+"',"+getTickerPollingIntervalInMinutes()+", '"+this.tickerId+"', '"+getTickerStyleClass()+"', "+getTickerIntervalInMS()+", '"+options+"');";
 			String scriptSource = iwb.getResourcesVirtualPath() +"/javascript/rssticker.js";
 			
 			add(layer);
@@ -108,7 +108,7 @@ public class RSSTicker extends RSSViewer {
 	 * @return Returns the tickerId.
 	 */
 	public String getTickerId() {
-		return tickerId;
+		return this.tickerId;
 	}
 
 	
@@ -124,7 +124,7 @@ public class RSSTicker extends RSSViewer {
 	 * @return Returns the tickerIntervalInMS.
 	 */
 	public long getTickerIntervalInMS() {
-		return tickerIntervalInMS;
+		return this.tickerIntervalInMS;
 	}
 
 	
@@ -140,7 +140,7 @@ public class RSSTicker extends RSSViewer {
 	 * @return Returns the tickerStyleClass.
 	 */
 	public String getTickerStyleClass() {
-		return tickerStyleClass;
+		return this.tickerStyleClass;
 	}
 
 	
@@ -157,7 +157,7 @@ public class RSSTicker extends RSSViewer {
 	 * @return Returns the tickerPollingIntervalInMinutes.
 	 */
 	public int getTickerPollingIntervalInMinutes() {
-		return tickerPollingIntervalInMinutes;
+		return this.tickerPollingIntervalInMinutes;
 	}
 
 
