@@ -212,7 +212,7 @@ public class RSSViewer extends Block {
 					itemPublished.setStyleClass("rssItemPublishedDate");
 					item.add(itemPublished);
 					if (entryPublishedDate != null) {
-						itemPublished.add(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale()));
+						itemPublished.add(new Text(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
 					}
 					else {
 						//JUST ADD THE CURRENT TIME
