@@ -121,12 +121,17 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 					this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
 				}
 				else{
+				//alert('atom1');
 					this.title[i] = getElementTextNS("", "title", this.feeditems[i], 0);
 					linkTag = this.feeditems[i].getElementsByTagName("link")[0];
-					if(linkTag){
+					if(linkTag && "n/a"!=linkTag){
 						this.link[i] = linkTag.getAttribute("href");	
 					}
 					this.pubdate[i] = getElementTextNS("", "published", this.feeditems[i], 0);
+					if("n/a"==this.pubdate[i]){
+						this.pubdate[i] = getElementTextNS("", "updated", this.feeditems[i], 0);
+					}
+					
 					this.description[i] = getElementTextNS("", "summary", this.feeditems[i],0);
 					
 					//alert(this.title[i] + " "+this.link[i]+" "+this.description[i]+" "+this.pubdate[i]);
