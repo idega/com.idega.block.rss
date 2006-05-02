@@ -105,6 +105,10 @@ public class RSSViewer extends Block {
 //					List entryContributors = rssEntry.getContributors();
 					List entryContents = rssEntry.getContents();
 					Date entryPublishedDate = rssEntry.getPublishedDate();
+					if(entryPublishedDate==null){
+						entryPublishedDate = rssEntry.getUpdatedDate();
+					}
+					
 //					Date entryUpdatedDate = rssEntry.getUpdatedDate();
 					SyndContent entryDescription = rssEntry.getDescription();
 					String description = "";
