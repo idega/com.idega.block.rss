@@ -28,8 +28,7 @@ div.rss div.rssItem div.rssItemDescription {
 .rssTicker{
 	color: #E0E4E8; 
     position:absolute;
-    #right:0px;
-    left:69px;
+  	left:69px;
     width: 280;
     height:100%;
     overflow:hidden;
