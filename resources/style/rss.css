@@ -29,11 +29,9 @@ div.rss div.rssItem div.rssItemDescription {
 	color: #E0E4E8; 
     position:absolute;
   	left:69px;
-    width: 280;
+    width: 280px;
     height:100%;
     overflow:hidden;
-	#background-color: #27445C;
-	#background-color: #1F394F;
 	border-left: 1px solid #112E43;
 	filter:progid:DXImageTransform.Microsoft.alpha(opacity=80); /*Specify fade effect in IE. Remove if desired.*/
 	-moz-opacity: 0.8; /*Specify fade effect in Firefox. Remove if desired.*/
@@ -49,7 +47,6 @@ div.rss div.rssItem div.rssItemDescription {
  	left:5px;
 	top: 4px;
 	font-size: 14px;
-	#border: 1px solid white;
 	overflow:hidden;
 	width:186px;
 	height:28px;
@@ -66,7 +63,6 @@ div.rss div.rssItem div.rssItemDescription {
  	position:absolute;
  	right:15px;
 	top:4px;
-	#border: 1px solid white;
 }
 
 .rssdescription{ /*shared class for all description elements in an RSS feed*/
@@ -74,8 +70,7 @@ div.rss div.rssItem div.rssItemDescription {
      position:absolute;
      top:32px;
 	left:5px;
-	#border: 1px solid white;
-	width:273;
+	width:273px;
 	height:40px;
 	overflow:hidden;
 	line-height: 12px;
