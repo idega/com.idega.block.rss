@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/05/23 11:57:07 $ by $Author: eiki $
+ * Last modified: $Date: 2006/05/23 13:07:05 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -194,7 +194,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			localRSSFileURL = localRSSFileURL.replaceAll("HTTPS", "http");
 			
 			URL theURL = new URL(localRSSFileURL);
-			
+			log("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
 		catch (Exception e) {
