@@ -16,8 +16,6 @@ import javax.ejb.FinderException;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
 import com.idega.slide.business.IWSlideService;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
@@ -34,10 +32,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/05/23 13:07:05 $ by $Author: eiki $
+ * Last modified: $Date: 2006/05/23 14:56:25 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -179,19 +177,18 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
-			String translatedURI = IWMainApplication.getDefaultIWMainApplication().getTranslatedURIWithContext(
-					rssSource.getLocalSourceURI());
-			String localRSSFileURL = IWContext.getInstance().getServerURL();
-			//always use http!
 			
+			String localRSSFileURL = rssSource.getLocalSourceURI();
+			String serverURLWithContent = getIWSlideService().getWebdavServerURL().toString();
+			if(!serverURLWithContent.endsWith("/")){
+				serverURLWithContent+="/";
+			}
+			
+			localRSSFileURL = serverURLWithContent+localRSSFileURL;
 			
 			if (localRSSFileURL.endsWith("/")) {
 				localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
 			}
-			localRSSFileURL += translatedURI;
-			
-			localRSSFileURL = localRSSFileURL.replaceAll("https", "http");
-			localRSSFileURL = localRSSFileURL.replaceAll("HTTPS", "http");
 			
 			URL theURL = new URL(localRSSFileURL);
 			log("Getting feed from local URL :" + theURL.toExternalForm());
@@ -367,7 +364,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		char[] except = { '.' };
 		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
 		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, xml);
-		return "/content" + RSS_FOLDER_URI + fileName;
+		return RSS_FOLDER_URI + fileName;
 	}
 
 	/**
