@@ -32,10 +32,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/05/23 16:19:11 $ by $Author: eiki $
+ * Last modified: $Date: 2006/05/24 12:17:20 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -190,7 +190,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			}
 			
 			if(localRSSFileURL.startsWith("/content")){
-				localRSSFileURL.substring(9,localRSSFileURL.length());
+				localRSSFileURL = localRSSFileURL.substring(9,localRSSFileURL.length());
 			}
 			
 			localRSSFileURL = serverURLWithContent+localRSSFileURL;
