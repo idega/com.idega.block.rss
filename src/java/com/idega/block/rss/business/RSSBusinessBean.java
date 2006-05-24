@@ -32,10 +32,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/05/24 12:17:20 $ by $Author: eiki $
+ * Last modified: $Date: 2006/05/24 17:06:44 $ by $Author: thomas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -369,7 +369,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		fileName = fileName.replaceAll(" ", "");
 		char[] except = { '.' };
 		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
-		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, xml);
+		// "true" : delete the previous version of the file  (do not create millions of versions)
+		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, xml, true);
 		return RSS_FOLDER_URI + fileName;
 	}
 
