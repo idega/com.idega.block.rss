@@ -4,7 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-  
+  	<release version="3.1.1" date="2006-07-13">
+      <action dev="eiki" type="fix">
+      Fixed URI bug in the RSSTicker
+      </action>
+    </release>
+    
 	<release version="3.1.0" date="2006-06-19">
       <action dev="tryggvil" type="update">
       	First release of module to be included in ePlatform 3.1 Release.

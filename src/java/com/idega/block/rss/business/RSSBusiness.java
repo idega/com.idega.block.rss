@@ -1,5 +1,5 @@
 /*
- * $Id: RSSBusiness.java,v 1.7 2006/02/24 09:39:34 laddi Exp $
+ * $Id: RSSBusiness.java,v 1.8 2006/07/13 14:45:10 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import com.sun.syndication.fetcher.FetcherListener;
 
 /**
  * 
- *  Last modified: $Date: 2006/02/24 09:39:34 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/07/13 14:45:10 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface RSSBusiness extends IBOService, FetcherListener {
 
@@ -61,6 +61,11 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getEntriesByRSSSource
 	 */
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException;
+
+	/**
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getLocalRSSURIWithContextAndSlideServlet
+	 */
+	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException, RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#removeSourceById
