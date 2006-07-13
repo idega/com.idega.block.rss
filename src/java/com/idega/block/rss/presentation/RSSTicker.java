@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.4 2006/04/09 11:56:54 laddi Exp $
+ * $Id: RSSTicker.java,v 1.4.2.1 2006/07/13 14:14:19 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,9 +9,9 @@
  */
 package com.idega.block.rss.presentation;
 
+import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
@@ -30,10 +30,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/04/09 11:56:54 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/07/13 14:14:19 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -52,9 +52,11 @@ public class RSSTicker extends RSSViewer {
 		IWBundle iwb = this.getBundle(iwc);
 		
 		if(getSourceId()>0){
+			RSSBusiness business = getRSSBusiness(iwc);
 			
-			RSSSource rssSource = getRSSBusiness(iwc).getRSSSourceBySourceId(getSourceId());
-			String rssSourceURL = IWMainApplication.getDefaultIWMainApplication().getTranslatedURIWithContext(rssSource.getLocalSourceURI());
+			RSSSource rssSource = business.getRSSSourceBySourceId(getSourceId());
+			//ADD /content
+			String rssSourceURL = business.getRSSLocalURIWithContextAndSlideServlet(rssSource);
 			String options = "title";
 			if(showDate()){
 				options+="+date";

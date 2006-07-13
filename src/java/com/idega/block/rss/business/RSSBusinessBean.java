@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
@@ -32,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/05/24 19:03:43 $ by $Author: eiki $
+ * Last modified: $Date: 2006/07/13 14:14:19 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.24.2.1 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -178,26 +180,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			
-			String localRSSFileURL = rssSource.getLocalSourceURI();
-			
-			String serverURLWithContent = getIWSlideService().getWebdavServerURL().toString();
-			if(!serverURLWithContent.endsWith("/")){
-				serverURLWithContent+="/";
-			}
-			
-			if (localRSSFileURL.endsWith("/")) {
-				localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
-			}
-			
-			if(localRSSFileURL.startsWith("/content")){
-				localRSSFileURL = localRSSFileURL.substring(9);
-			}
-			else if(localRSSFileURL.startsWith("/")){
-				localRSSFileURL = localRSSFileURL.substring(1);
-			}
-			
-			localRSSFileURL = serverURLWithContent+localRSSFileURL;
-			
+			String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
 			
 			URL theURL = new URL(localRSSFileURL);
 			log("Getting feed from local URL :" + theURL.toExternalForm());
@@ -207,6 +190,34 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			e.printStackTrace();
 		}
 		return ListUtil.getEmptyList();
+	}
+
+	/**
+	 * @param rssSource
+	 * @return
+	 * @throws RemoteException
+	 */
+	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException {
+		String localRSSFileURL = rssSource.getLocalSourceURI();
+		
+		String serverURLWithContent = getIWSlideService().getWebdavServerURL().toString();
+		if(!serverURLWithContent.endsWith("/")){
+			serverURLWithContent+="/";
+		}
+		
+		if (localRSSFileURL.endsWith("/")) {
+			localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
+		}
+		
+		if(localRSSFileURL.startsWith("/content")){
+			localRSSFileURL = localRSSFileURL.substring(9);
+		}
+		else if(localRSSFileURL.startsWith("/")){
+			localRSSFileURL = localRSSFileURL.substring(1);
+		}
+		
+		localRSSFileURL = serverURLWithContent+localRSSFileURL;
+		return localRSSFileURL;
 	}
 
 	/**
