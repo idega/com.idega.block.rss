@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.4.2.1 2006/07/13 14:14:19 eiki Exp $
+ * $Id: RSSTicker.java,v 1.4.2.2 2006/07/17 23:05:32 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/07/13 14:14:19 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/07/17 23:05:32 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4.2.1 $
+ * @version $Revision: 1.4.2.2 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -44,6 +44,7 @@ public class RSSTicker extends RSSViewer {
 //	private boolean showDescription = true;
 	private String tickerStyleClass = "rssTicker";
 	private String tickerId = null;
+	private String dateFormatPattern = "dd.MM.yyyy hh:mm:ss";
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
@@ -51,7 +52,7 @@ public class RSSTicker extends RSSViewer {
 	public void main(IWContext iwc) throws Exception {
 		IWBundle iwb = this.getBundle(iwc);
 		
-		if(getSourceId()>0){
+		if(getSourceId()>-1){
 			RSSBusiness business = getRSSBusiness(iwc);
 			
 			RSSSource rssSource = business.getRSSSourceBySourceId(getSourceId());
@@ -74,7 +75,8 @@ public class RSSTicker extends RSSViewer {
 			
 			//TODO use cachtime in javascript!!
 			//rssticker_ajax(RSS_URL, cachetime, divId, divClass, delay, optionalswitch)
-			String scriptString ="new rssticker_ajax('"+rssSourceURL+"',"+getTickerPollingIntervalInMinutes()+", '"+this.tickerId+"', '"+getTickerStyleClass()+"', "+getTickerIntervalInMS()+", '"+options+"');";
+			String javascriptObjectName = "rssTicker"+this.tickerId;
+			String scriptString ="var "+javascriptObjectName+" = new rssticker_ajax('"+rssSourceURL+"',"+getTickerPollingIntervalInMinutes()+", '"+this.tickerId+"', '"+getTickerStyleClass()+"', "+getTickerIntervalInMS()+", '"+options+"','"+getDateFormatPattern()+"');";
 			String scriptSource = iwb.getResourcesVirtualPath() +"/javascript/rssticker.js";
 			
 			add(layer);
@@ -169,6 +171,21 @@ public class RSSTicker extends RSSViewer {
 	 */
 	public void setTickerPollingIntervalInMinutes(int tickerPollingIntervalInMinutes) {
 		this.tickerPollingIntervalInMinutes = tickerPollingIntervalInMinutes;
+	}
+
+	/**
+	 * @return Returns the dateFormatPattern.
+	 */
+	public String getDateFormatPattern() {
+		return dateFormatPattern;
+	}
+
+	/**
+	 * Use this method to change the way an rss items date is displayed
+	 * @param dateFormatPattern The default dateFormatPattern is dd.MM.yyyy hh:mm:ss
+	 */
+	public void setDateFormatPattern(String dateFormatPattern) {
+		this.dateFormatPattern = dateFormatPattern;
 	}
 		
 }

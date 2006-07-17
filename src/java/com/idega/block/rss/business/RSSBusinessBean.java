@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/07/13 14:14:19 $ by $Author: eiki $
+ * Last modified: $Date: 2006/07/17 23:05:32 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.24.2.1 $
+ * @version $Revision: 1.24.2.2 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -350,12 +350,22 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
 		//String atomXML = convertFeedToAtomXMLString(feed);
-		
-		String xml = convertFeedToRSS2XMLString(feed);
-		if(xml==null){
-			//rss2 failed try atom 1.0
+		String xml = null;
+		try{
+			xml = convertFeedToRSS2XMLString(feed);
+			
+			if(xml==null){
+				//rss2 failed try atom 1.0
+				xml = convertFeedToAtomXMLString(feed);
+			}
+		}
+		catch(NullPointerException ex){
+			ex.printStackTrace();
+			//because of bug in ROME, try with mbl.is rss files
 			xml = convertFeedToAtomXMLString(feed);
 		}
+		
+		
 		
 		String fileName = null;
 		IWSlideService ss = getIWSlideService();

@@ -34,15 +34,22 @@ function createAjaxObj(){
 
 // -------------------------------------------------------------------
 // Main RSS Ticker Object function
-// rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, optionallogicswitch)
+// rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, optionallogicswitch, dateFormatPattern)
+// Default dateFormatPattern is dd.MM.yyyy hh:mm:ss
 // -------------------------------------------------------------------
 
-function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch){
+function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch, dateFormatPattern){
 	this.RSS_URI = RSS_URI //Array key indicating which RSS feed to display
-	this.cachetime=cachetime //Time to cache feed, in minutes. 0=no cache.
+	this.cachetime=cachetime*60000 //Time to cache feed, in minutes. 0=no cache.
 	this.tickerid=divId //ID of ticker div to display information
 	this.delay=delay //Delay between msg change, in miliseconds.
 	this.logicswitch=(typeof logicswitch!="undefined")? logicswitch : ""
+	this.dateFormatPattern = dateFormatPattern;
+	
+	if(!this.dateFormatPattern){
+		this.dateFormatPattern = "dd.MM.yyyy hh:mm:ss";
+	}
+	
 	this.mouseoverBol=0 //Boolean to indicate whether mouse is currently over ticker (and pause it if it is)
 	this.pointer=0
 	this.opacitysetting=0.2 //Opacity value when reset. Internal use.
@@ -51,7 +58,11 @@ function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch)
 	document.write('<div id="'+divId+'" class="'+divClass+'" >Initializing ticker...</div>')
 	if (window.getComputedStyle) //detect if moz-opacity is defined in external CSS for specified class
 	this.mozopacityisdefined=(window.getComputedStyle(document.getElementById(this.tickerid), "").getPropertyValue("-moz-opacity")==1)? 0 : 1
-	this.getAjaxcontent()
+	
+	var self=this;
+	this.intervalTimer = setInterval(function(){self.getAjaxcontent();}, this.cachetime) //update the data every cachetime minutes
+	//call it once because the timer has to timeout before calling the method for the first time
+	this.getAjaxcontent();
 }
 
 // -------------------------------------------------------------------
@@ -59,15 +70,24 @@ function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch)
 // -------------------------------------------------------------------
 
 rssticker_ajax.prototype.getAjaxcontent=function(){
+	var self=this;
+
 	if (this.ajaxobj){
-		var instanceOfTicker=this;
 		//var parameters="id="+encodeURIComponent(this.RSS_id)+"&cachetime="+this.cachetime+"&bustcache="+new Date().getTime()		
 		this.ajaxobj.onreadystatechange=function(){
-			instanceOfTicker.initialize()
+			self.initialize()
 		}
 		
-		this.fullURL = "http://"+window.location.hostname + ":"+window.location.port + this.RSS_URI
+		if(this.RSS_URI.indexOf("http")==-1){
+			this.fullURL = "http://"+window.location.hostname + ":"+window.location.port + this.RSS_URI
+		}
+		else{
+			this.fullURL = this.RSS_URI;
+		}
+
+
 		//this.ajaxobj.open('GET',this.fullURL +"?"+parameters, true);
+		//console.log(this.fullURL);
 		this.ajaxobj.open('GET',this.fullURL, true);
 		// safari fix
    	 	//this.ajaxobj.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1995 00:00:00 GMT');
@@ -85,6 +105,8 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 // -------------------------------------------------------------------
 
 	rssticker_ajax.prototype.initialize=function(){ 
+	var self=this;
+	
 	if (this.ajaxobj.readyState == 4){ //if request of file completed
 		if (this.ajaxobj.status==200){ //if request was successful
 			var xmldata=this.ajaxobj.responseXML;
@@ -101,8 +123,6 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 				isRSSTWO = true;
 			}
 			
-			var instanceOfTicker=this;
-			
 			if(isRSSTWO){//for rss 2.0 feeds
 				this.feeditems=xmldata.getElementsByTagName("item");
 			}
@@ -118,7 +138,11 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 					this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
 					this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;		
 					this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;
-					this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
+					
+					this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
+					if(!this.pubdate[i]){
+						this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
+					}
 				}
 				else{
 				//alert('atom1');
@@ -138,8 +162,8 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 				}
 			}
 			
-			document.getElementById(this.tickerid).onmouseover=function(){instanceOfTicker.mouseoverBol=1}
-			document.getElementById(this.tickerid).onmouseout=function(){instanceOfTicker.mouseoverBol=0}
+			document.getElementById(this.tickerid).onmouseover=function(){self.mouseoverBol=1}
+			document.getElementById(this.tickerid).onmouseout=function(){self.mouseoverBol=0}
 			this.rotatemsg()
 		}
 	}
@@ -151,14 +175,35 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 // -------------------------------------------------------------------
 
 	rssticker_ajax.prototype.rotatemsg=function(){
-		var instanceOfTicker=this
+		var self=this
 		if (this.mouseoverBol==1) //if mouse is currently over ticker, do nothing (pause it)
-			setTimeout(function(){instanceOfTicker.rotatemsg()}, 100)
+			setTimeout(function(){self.rotatemsg()}, 100);
 		else{ //else, construct item, show and rotate it!
-			var tickerDiv=document.getElementById(this.tickerid)
-			var linktitle='<div class="rsstitle"><a target="_new" href="'+this.link[this.pointer]+'">'+this.title[this.pointer]+'</a></div>'
-			var description='<div class="rssdescription">'+this.description[this.pointer].replace("\\<.*?\\>","")+'</div>'
-			var feeddate='<div class="rssdate">'+this.pubdate[this.pointer]+'</div>'
+			var tickerDiv=document.getElementById(this.tickerid);
+			var linktitle='<div class="rsstitle"><a target="_new" href="'+this.link[this.pointer]+'">'+this.title[this.pointer]+'</a></div>';
+			var description='<div class="rssdescription">'+this.description[this.pointer].replace("\\<.*?\\>","")+'</div>';
+			//The date needs some special attention, the format is YYYY-MM-DDTHH:MM:SSZ
+			// e.g. 2006-07-14T00:00:00Z
+			var date = new Date();
+			var dateString = this.pubdate[this.pointer];
+			var year = dateString.substring(0,4);
+			var month = dateString.substring(5,7);
+			var day = dateString.substring(8,10);
+			var hour = dateString.substring(11,13);
+			var minute = dateString.substring(14,16);
+			var second = dateString.substring(17,19);
+			
+			date.setDate(day);
+			date.setMonth(month-1);
+			date.setYear(year);
+			date.setHours(hour);
+			date.setMinutes(minute);
+			date.setSeconds(second);
+			
+			dateString = formatDate(date,self.dateFormatPattern);
+			//FireBug debuging
+			//console.log(dateString);
+			var feeddate='<div class="rssdate">'+dateString+'</div>';
 			
 			if (this.logicswitch.indexOf("description")==-1) description=""
 			if (this.logicswitch.indexOf("date")==-1) feeddate=""
@@ -166,9 +211,12 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 			var tickercontent=linktitle+feeddate+description //STRING FOR FEED CONTENTS 
 			this.fadetransition("reset") //FADE EFFECT- RESET OPACITY
 			tickerDiv.innerHTML=tickercontent
-			this.fadetimer1=setInterval(function(){instanceOfTicker.fadetransition('up', 'fadetimer1')}, 100) //FADE EFFECT- PLAY IT
+			this.fadetimer1=setInterval(function(){self.fadetransition('up', 'fadetimer1')}, 100) //FADE EFFECT- PLAY IT
 			this.pointer=(this.pointer<this.feeditems.length-1)? this.pointer+1 : 0
-			setTimeout(function(){instanceOfTicker.rotatemsg()}, this.delay) //update container every second
+			
+			//clear it so we don't compound the timers
+			clearTimeout(self.rotationTimer);
+			self.rotationTimer = setTimeout(function(){self.rotatemsg()}, this.delay) //update container every delay time
 		}
 	}
 
@@ -223,3 +271,23 @@ function getElementTextNS(prefix, local, parentElem, index) {
         return "n/a";
     }
 }
+
+
+ function addZero(vNumber){ 
+    return ((vNumber < 10) ? "0" : "") + vNumber 
+  } 
+        
+  function formatDate(vDate, vFormat){ 
+    var vDay              = addZero(vDate.getDate()); 
+    var vMonth            = addZero(vDate.getMonth()+1); 
+    var vYearLong         = addZero(vDate.getFullYear()); 
+    var vYearShort        = addZero(vDate.getFullYear().toString().substring(3,4)); 
+    var vYear             = (vFormat.indexOf("yyyy")>-1?vYearLong:vYearShort) 
+    var vHour             = addZero(vDate.getHours()); 
+    var vMinute           = addZero(vDate.getMinutes()); 
+    var vSecond           = addZero(vDate.getSeconds()); 
+    var vDateString       = vFormat.replace(/dd/g, vDay).replace(/MM/g, vMonth).replace(/y{1,4}/g, vYear) 
+    vDateString           = vDateString.replace(/hh/g, vHour).replace(/mm/g, vMinute).replace(/ss/g, vSecond) 
+    return vDateString 
+  } 
+
