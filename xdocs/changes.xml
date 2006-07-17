@@ -1,9 +1,18 @@
 <document>
   <properties>
     <title>RSS Block changes</title>
-    <author email="tryggvi@idega.com">Tryggvi Larusson</author>
+    <author email="eiki@idega.com">Eirikur S. Hrafnsson</author>
   </properties>
   <body>
+  
+  <release version="3.1.2" date="2006-07-17">
+      <action dev="eiki" type="update">
+      	Many RSSTicker improvements and bugfixes.
+		Now the date for each rss item is read from dc:date and the datestring can be formatted by a pattern.
+		Live interval updating the RSS via ajax is now implemented for the RSSTicker.
+      </action>
+    </release>
+    
   	<release version="3.1.1" date="2006-07-13">
       <action dev="eiki" type="fix">
       Fixed URI bug in the RSSTicker
@@ -11,13 +20,13 @@
     </release>
     
 	<release version="3.1.0" date="2006-06-19">
-      <action dev="tryggvil" type="update">
+      <action dev="eiki" type="update">
       	First release of module to be included in ePlatform 3.1 Release.
       </action>
-	  <action dev="tryggvil" type="update">
+	  <action dev="eiki" type="update">
 	  	Built on the Rome API for supporting RSS 1.0,2.0 and Atom formats.
       </action>
-	  <action dev="tryggvil" type="update">
+	  <action dev="eiki" type="update">
 	  	Fetches and aggregates feeds into the Local WebDav repository.
       </action>
     </release>
