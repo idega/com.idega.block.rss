@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.4.2.2 2006/07/17 23:05:32 eiki Exp $
+ * $Id: RSSTicker.java,v 1.4.2.3 2006/07/24 10:54:30 laddi Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/07/17 23:05:32 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/07/24 10:54:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4.2.2 $
+ * @version $Revision: 1.4.2.3 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -177,7 +177,7 @@ public class RSSTicker extends RSSViewer {
 	 * @return Returns the dateFormatPattern.
 	 */
 	public String getDateFormatPattern() {
-		return dateFormatPattern;
+		return this.dateFormatPattern;
 	}
 
 	/**
