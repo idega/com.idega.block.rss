@@ -60,22 +60,21 @@ function rssticker_ajax(RSS_URI, cachetime, divId, divClass, delay, logicswitch,
 	this.mozopacityisdefined=(window.getComputedStyle(document.getElementById(this.tickerid), "").getPropertyValue("-moz-opacity")==1)? 0 : 1
 	
 	var self=this;
-	this.intervalTimer = setInterval(function(){self.getAjaxcontent();}, this.cachetime) //update the data every cachetime minutes
+	this.intervalTimer = setInterval(function(){self.getAjaxcontent(self);}, this.cachetime) //update the data every cachetime minutes
 	//call it once because the timer has to timeout before calling the method for the first time
-	this.getAjaxcontent();
+	this.getAjaxcontent(this);
 }
 
 // -------------------------------------------------------------------
 // getAjaxcontent()- Makes asynchronous GET request to RSS_URI
 // -------------------------------------------------------------------
 
-rssticker_ajax.prototype.getAjaxcontent=function(){
-	var self=this;
-
+rssticker_ajax.prototype.getAjaxcontent=function(tickerInstance){
+	
 	if (this.ajaxobj){
 		//var parameters="id="+encodeURIComponent(this.RSS_id)+"&cachetime="+this.cachetime+"&bustcache="+new Date().getTime()		
 		this.ajaxobj.onreadystatechange=function(){
-			self.initialize()
+			tickerInstance.initialize()
 		}
 		
 		if(this.RSS_URI.indexOf("http")==-1){
@@ -89,9 +88,9 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 		//this.ajaxobj.open('GET',this.fullURL +"?"+parameters, true);
 		//console.log(this.fullURL);
 		this.ajaxobj.open('GET',this.fullURL, true);
-		// safari fix
+		//safari fix, (eiki) does nothing...
    	 	//this.ajaxobj.setRequestHeader('If-Modified-Since', 'Wed, 15 Nov 1995 00:00:00 GMT');
-    		//this.ajaxobj.send("");
+    	//this.ajaxobj.send("");
 		
 		this.ajaxobj.send(null);
 	}
@@ -135,10 +134,10 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 			//Cycle through RSS XML object and store each peice of an item inside a corresponding array
 			for (var i=0; i<this.feeditems.length; i++){
 				if(isRSSTWO){
+				//todo use getElementTextNS rather than this method? like for atom
 					this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
-					this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;		
-					this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;
-					
+					this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;	
+					this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;		
 					this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
 					if(!this.pubdate[i]){
 						this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
@@ -148,12 +147,19 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 				//alert('atom1');
 					this.title[i] = getElementTextNS("", "title", this.feeditems[i], 0);
 					linkTag = this.feeditems[i].getElementsByTagName("link")[0];
+					//console.log(linkTag);
 					if(linkTag && "n/a"!=linkTag){
 						this.link[i] = linkTag.getAttribute("href");	
 					}
-					this.pubdate[i] = getElementTextNS("", "published", this.feeditems[i], 0);
+					
+					this.pubdate[i] = getElementTextNS("dc", "date", this.feeditems[i], 0);
+					//console.log(this.pubdate[i]); this log methods works in Safari and Firefox w/FireBug 
 					if("n/a"==this.pubdate[i]){
-						this.pubdate[i] = getElementTextNS("", "updated", this.feeditems[i], 0);
+						this.pubdate[i] = getElementTextNS("", "published", this.feeditems[i], 0);
+						if("n/a"==this.pubdate[i]){
+							this.pubdate[i] = getElementTextNS("", "updated", this.feeditems[i], 0);	
+						}		
+						
 					}
 					
 					this.description[i] = getElementTextNS("", "summary", this.feeditems[i],0);
@@ -193,6 +199,8 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 			var minute = dateString.substring(14,16);
 			var second = dateString.substring(17,19);
 			
+			//console.log(dateString,year,month,day,hour,minute,second);
+			
 			date.setDate(day);
 			date.setMonth(month-1);
 			date.setYear(year);
@@ -200,9 +208,8 @@ rssticker_ajax.prototype.getAjaxcontent=function(){
 			date.setMinutes(minute);
 			date.setSeconds(second);
 			
-			dateString = formatDate(date,self.dateFormatPattern);
-			//FireBug debuging
-			//console.log(dateString);
+			dateString = formatDate(date,this.dateFormatPattern);
+			
 			var feeddate='<div class="rssdate">'+dateString+'</div>';
 			
 			if (this.logicswitch.indexOf("description")==-1) description=""

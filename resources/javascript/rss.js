@@ -1,4 +1,4 @@
-	// -------------------------------------------------------------------
+// -------------------------------------------------------------------
 // IdegaWeb RSS block helper functions by Eirikur S. Hrafnsson, eiki@idega.is
 // -------------------------------------------------------------------
 
@@ -7,10 +7,13 @@ var layerHidden = true;
 
 function showRSSContentLayer(contentLayerID) { 
 	setRSSContentLayerId(contentLayerID);
+
 	var content = findObj(contentLayerID);
-	//content.innerHTML = content.innerHTML + '<'+'a href="javascript:hideRSSContentLayer();" style="visibility:hidden;" id="focusLink" name="focusLink" >&nbsp;<'+'/a>';
-	counter = 0;
 	
+	content.onclick = hideRSSContentLayer;
+	
+/*	
+	Created problems, used onclick above instead
 	var l=document.createElement('a'); 
 	l.setAttribute('href', 'javascript:hideRSSContentLayer();window.focus();this.parentNode.removeChild(this);'); 
 	l.setAttribute('onclick', 'javascript:hideRSSContentLayer();window.focus();this.parentNode.removeChild(this);'); 
@@ -19,15 +22,14 @@ function showRSSContentLayer(contentLayerID) {
 	l.setAttribute('name', 'focusLink'); 
 	
 	content.appendChild(l); 
-	
+*/
 	content.style.visibility='visible';	
 	layerHidden = false;
 	
-	//todo laga findObj
+	/*
 	theLink = $('focusLink');
-	
 	theLink.focus();
-	
+	*/
 	
 }
 

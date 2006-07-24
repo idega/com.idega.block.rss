@@ -136,6 +136,7 @@ public class RSSViewer extends Block {
 					
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
+					String originalTitle = entryTitle;
 					if (entryTitle.length() > getMaximumNumberOfLettersInHeadline()
 							&& getMaximumNumberOfLettersInHeadline() != 0) {
 						entryTitle = entryTitle.substring(0, getMaximumNumberOfLettersInHeadline() - 1) + "...";
@@ -162,7 +163,7 @@ public class RSSViewer extends Block {
 						
 						Layer itemHeadline = new Layer();
 						itemHeadline.setStyleClass("rssItemHeadline");
-						itemHeadline.add(entryTitle);
+						itemHeadline.add(originalTitle);
 						
 						itemContent.add(itemHeadline);
 						
