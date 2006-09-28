@@ -5,7 +5,14 @@
   </properties>
   <body>
   
-    
+     <release version="3.1.4" date="2006-09-28">
+      <action dev="eiki" type="update">
+      	Added a new framework, RSSProducer for producing RSS feeds via plugable interface and a RSS servlet.
+		Read the wiki entry http://trac.idega.is/projects/idegaweb/wiki/RSSProducer for details.
+		updated to com.idega.slide v.3.1.2 
+      </action>
+    </release>
+	
   <release version="3.1.3" date="2006-07-24">
       <action dev="eiki" type="fix">
       	RSSTicker and RSSViewer hidden layer bugfixes
