@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+    <release version="3.1.5" date="2006-20-04">
+      <action dev="eiki" type="fix">
+      	Built a new rome-modules-0.2.jar because the old one was made with java 1.5. The new one was built with jdk 1.4
+      </action>
+    </release>
+	
      <release version="3.1.4" date="2006-09-28">
       <action dev="eiki" type="update">
       	Added a new framework, RSSProducer for producing RSS feeds via plugable interface and a RSS servlet.
