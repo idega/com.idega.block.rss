@@ -34,6 +34,11 @@
       <name>3.1.4</name>
       <tag>RSS_3_1_4</tag>
     </version>
+    <version>
+      <id>3.1.5</id>
+      <name>3.1.5</name>
+      <tag>RSS_3_1_5</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
@@ -107,7 +112,7 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>rome</groupId>
       <artifactId>rome-modules</artifactId>
       <version>0.2j1.4</version>
@@ -134,7 +139,7 @@
       <type>jar</type>
       <url>http://jakarta.apache.org/commons/httpclient/</url>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>slide</groupId>
       <artifactId>jakarta-slide-webdavlib</artifactId>
       <version>2.2pre1.iwbuild4</version>
