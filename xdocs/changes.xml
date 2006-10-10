@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+    <release version="3.1.6" date="2006-10-10">
+      <action dev="eiki" type="fix">
+      	Same as the last change, the jar making failed...
+      </action>
+    </release>
+	
     <release version="3.1.5" date="2006-10-04">
       <action dev="eiki" type="fix">
       	Built a new rome-modules-0.2.jar because the old one was made with java 1.5. The new one was built with jdk 1.4
