@@ -227,6 +227,7 @@ public class RSSViewer extends Block {
 					if(!"".equals(description) && getShowDescription()){
 						Layer itemDescription = new Layer();
 						itemDescription.setStyleClass("rssItemDescription");
+						itemDescription.add(description);
 						item.add(itemDescription);	
 					}
 					
@@ -240,8 +241,7 @@ public class RSSViewer extends Block {
 	}
 
 	private boolean getShowDescription() {
-		// TODO Auto-generated method stub
-		return false;
+		return showDescription;
 	}
 
 	/**

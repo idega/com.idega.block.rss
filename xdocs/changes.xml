@@ -5,6 +5,13 @@
   </properties>
   <body>
   
+    <release version="3.1.7" date="2006-10-19">
+      <action dev="eiki" type="fix">
+      	RSSItemDescription was added empty, fixed now.
+		Fixed missing bundle identifier in rss source editor window.
+      </action>
+    </release>
+	
     <release version="3.1.6" date="2006-10-10">
       <action dev="eiki" type="fix">
       	Same as the last change, the jar making failed...

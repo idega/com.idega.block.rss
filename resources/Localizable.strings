@@ -1,5 +1,11 @@
 edit.rss.sources=Edit RSS Sources
+edit.rss.sources.title=Edit Source Definition
+error.could.not.be.added=Error\: RSS Source could not be added
 iw.component.com.idega.block.rss.presentation.RSSTicker.name=RSSTicker
 iw.component.com.idega.block.rss.presentation.RSSViewer.name=RSSViewer
 no.rss.source.selected=No RSS source selected, please select one in the property window.
+result.from.action=Result from last action\: 
 select.rss.source=Select rss source to show\:
+success.added=RSS Source "videoticker" added
+success.deleted=RSS Source deleted
+success.removed=RSS Source has been removed
