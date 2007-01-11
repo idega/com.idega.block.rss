@@ -5,6 +5,7 @@
 // -------------------------------------------------------------------
 
 var isIE = false;
+var isOpera = (navigator.userAgent.indexOf("Opera") != -1);
 
 function createAjaxObj(){
 	var httprequest=false
@@ -138,12 +139,18 @@ rssticker_ajax.prototype.getAjaxcontent=function(tickerInstance){
 					//this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
 					//this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;	
 					//this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;		
-					//this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
+					//
 					
 					this.title[i] = getElementTextNS("","title",this.feeditems[i],0);
 					this.link[i]= getElementTextNS("","link",this.feeditems[i],0);
 					this.description[i] = getElementTextNS("","description",this.feeditems[i],0);		
-					this.pubdate[i] = getElementTextNS("dc","date",this.feeditems[i],0);	
+					
+					if(isOpera){
+						this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
+					}
+					else{
+						this.pubdate[i] = getElementTextNS("dc","date",this.feeditems[i],0);	
+					}
 					
 					if(!this.pubdate[i]){
 						this.pubdate[i] = getElementTextNS("","pubDate",this.feeditems[i],0);	
