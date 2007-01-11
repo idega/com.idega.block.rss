@@ -52,9 +52,14 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException, RemoteException;
 
 	/**
-	 * @see com.idega.block.rss.business.RSSBusinessBean#getLocalRSSURIWithContextAndSlideServlet
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndSlideServlet
 	 */
 	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException, RemoteException;
+
+	/**
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndSlideServletNoServerURL
+	 */
+	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException, RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#removeSourceById

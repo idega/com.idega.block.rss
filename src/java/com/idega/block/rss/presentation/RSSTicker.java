@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.4.2.3 2006/07/24 10:54:30 laddi Exp $
+ * $Id: RSSTicker.java,v 1.4.2.4 2007/01/11 17:33:23 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2006/07/24 10:54:30 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/01/11 17:33:23 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4.2.3 $
+ * @version $Revision: 1.4.2.4 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -57,7 +57,7 @@ public class RSSTicker extends RSSViewer {
 			
 			RSSSource rssSource = business.getRSSSourceBySourceId(getSourceId());
 			//ADD /content
-			String rssSourceURL = business.getRSSLocalURIWithContextAndSlideServlet(rssSource);
+			String rssSourceURL = business.getRSSLocalURIWithContextAndSlideServletNoServerURL(rssSource);
 			String options = "title";
 			if(showDate()){
 				options+="+date";
@@ -82,7 +82,7 @@ public class RSSTicker extends RSSViewer {
 			add(layer);
 			
 			Page parentPage = getParentPage();
-			if(parentPage!=null && !iwc.isSafari()){
+			if(parentPage!=null && !(iwc.isSafari() || iwc.isIE())){
 				parentPage.addScriptSource(scriptSource);	
 			}
 			else{

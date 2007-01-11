@@ -34,10 +34,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2006/07/17 23:05:32 $ by $Author: eiki $
+ * Last modified: $Date: 2007/01/11 17:33:23 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.24.2.2 $
+ * @version $Revision: 1.24.2.3 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -219,7 +219,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		localRSSFileURL = serverURLWithContent+localRSSFileURL;
 		return localRSSFileURL;
 	}
-
+	
+	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException {
+		String localRSSFileURL = rssSource.getLocalSourceURI();
+		String serverURLWithContent = getIWSlideService().getURI(localRSSFileURL);
+		return serverURLWithContent;
+	}
+	
 	/**
 	 * Removes the source definition and all headlines for a RSSSource
 	 * 

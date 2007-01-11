@@ -9,6 +9,7 @@ var isIE = false;
 function createAjaxObj(){
 	var httprequest=false
 	if (window.XMLHttpRequest){ // if Mozilla, Safari etc
+		isIE = document.all?true:false; 
 		httprequest=new XMLHttpRequest();
 		if (httprequest.overrideMimeType)	{
 			//httprequest.overrideMimeType('text/xml; charset=UTF-8');
@@ -17,14 +18,13 @@ function createAjaxObj(){
 		}
 	}
 	else if (window.ActiveXObject){ // if IE
+		isIE = true;
 		try {
 			httprequest=new ActiveXObject("Msxml2.XMLHTTP");
-			isIE = true;
 		} 
 		catch (e){
 		try{
 			httprequest=new ActiveXObject("Microsoft.XMLHTTP");
-			isIE = true;
 		}
 		catch (e){}
 		}
@@ -135,12 +135,18 @@ rssticker_ajax.prototype.getAjaxcontent=function(tickerInstance){
 			for (var i=0; i<this.feeditems.length; i++){
 				if(isRSSTWO){
 				//todo use getElementTextNS rather than this method? like for atom
-					this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
-					this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;	
-					this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;		
-					this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
+					//this.title[i]=this.feeditems[i].getElementsByTagName("title")[0].firstChild.nodeValue;
+					//this.link[i]=this.feeditems[i].getElementsByTagName("link")[0].firstChild.nodeValue;	
+					//this.description[i]=this.feeditems[i].getElementsByTagName("description")[0].firstChild.nodeValue;		
+					//this.pubdate[i]=this.feeditems[i].getElementsByTagName("date","dc")[0].firstChild.nodeValue;
+					
+					this.title[i] = getElementTextNS("","title",this.feeditems[i],0);
+					this.link[i]= getElementTextNS("","link",this.feeditems[i],0);
+					this.description[i] = getElementTextNS("","description",this.feeditems[i],0);		
+					this.pubdate[i] = getElementTextNS("dc","date",this.feeditems[i],0);	
+					
 					if(!this.pubdate[i]){
-						this.pubdate[i]=this.feeditems[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue;
+						this.pubdate[i] = getElementTextNS("","pubDate",this.feeditems[i],0);	
 					}
 				}
 				else{
