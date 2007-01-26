@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb RSS Block</name>
   <artifactId>com.idega.block.rss</artifactId>
-  <currentVersion>3.1.8</currentVersion>
+  <currentVersion>3.1.9</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>RSS</shortDescription>
   <versions>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>rome</groupId>
       <artifactId>rome</artifactId>
-      <version>0.8</version>
+      <version>0.9</version>
       <type>jar</type>
       <url>https://rome.dev.java.net/</url>
       <properties>
