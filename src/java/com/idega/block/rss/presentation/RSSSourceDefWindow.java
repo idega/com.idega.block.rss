@@ -34,6 +34,8 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	private final static String PARAM_NAME = "rss_name";
 	private final static String PARAM_REMOVE = "rss_remove";
 	
+	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
+	
 	//TODO localize all strings
 	public RSSSourceDefWindow() {
 		super();
@@ -174,5 +176,9 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	 */
 	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
 		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+	}
+	
+	public String getBundleIdentifier(){
+		return IW_BUNDLE_IDENTIFIER;
 	}
 }

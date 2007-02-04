@@ -136,6 +136,7 @@ public class RSSViewer extends Block {
 					
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
+					String originalTitle = entryTitle;
 					if (entryTitle.length() > getMaximumNumberOfLettersInHeadline()
 							&& getMaximumNumberOfLettersInHeadline() != 0) {
 						entryTitle = entryTitle.substring(0, getMaximumNumberOfLettersInHeadline() - 1) + "...";
@@ -162,7 +163,7 @@ public class RSSViewer extends Block {
 						
 						Layer itemHeadline = new Layer();
 						itemHeadline.setStyleClass("rssItemHeadline");
-						itemHeadline.add(entryTitle);
+						itemHeadline.add(originalTitle);
 						
 						itemContent.add(itemHeadline);
 						
@@ -226,6 +227,7 @@ public class RSSViewer extends Block {
 					if(!"".equals(description) && getShowDescription()){
 						Layer itemDescription = new Layer();
 						itemDescription.setStyleClass("rssItemDescription");
+						itemDescription.add(description);
 						item.add(itemDescription);	
 					}
 					
@@ -239,8 +241,7 @@ public class RSSViewer extends Block {
 	}
 
 	private boolean getShowDescription() {
-		// TODO Auto-generated method stub
-		return false;
+		return showDescription;
 	}
 
 	/**

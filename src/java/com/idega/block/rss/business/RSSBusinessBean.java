@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ejb.FinderException;
 
 import org.jdom.Document;
@@ -25,9 +26,6 @@ import com.idega.business.IBOServiceBean;
 import com.idega.slide.business.IWSlideService;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.module.DCModuleImpl;
-import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -49,10 +47,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/02/01 01:21:09 $ by $Author: valdas $
+ * Last modified: $Date: 2007/02/04 20:42:26 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -236,7 +234,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		localRSSFileURL = serverURLWithContent+localRSSFileURL;
 		return localRSSFileURL;
 	}
-
+	
+	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException {
+		String localRSSFileURL = rssSource.getLocalSourceURI();
+		String serverURLWithContent = getIWSlideService().getURI(localRSSFileURL);
+		return serverURLWithContent;
+	}
+	
 	/**
 	 * Removes the source definition and all headlines for a RSSSource
 	 * 
@@ -367,13 +371,21 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
 		//String atomXML = convertFeedToAtomXMLString(feed);
-		
-		String xml = convertFeedToRSS2XMLString(feed);
-		if(xml==null){
-			//rss2 failed try atom 1.0
+		String xml = null;
+		try{
+			xml = convertFeedToRSS2XMLString(feed);
+			
+			if(xml==null){
+				//rss2 failed try atom 1.0
+				xml = convertFeedToAtomXMLString(feed);
+			}
+		}
+		catch(NullPointerException ex){
+			ex.printStackTrace();
+			//because of bug in ROME, try with mbl.is rss files
 			xml = convertFeedToAtomXMLString(feed);
 		}
-		
+
 		String fileName = null;
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
 		if (feedURL.endsWith(".xml")) {
@@ -442,8 +454,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		SyndFeedOutput output = new SyndFeedOutput();
 		String xmlFeed = null;
 		try {
-			Document d = output.outputJDom(feed);
-			System.out.println(d);
 			xmlFeed = output.outputString(feed);
 			// System.out.println(xmlFeed);
 			// output.output(feed,new PrintWriter(System.out));
@@ -551,15 +561,20 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	/**
 	 * @param type: for example "atom_1.0"
 	 * @param title
-	 * @param link
+	 * @param serverName
 	 * @param feedName
 	 * @param description
+	 * @param type
+	 * @param language
+	 * @param date
 	 * @return creates new instance of SyndFeed
 	 */
-	public SyndFeed createNewFeed(String title, String link, String description, String type) {
+	public SyndFeed createNewFeed(String title, String serverName, String description, String type, String language, Timestamp date) {
 		SyndFeed feed = new SyndFeedImpl();
+		feed.setPublishedDate(date);
+		feed.setLanguage(language);
 		feed.setTitle(title);
-		feed.setLink(link);
+		feed.setLink(serverName);
 		feed.setDescription(description);
 		feed.setFeedType(type);
 		return feed;
@@ -568,28 +583,33 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	/**
 	 * @param title
 	 * @param link
-	 * @param publishedDate
+	 * @param published
 	 * @param descriptionType: for example "text/plain"
 	 * @param description
+	 * @param descriptionType
+	 * @param body
+	 * @param author
+	 * @param language
+	 * @param categories
+	 * @param bodyType
+	 * @param created
 	 * @return creates new instance of SyndEntry
 	 */
-	public SyndEntry createNewEntry(String title, String link, Timestamp publishedDate, String descriptionType, String description,
-			String author, String language, List<String> categories) {
+	public SyndEntry createNewEntry(String title, String link, Timestamp created, Timestamp published, String descriptionType,
+			String description, String bodyType, String body, String author, String language, List<String> categories) {
 		SyndEntry entry = null;
 		SyndContent descr = null;
+		SyndContent content = null;
 
 		entry = new SyndEntryImpl();
 		entry.setTitle(title);
 		entry.setLink(link);
-		if (publishedDate != null) {
-			entry.setPublishedDate(publishedDate);
+		entry.setUri(link);
+		if (published != null) {
+			entry.setPublishedDate(published);
 		}
-		entry.setAuthor(author);
 		
-		DCModule m = new DCModuleImpl();
-		m.setLanguage(language);
-		m.setDescription(description);
-		entry.getModules().add(m);
+		entry.setAuthor(author);
 		
 		if (categories != null) {
 			List<SyndCategory> categoriesList = new ArrayList<SyndCategory>();
@@ -606,6 +626,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		descr.setType(descriptionType);
 		descr.setValue(description);
 		entry.setDescription(descr);
+		
+		content = new SyndContentImpl();
+		content.setType(bodyType);
+		content.setValue(body);
+		List<SyndContent> contents = new ArrayList<SyndContent>();
+		contents.add(content);
+		entry.setContents(contents);
 
 		return entry;
 	}

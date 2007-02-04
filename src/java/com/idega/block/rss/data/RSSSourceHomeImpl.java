@@ -1,5 +1,5 @@
 /*
- * $Id: RSSSourceHomeImpl.java,v 1.7 2007/02/01 01:21:10 valdas Exp $
+ * $Id: RSSSourceHomeImpl.java,v 1.8 2007/02/04 20:42:27 valdas Exp $
  * Created on Feb 27, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2007/02/01 01:21:10 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/02/04 20:42:27 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class RSSSourceHomeImpl extends IDOFactory implements RSSSourceHome {
 
