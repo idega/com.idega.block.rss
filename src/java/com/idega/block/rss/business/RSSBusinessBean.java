@@ -26,6 +26,11 @@ import com.idega.business.IBOServiceBean;
 import com.idega.slide.business.IWSlideService;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.sun.syndication.feed.module.DCModule;
+import com.sun.syndication.feed.module.DCModuleImpl;
+import com.sun.syndication.feed.module.Module;
+import com.sun.syndication.feed.module.wfw.CommentAPIModule;
+import com.sun.syndication.feed.module.wfw.CommentAPIModuleImpl;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -47,10 +52,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/02/04 20:42:26 $ by $Author: valdas $
+ * Last modified: $Date: 2007/02/06 01:33:00 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -592,11 +597,14 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param language
 	 * @param categories
 	 * @param bodyType
-	 * @param created
+	 * @param updated
+	 * @param source
+	 * @param comment
 	 * @return creates new instance of SyndEntry
 	 */
-	public SyndEntry createNewEntry(String title, String link, Timestamp created, Timestamp published, String descriptionType,
-			String description, String bodyType, String body, String author, String language, List<String> categories) {
+	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
+			String description, String bodyType, String body, String author, String language, List<String> categories, String source,
+			String comment) {
 		SyndEntry entry = null;
 		SyndContent descr = null;
 		SyndContent content = null;
@@ -605,10 +613,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		entry.setTitle(title);
 		entry.setLink(link);
 		entry.setUri(link);
-		if (published != null) {
-			entry.setPublishedDate(published);
-		}
-		
+		entry.setPublishedDate(published);
+		entry.setUpdatedDate(updated);
 		entry.setAuthor(author);
 		
 		if (categories != null) {
@@ -633,7 +639,21 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		List<SyndContent> contents = new ArrayList<SyndContent>();
 		contents.add(content);
 		entry.setContents(contents);
-
+		
+		List<Module> modules = new ArrayList<Module>();
+		DCModule dcModule = new DCModuleImpl();
+		dcModule.setSource(source);
+		dcModule.setCreator(author);
+		dcModule.setDate(published);
+		modules.add(dcModule);
+		
+		if (comment != null) {
+			CommentAPIModule commentModule = new CommentAPIModuleImpl();
+			commentModule.setComment(comment);
+			modules.add(commentModule);
+		}
+		entry.setModules(modules);
+		
 		return entry;
 	}
 	/*
