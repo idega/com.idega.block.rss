@@ -52,10 +52,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/02/06 01:33:00 $ by $Author: valdas $
+ * Last modified: $Date: 2007/02/13 19:05:33 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -600,11 +600,12 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param updated
 	 * @param source
 	 * @param comment
+	 * @param linkToComments
 	 * @return creates new instance of SyndEntry
 	 */
 	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
 			String description, String bodyType, String body, String author, String language, List<String> categories, String source,
-			String comment) {
+			String comment, String linkToComments) {
 		SyndEntry entry = null;
 		SyndContent descr = null;
 		SyndContent content = null;
@@ -647,9 +648,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		dcModule.setDate(published);
 		modules.add(dcModule);
 		
-		if (comment != null) {
+		if (comment != null || linkToComments != null) {
 			CommentAPIModule commentModule = new CommentAPIModuleImpl();
 			commentModule.setComment(comment);
+			commentModule.setCommentRss(linkToComments);
 			modules.add(commentModule);
 		}
 		entry.setModules(modules);
