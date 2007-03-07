@@ -1,5 +1,5 @@
 /*
- * $Id: RSSRequest.java,v 1.3 2007/03/07 09:33:48 justinas Exp $
+ * $Id: RSSRequest.java,v 1.4 2007/03/07 17:18:17 justinas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -14,15 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.tools.javac.util.List;
-
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/03/07 09:33:48 $ by $Author: justinas $
+ *  Last modified: $Date: 2007/03/07 17:18:17 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class RSSRequest {
 	
