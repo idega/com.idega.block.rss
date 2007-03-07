@@ -1,5 +1,5 @@
 /*
- * $Id: IWRSSProducerServlet.java,v 1.2 2007/02/04 20:42:27 valdas Exp $
+ * $Id: IWRSSProducerServlet.java,v 1.3 2007/03/07 09:34:13 justinas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.block.rss.data.RSSRequest;
  * @see com.idega.block.rss.business.RSSProducer Finds the correct RSSProducer
  *      and delegates the task of getting an rss feed to it.
  * 
- * Last modified: $Date: 2007/02/04 20:42:27 $ by $Author: valdas $
+ * Last modified: $Date: 2007/03/07 09:34:13 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWRSSProducerServlet extends HttpServlet {
 
@@ -44,11 +44,11 @@ public class IWRSSProducerServlet extends HttpServlet {
 
 		RSSProducerRegistry factory = RSSProducerRegistry.getInstance();
 		RSSRequest rssReq = new RSSRequest(request, response);
+		rssReq.setServletContext(this.getServletContext());
 
 		try {
 			RSSProducer producer = factory.getRSSProducerByIdentifier(rssReq.getIdentifier());
 			producer.handleRSSRequest(rssReq);
-
 		} catch (NoSuchRSSProducerException e) {
 			response.getWriter().print(e.getMessage());
 			e.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: RSSRequest.java,v 1.2 2007/02/04 20:42:27 valdas Exp $
+ * $Id: RSSRequest.java,v 1.3 2007/03/07 09:33:48 justinas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,20 @@
  */
 package com.idega.block.rss.data;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sun.tools.javac.util.List;
+
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/02/04 20:42:27 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/03/07 09:33:48 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RSSRequest {
 	
@@ -29,7 +32,7 @@ public class RSSRequest {
 	HttpServletRequestWrapper requestWrapped = null;
 	HttpServletRequest request = null;
 	HttpServletResponse response = null;
-	
+	ServletContext servletContext = null; 
 	
 	public RSSRequest(HttpServletRequest request, HttpServletResponse response) {
 		super();
@@ -136,6 +139,14 @@ public class RSSRequest {
 	 */
 	public void setRequestWrapped(HttpServletRequestWrapper requestWrapped) {
 		this.requestWrapped = requestWrapped;
+	}
+
+	public ServletContext getServletContext() {
+		return servletContext;
+	}
+
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 
 	

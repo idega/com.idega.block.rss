@@ -1,5 +1,5 @@
 /*
- * $Id: RSSAbstractProducer.java,v 1.2 2007/02/04 20:42:27 valdas Exp $
+ * $Id: RSSAbstractProducer.java,v 1.3 2007/03/07 09:33:17 justinas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -21,16 +21,17 @@ import com.idega.block.rss.data.RSSRequest;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.slide.business.IWSlideService;
 import com.idega.slide.business.IWSlideSession;
 
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/02/04 20:42:27 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/03/07 09:33:17 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class RSSAbstractProducer implements RSSProducer {
 
@@ -164,5 +165,11 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	public IWApplicationContext getIWApplicationContext(RSSRequest rssRequest){
 		return IWMainApplication.getIWMainApplication(rssRequest.getRequest().getSession().getServletContext()).getIWApplicationContext();
 	}
-	
+	public IWContext getIWContext(RSSRequest rss){
+//		IWContext iwc = IWContext.getInstance();
+		IWContext iwc = null;
+		if(iwc == null)
+			iwc = new IWContext(rss.getRequest(), rss.getResponse(), rss.getServletContext());
+		return iwc;
+	}
 }
