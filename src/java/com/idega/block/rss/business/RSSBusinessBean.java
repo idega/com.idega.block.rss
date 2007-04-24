@@ -6,8 +6,11 @@
  */
 package com.idega.block.rss.business;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,15 +18,29 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import org.jdom.Document;
+
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.slide.business.IWSlideService;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.sun.syndication.feed.module.DCModule;
+import com.sun.syndication.feed.module.DCModuleImpl;
+import com.sun.syndication.feed.module.wfw.CommentAPIModule;
+import com.sun.syndication.feed.module.wfw.CommentAPIModuleImpl;
+import com.sun.syndication.feed.synd.SyndCategory;
+import com.sun.syndication.feed.synd.SyndCategoryImpl;
+import com.sun.syndication.feed.synd.SyndContent;
+import com.sun.syndication.feed.synd.SyndContentImpl;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.FetcherEvent;
+import com.sun.syndication.fetcher.FetcherException;
 import com.sun.syndication.fetcher.FetcherListener;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
@@ -34,13 +51,15 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/01/11 17:33:23 $ by $Author: eiki $
+ * Last modified: $Date: 2007/04/24 12:37:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.24.2.3 $
+ * @version $Revision: 1.24.2.4 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
+	private static final long serialVersionUID = -4108662712781008003L;
+	
 	public static final String RSS_FOLDER_URI = "/files/cms/rss/";
 	private IWSlideService slideService;
 	private FeedFetcherCache feedInfoCache;
@@ -370,11 +389,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			//because of bug in ROME, try with mbl.is rss files
 			xml = convertFeedToAtomXMLString(feed);
 		}
-		
-		
-		
+
 		String fileName = null;
-		IWSlideService ss = getIWSlideService();
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
 		if (feedURL.endsWith(".xml")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
@@ -395,12 +411,27 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			String title = feed.getTitle();
 			fileName = title + ".xml";
 		}
+		return createFileInSlide(xml, fileName);
+	}
+	
+	/**
+	 * @param feedXML
+	 * @param fileName
+	 * @return path to uploaded feed
+	 * @throws RemoteException
+	 */
+	public String createFileInSlide(String feedXML, String fileName) throws RemoteException {
+		if (feedXML == null || fileName == null) {
+			return null;
+		}
+		
 		// just to be safe
 		fileName = fileName.replaceAll(" ", "");
 		char[] except = { '.' };
 		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
 		// "true" : delete the previous version of the file  (do not create millions of versions)
-		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, xml, true);
+		IWSlideService ss = getIWSlideService();
+		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, feedXML, true);
 		return RSS_FOLDER_URI + fileName;
 	}
 
@@ -460,6 +491,25 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		}
 		return xmlFeed;
 	}
+	
+	/**
+	 * Takes a SyndFeed of any type and returns it as an JDOM document
+	 * 
+	 * @param feed
+	 * @return
+	 */
+	public Document convertFeedToJDomDocument(SyndFeed feed) {
+		if (feed == null) {
+			return null;
+		}
+		SyndFeedOutput output = new SyndFeedOutput();
+		try {
+			return output.outputJDom(feed);
+		} catch (FeedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * @return a feedfetcher with caching
@@ -481,6 +531,131 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			this.feedInfoCache = HashMapFeedInfoCache.getInstance();
 		}
 		return this.feedInfoCache;
+	}
+	
+	/**
+	 * @param pathToFeed
+	 * @return returns instance of SyndFeed
+	 */
+	public SyndFeed getFeed(String pathToFeed) {
+		if (pathToFeed == null) {
+			return null;
+		}
+		URL url = null;
+		try {
+			url = new URL(pathToFeed);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		try {
+			return getFeedFetcher().retrieveFeed(url);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (FeedException e) {
+			e.printStackTrace();
+		} catch (FetcherException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * @param type: for example "atom_1.0"
+	 * @param title
+	 * @param serverName
+	 * @param feedName
+	 * @param description
+	 * @param type
+	 * @param language
+	 * @param date
+	 * @return creates new instance of SyndFeed
+	 */
+	public SyndFeed createNewFeed(String title, String serverName, String description, String type, String language, Timestamp date) {
+		SyndFeed feed = new SyndFeedImpl();
+		feed.setPublishedDate(date);
+		feed.setLanguage(language);
+		feed.setTitle(title);
+		feed.setLink(serverName);
+		feed.setDescription(description);
+		feed.setFeedType(type);
+		return feed;
+	}
+	
+	/**
+	 * @param title
+	 * @param link
+	 * @param published
+	 * @param descriptionType: for example "text/plain"
+	 * @param description
+	 * @param descriptionType
+	 * @param body
+	 * @param author
+	 * @param language
+	 * @param categories
+	 * @param bodyType
+	 * @param updated
+	 * @param source
+	 * @param comment
+	 * @param linkToComments
+	 * @return creates new instance of SyndEntry
+	 */
+	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
+			String description, String bodyType, String body, String author, String language, List categories, String source,
+			String comment, String linkToComments) {
+		SyndEntry entry = null;
+		SyndContent descr = null;
+		SyndContent content = null;
+
+		entry = new SyndEntryImpl();
+		entry.setTitle(title);
+		entry.setLink(link);
+		entry.setUri(link);
+		entry.setPublishedDate(published);
+		entry.setUpdatedDate(updated);
+		entry.setAuthor(author);
+		
+		if (categories != null) {
+			List categoriesList = new ArrayList();
+			SyndCategory category = null;
+			for (int i = 0; i < categories.size(); i++) {
+				category = new SyndCategoryImpl();
+				category.setName((String) categories.get(i));
+				categoriesList.add(category);
+			}
+			entry.setCategories(categoriesList);
+		}
+		
+		descr = new SyndContentImpl();
+		descr.setType(descriptionType);
+		descr.setValue(description);
+		entry.setDescription(descr);
+		
+		content = new SyndContentImpl();
+		content.setType(bodyType);
+		content.setValue(body);
+		List contents = new ArrayList();
+		contents.add(content);
+		entry.setContents(contents);
+		
+		List modules = new ArrayList();
+		DCModule dcModule = new DCModuleImpl();
+		dcModule.setSource(source);
+		dcModule.setCreator(author);
+		dcModule.setDate(published);
+		modules.add(dcModule);
+		
+		if (comment != null || linkToComments != null) {
+			CommentAPIModule commentModule = new CommentAPIModuleImpl();
+			commentModule.setComment(comment);
+			commentModule.setCommentRss(linkToComments);
+			modules.add(commentModule);
+		}
+		entry.setModules(modules);
+		
+		return entry;
 	}
 	/*
 	 * Aggreate many into one! public static void main(String[] args) { boolean
