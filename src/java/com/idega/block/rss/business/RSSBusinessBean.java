@@ -28,8 +28,6 @@ import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCModuleImpl;
-import com.sun.syndication.feed.module.wfw.CommentAPIModule;
-import com.sun.syndication.feed.module.wfw.CommentAPIModuleImpl;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -51,10 +49,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/04/24 12:37:42 $ by $Author: eiki $
+ * Last modified: $Date: 2007/04/24 15:55:00 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.24.2.4 $
+ * @version $Revision: 1.24.2.5 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -598,13 +596,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param bodyType
 	 * @param updated
 	 * @param source
-	 * @param comment
-	 * @param linkToComments
 	 * @return creates new instance of SyndEntry
 	 */
 	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
-			String description, String bodyType, String body, String author, String language, List categories, String source,
-			String comment, String linkToComments) {
+			String description, String bodyType, String body, String author, String language, List categories, String source) {
 		SyndEntry entry = null;
 		SyndContent descr = null;
 		SyndContent content = null;
@@ -647,12 +642,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		dcModule.setDate(published);
 		modules.add(dcModule);
 		
-		if (comment != null || linkToComments != null) {
-			CommentAPIModule commentModule = new CommentAPIModuleImpl();
-			commentModule.setComment(comment);
-			commentModule.setCommentRss(linkToComments);
-			modules.add(commentModule);
-		}
 		entry.setModules(modules);
 		
 		return entry;

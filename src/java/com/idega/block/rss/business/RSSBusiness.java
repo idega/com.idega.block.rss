@@ -1,5 +1,5 @@
 /*
- * $Id: RSSBusiness.java,v 1.7.2.3 2007/04/24 12:37:42 eiki Exp $
+ * $Id: RSSBusiness.java,v 1.7.2.4 2007/04/24 15:54:59 eiki Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.sun.syndication.fetcher.FetcherListener;
 
 /**
  * 
- *  Last modified: $Date: 2007/04/24 12:37:42 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/04/24 15:54:59 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.7.2.3 $
+ * @version $Revision: 1.7.2.4 $
  */
 public interface RSSBusiness extends IBOService, FetcherListener {
 
@@ -122,8 +122,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewEntry
 	 */
 	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
-			String description, String bodyType, String body, String author, String language, List categories, String source,
-			String comment, String linkToComments);
+			String description, String bodyType, String body, String author, String language, List categories, String source);
 	
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#convertFeedToRSS2XMLString

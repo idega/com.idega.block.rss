@@ -1,5 +1,5 @@
 /*
- * $Id: RSSRequest.java,v 1.1.2.2 2007/04/24 12:37:42 eiki Exp $
+ * $Id: RSSRequest.java,v 1.1.2.3 2007/04/24 15:55:00 eiki Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/04/24 12:37:42 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/04/24 15:55:00 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  */
 public class RSSRequest {
 	
@@ -138,14 +138,6 @@ public class RSSRequest {
 	 */
 	public void setRequestWrapped(HttpServletRequestWrapper requestWrapped) {
 		this.requestWrapped = requestWrapped;
-	}
-
-	public ServletContext getServletContext() {
-		return servletContext;
-	}
-	
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
 	}
 
 }
