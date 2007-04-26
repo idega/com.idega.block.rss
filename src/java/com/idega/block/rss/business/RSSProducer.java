@@ -1,5 +1,5 @@
 /*
- * $Id: RSSProducer.java,v 1.2 2007/02/04 20:42:26 valdas Exp $
+ * $Id: RSSProducer.java,v 1.3 2007/04/26 18:58:18 justinas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -63,15 +63,15 @@ Rss podcast from that folder in Slide<br>
 
 etc...<br>
  * 
- *  Last modified: $Date: 2007/02/04 20:42:26 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/04/26 18:58:18 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface RSSProducer {
 	
 	public void handleRSSRequest(RSSRequest rssRequest) throws IOException;
 	
-	
+	public void clearRssCacheList(String[] parameters);
 
 }
