@@ -1,5 +1,5 @@
 /*
- * $Id: RSSAbstractProducer.java,v 1.1.2.4 2007/04/24 15:54:59 eiki Exp $
+ * $Id: RSSAbstractProducer.java,v 1.1.2.5 2007/04/27 10:33:32 gimmi Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,6 @@ import com.idega.block.rss.data.RSSRequest;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.IWContext;
 import com.idega.slide.business.IWSlideService;
 import com.idega.slide.business.IWSlideSession;
@@ -29,10 +28,10 @@ import com.idega.slide.business.IWSlideSession;
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/04/24 15:54:59 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/04/27 10:33:32 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1.2.4 $
+ * @version $Revision: 1.1.2.5 $
  */
 public abstract class RSSAbstractProducer implements RSSProducer {
 
