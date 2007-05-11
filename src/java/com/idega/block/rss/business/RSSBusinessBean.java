@@ -6,8 +6,6 @@
  */
 package com.idega.block.rss.business;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -41,7 +39,6 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.FetcherEvent;
-import com.sun.syndication.fetcher.FetcherException;
 import com.sun.syndication.fetcher.FetcherListener;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
@@ -52,10 +49,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/02/13 19:05:33 $ by $Author: valdas $
+ * Last modified: $Date: 2007/05/11 13:43:45 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -545,19 +542,8 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		URL url = null;
 		try {
 			url = new URL(pathToFeed);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		try {
 			return getFeedFetcher().retrieveFeed(url);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FeedException e) {
-			e.printStackTrace();
-		} catch (FetcherException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
