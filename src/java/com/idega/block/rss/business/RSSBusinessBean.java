@@ -22,6 +22,7 @@ import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.slide.business.IWSlideService;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.sun.syndication.feed.module.DCModule;
@@ -49,10 +50,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2007/05/11 13:43:45 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/20 14:41:10 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -226,7 +227,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
 		}
 		
-		if(localRSSFileURL.startsWith("/content")){
+		if(localRSSFileURL.startsWith(CoreConstants.WEBDAV_SERVLET_URI)){
 			localRSSFileURL = localRSSFileURL.substring(9);
 		}
 		else if(localRSSFileURL.startsWith("/")){
