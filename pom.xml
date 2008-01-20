@@ -3,16 +3,20 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>4.0-SNAPSHOT</version>
+  	<version>4.0.0</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <name>idegaWeb RSS Block</name>
   <artifactId>com.idega.block.rss</artifactId>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <inceptionYear>2000</inceptionYear>
   <description>RSS Block is a module for aggregationg RSS/Atom Feeds from external sites</description>
   <scm>
+    <!--
+    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
+    -->
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
   </scm>
@@ -51,6 +55,12 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.idega.block.platform</groupId>
+      <artifactId>com.idega.slide</artifactId>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
@@ -69,10 +79,6 @@
       <artifactId>rome-modules</artifactId>
       <version>0.2.1j1.4.2</version>
       <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.slide</artifactId>
     </dependency>
   </dependencies>
 </project>
