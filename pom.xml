@@ -3,12 +3,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.platform</artifactId>
-  	<version>4.0.1-SNAPSHOT</version>
+  	<version>4.0.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.block.rss</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <name>idegaWeb RSS Block</name>
   <inceptionYear>2000</inceptionYear>
   <description>RSS Block is a module for aggregationg RSS/Atom Feeds from external sites</description>
@@ -17,8 +17,8 @@
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
     -->
-    <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.block.rss/</connection>
-    <developerConnection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.block.rss/</developerConnection>
+    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
   </scm>
 
   <developers>
