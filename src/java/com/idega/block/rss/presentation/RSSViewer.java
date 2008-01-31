@@ -4,10 +4,13 @@
 package com.idega.block.rss.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
@@ -43,7 +46,9 @@ public class RSSViewer extends Block {
 	private boolean useHiddenLayer = false;
 	private boolean showTitle = true;
 	private boolean showDate = true;
+	private boolean showCreationDate = true;
 	private boolean showDescription = true;
+	private boolean showOldestFirst = false;
 	private boolean stripHTMLFromContent = false;
 	private boolean stripHTMLFromDescription = false;
 	
@@ -94,6 +99,32 @@ public class RSSViewer extends Block {
 					// if maxLinks is zero (or negative), no limit
 					maxLinksTmp = 10000;
 				}
+				
+				if (this.showOldestFirst) {
+					int size = entries.size();
+					if (size > maxLinksTmp) {
+						size = maxLinksTmp;
+					}
+					
+					Stack stack = new Stack();
+					
+					List sorted = new ArrayList(size);
+					
+					int tmpRow = 1;
+					for (Iterator loop = entries.iterator(); tmpRow <= maxLinksTmp && loop.hasNext();) {
+						SyndEntry rssEntry = (SyndEntry) loop.next();
+						stack.push(rssEntry);
+						tmpRow++;
+					}
+					
+					int stackSize = stack.size();
+					for (int i = 0; i < stackSize; i++) {
+						sorted.add(stack.pop());
+					}
+					
+					entries = sorted;
+				}
+				
 				for (Iterator loop = entries.iterator(); row <= maxLinksTmp && loop.hasNext();) {
 					SyndEntry rssEntry = (SyndEntry) loop.next();
 					row++;
@@ -213,15 +244,17 @@ public class RSSViewer extends Block {
 					}
 					item.add(link);
 					
-					Layer itemPublished = new Layer();
-					itemPublished.setStyleClass("rssItemPublishedDate");
-					item.add(itemPublished);
-					if (entryPublishedDate != null) {
-						itemPublished.add(new Text(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
-					}
-					else {
-						//JUST ADD THE CURRENT TIME
-						itemPublished.add(new Text(new IWTimestamp().getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
+					if (this.showCreationDate) {
+						Layer itemPublished = new Layer();
+						itemPublished.setStyleClass("rssItemPublishedDate");
+						item.add(itemPublished);
+						if (entryPublishedDate != null) {
+							itemPublished.add(new Text(new IWTimestamp(entryPublishedDate).getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
+						}
+						else {
+							//JUST ADD THE CURRENT TIME
+							itemPublished.add(new Text(new IWTimestamp().getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)));
+						}
 					}
 					
 					if(!"".equals(description) && getShowDescription()){
@@ -384,6 +417,21 @@ public class RSSViewer extends Block {
 	}
 	
 	/**
+	 * @return Returns the showCreationDate.
+	 */
+	public boolean showCreationDate() {
+		return this.showCreationDate;
+	}
+
+	
+	/**
+	 * @param showCreationDate The showCreationDate to set.
+	 */
+	public void setShowCreationDate(boolean showCreationDate) {
+		this.showCreationDate = showCreationDate;
+	}
+
+	/**
 	 * @return Returns the showTitle.
 	 */
 	public boolean showTitle() {
@@ -398,6 +446,20 @@ public class RSSViewer extends Block {
 		this.showTitle = showTitle;
 	}
 
+	/**
+	 * @return Returns the showOldestFirst.
+	 */
+	public boolean showOldestFirst() {
+		return this.showOldestFirst;
+	}
+
+	
+	/**
+	 * @param showOldestFirst The showOldestFirst to set.
+	 */
+	public void setShowOldestFirst(boolean showOldestFirst) {
+		this.showOldestFirst = showOldestFirst;
+	}
 	
 	/**
 	 * @return Returns the isSetToStripHTMLFromContent.

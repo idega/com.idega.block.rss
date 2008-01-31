@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb RSS Block</name>
   <artifactId>com.idega.block.rss</artifactId>
-  <currentVersion>3.1.13</currentVersion>
+  <currentVersion>3.1.14</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>RSS</shortDescription>
   <versions>
