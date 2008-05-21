@@ -4,6 +4,12 @@
     <author email="eiki@idega.com">Eirikur S. Hrafnsson</author>
   </properties>
   <body>
+    <release version="3.1.15" date="2008-05-21">
+      <action dev="palli" type="update">
+		Updated rome-fetcher to 0.9 to fix strange problem with getting sudurland.info feed on hveragerdi.is
+      </action>
+    </release>
+
     <release version="3.1.14" date="2008-01-31">
       <action dev="palli" type="update">
 		Added properties to RSSViewer to hide/show the creation date and to toggle show oldest first.
