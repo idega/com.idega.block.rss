@@ -1,5 +1,5 @@
 /*
- * $Id: RSSBusiness.java,v 1.13 2008/02/22 13:47:06 valdas Exp $
+ * $Id: RSSBusiness.java,v 1.14 2008/10/08 15:32:31 valdas Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -22,6 +22,7 @@ import org.jdom.Document;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOService;
+import com.idega.user.data.User;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.fetcher.FeedFetcher;
@@ -31,10 +32,10 @@ import com.sun.syndication.fetcher.FetcherListener;
 
 /**
  * 
- *  Last modified: $Date: 2008/02/22 13:47:06 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/10/08 15:32:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public interface RSSBusiness extends IBOService, FetcherListener {
 
@@ -112,6 +113,8 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getFeed
 	 */
 	public SyndFeed getFeed(String pathToFeed);
+	
+	public SyndFeed getFeedAuthenticatedByUser(String pathToFeed, User user);
 	
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewFeed

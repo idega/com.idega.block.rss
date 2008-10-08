@@ -21,10 +21,13 @@ import org.jdom.Document;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.slide.business.IWSlideService;
+import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCModuleImpl;
 import com.sun.syndication.feed.module.Module;
@@ -52,10 +55,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2008/02/22 13:47:06 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/08 15:32:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -539,17 +542,27 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return returns instance of SyndFeed
 	 */
 	public SyndFeed getFeed(String pathToFeed) {
-		if (pathToFeed == null) {
+		return getFeedAuthenticatedByUser(pathToFeed, null);
+	}
+	
+	public SyndFeed getFeedAuthenticatedByUser(String pathToFeed, User user) {
+		if (StringUtil.isEmpty(pathToFeed)) {
 			return null;
 		}
-		URL url = null;
+		
+		SyndFeed feed = null;
 		try {
-			url = new URL(pathToFeed);
-			return getFeedFetcher().retrieveFeed(url);
+			if (user != null) {
+				pathToFeed = new StringBuilder(pathToFeed).append("?").append(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID).append("=").append(user.getUniqueId())
+									.append("&").append(LoginBusinessBean.LoginStateParameter).append("=").append(LoginBusinessBean.LOGIN_EVENT_LOGIN).toString();
+			}
+			URL url = new URL(pathToFeed);
+			feed = getFeedFetcher().retrieveFeed(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		
+		return feed;
 	}
 	
 	/**
