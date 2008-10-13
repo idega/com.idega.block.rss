@@ -22,6 +22,8 @@ import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.slide.business.IWSlideService;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -55,10 +57,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2008/10/08 15:32:31 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/13 14:48:18 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -563,6 +565,21 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		}
 		
 		return feed;
+	}
+	
+	public SyndFeed getFeedAuthenticatedByAdmin(String pathToFeed) {
+		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
+		if (iwac == null) {
+			return null;
+		}
+		
+		try {
+			return getFeedAuthenticatedByUser(pathToFeed, iwac.getIWMainApplication().getAccessController().getAdministratorUser());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	/**
