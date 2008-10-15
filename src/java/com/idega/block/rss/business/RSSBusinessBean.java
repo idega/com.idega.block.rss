@@ -57,10 +57,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2008/10/13 14:48:18 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/15 14:53:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -539,6 +539,15 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		return this.feedInfoCache;
 	}
 	
+	public String getLinkToFeedWithUUIDParameters(String link, User user) {
+		if (StringUtil.isEmpty(link) || user == null) {
+			return link;
+		}
+		
+		return new StringBuilder(link).append("?").append(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID).append("=").append(user.getUniqueId()).append("&")
+			.append(LoginBusinessBean.LoginStateParameter).append("=").append(LoginBusinessBean.LOGIN_EVENT_LOGIN).toString();
+	}
+	
 	/**
 	 * @param pathToFeed
 	 * @return returns instance of SyndFeed
@@ -555,8 +564,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		SyndFeed feed = null;
 		try {
 			if (user != null) {
-				pathToFeed = new StringBuilder(pathToFeed).append("?").append(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID).append("=").append(user.getUniqueId())
-									.append("&").append(LoginBusinessBean.LoginStateParameter).append("=").append(LoginBusinessBean.LOGIN_EVENT_LOGIN).toString();
+				pathToFeed = getLinkToFeedWithUUIDParameters(pathToFeed, user);
 			}
 			URL url = new URL(pathToFeed);
 			feed = getFeedFetcher().retrieveFeed(url);

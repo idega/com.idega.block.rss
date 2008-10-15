@@ -1,5 +1,5 @@
 /*
- * $Id: RSSBusiness.java,v 1.15 2008/10/13 14:48:18 valdas Exp $
+ * $Id: RSSBusiness.java,v 1.16 2008/10/15 14:53:54 valdas Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.sun.syndication.fetcher.FetcherListener;
 
 /**
  * 
- *  Last modified: $Date: 2008/10/13 14:48:18 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/10/15 14:53:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public interface RSSBusiness extends IBOService, FetcherListener {
 
@@ -144,4 +144,6 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getFeedFetcher
 	 */
 	public FeedFetcher getFeedFetcher() throws RemoteException;
+
+	public String getLinkToFeedWithUUIDParameters(String link, User user);
 }
