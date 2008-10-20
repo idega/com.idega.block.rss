@@ -8,9 +8,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -21,6 +23,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Paragraph;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWTimestamp;
+import com.idega.util.PresentationUtil;
 import com.idega.util.StringHandler;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -58,8 +61,13 @@ public class RSSViewer extends Block {
 	/**
 	 * This is where everything happens.
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
+		IWBundle iwb = getBundle(iwc);
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
+
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/rss.css"));
+
 		// if no selected rss source display an error message
 		if (this.sourceId == -1) {
 			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected",
@@ -247,6 +255,7 @@ public class RSSViewer extends Block {
 	/**
 	 * standard overriding to point to the correct bundle
 	 */
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}

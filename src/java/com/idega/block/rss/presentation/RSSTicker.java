@@ -1,5 +1,5 @@
 /*
- * $Id: RSSTicker.java,v 1.6 2007/02/04 20:42:26 valdas Exp $
+ * $Id: RSSTicker.java,v 1.7 2008/10/20 11:54:27 laddi Exp $
  * Created on Feb 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -16,6 +16,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
+import com.idega.util.PresentationUtil;
 
 /**
  * Displays one headline at a time with or without extra information<br>
@@ -30,10 +31,10 @@ import com.idega.presentation.Script;
  * 6) optionalswitch: "optional arbitrary" string to create additional logic in call back function<br>
  * e.g. "date" will show title and date, "date+description" will also show the description with the date and title.
  * 
- *  Last modified: $Date: 2007/02/04 20:42:26 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/10/20 11:54:27 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class RSSTicker extends RSSViewer {
 	
@@ -49,8 +50,10 @@ public class RSSTicker extends RSSViewer {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWBundle iwb = this.getBundle(iwc);
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/rss.css"));
 		
 		if(getSourceId()>-1){
 			RSSBusiness business = getRSSBusiness(iwc);

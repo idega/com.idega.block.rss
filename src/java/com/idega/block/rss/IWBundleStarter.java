@@ -14,6 +14,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
@@ -23,7 +24,6 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.util.timer.PastDateException;
 import com.idega.util.timer.TimerEntry;
 import com.idega.util.timer.TimerListener;
@@ -53,8 +53,6 @@ public class IWBundleStarter implements IWBundleStartable {
 	private static final String BUNDLE_PROPERTY_NAME_POLL_INTERVAL = "iw_bundle_rss_poll_interval";
 	
 	public void start(IWBundle starterBundle) {
-		GlobalIncludeManager includeManager = GlobalIncludeManager.getInstance();
-		includeManager.addBundleStyleSheet("com.idega.block.rss", "/style/rss.css");
 		//START THE RSS FEED POLLING/AGGREGATING
 		startPoller(starterBundle);
 	}
