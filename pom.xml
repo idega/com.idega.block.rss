@@ -65,13 +65,13 @@
     <dependency>
       <groupId>rome</groupId>
       <artifactId>rome</artifactId>
-      <version>0.9</version>
+      <version>1.0RC1</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
       <artifactId>rome-fetcher</artifactId>
-      <version>0.7</version>
+      <version>0.9</version>
       <type>jar</type>
     </dependency>
     <dependency>
