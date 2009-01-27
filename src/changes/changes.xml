@@ -1,0 +1,119 @@
+    <document>
+  <properties>
+    <title>RSS Block changes</title>
+    <author email='eiki@idega.com'>Eirikur S. Hrafnsson</author>
+  </properties>
+  <body>
+    <release date='2009-01-27' description='First 4.1.x Release' version='4.1.0'>
+          <action type='add' dev='tryggvil'>First 4.1.x Release</action>
+        </release>
+        <release date='2008-05-21' version='3.1.15'>
+      <action type='update' dev='palli'>
+		Updated rome-fetcher to 0.9 to fix strange problem with getting sudurland.info feed on hveragerdi.is
+      </action>
+    </release>
+
+    <release date='2008-01-31' version='3.1.14'>
+      <action type='update' dev='palli'>
+		Added properties to RSSViewer to hide/show the creation date and to toggle show oldest first.
+      </action>
+    </release>
+
+    <release date='2007-04-30' version='3.1.13'>
+      <action type='fix' dev='palli'>
+		Small change to classpath to make bundle non eclipse-dependant on platform bundles.
+      </action>
+    </release>
+  
+    <release date='2007-04-24' version='3.1.12'>
+      <action type='update' dev='eiki'>
+		Removing comments support stuff.
+      </action>
+    </release>
+    
+   <release date='2007-04-24' version='3.1.11'>
+      <action type='update' dev='eiki'>
+		Merging with updates from HEAD
+      </action>
+    </release>
+    
+    <release date='2007-03-28' version='3.1.10'>
+      <action type='update' dev='eiki'>
+		Updated slide to versions 3.1.3 and 2.2pre1.iwbuild5 and core and content
+      </action>
+    </release>
+    
+    <release date='2007-01-26' version='3.1.9'>
+      <action type='update' dev='eiki'>
+      	Updated to ROME 0.9 to fix many bugs.
+      </action>
+    </release>
+    
+    <release date='2007-01-11' version='3.1.8'>
+      <action type='fix' dev='eiki'>
+      	Fixed RSSTicker's javascript bugs for IE6,IE7 and Opera. Now works in all browsers.
+      </action>
+    </release>
+    
+    <release date='2006-10-19' version='3.1.7'>
+      <action type='fix' dev='eiki'>
+      	RSSItemDescription was added empty, fixed now.
+		Fixed missing bundle identifier in rss source editor window.
+      </action>
+    </release>
+	
+    <release date='2006-10-10' version='3.1.6'>
+      <action type='fix' dev='eiki'>
+      	Same as the last change, the jar making failed...
+      </action>
+    </release>
+	
+    <release date='2006-10-04' version='3.1.5'>
+      <action type='fix' dev='eiki'>
+      	Built a new rome-modules-0.2.jar because the old one was made with java 1.5. The new one was built with jdk 1.4
+      </action>
+    </release>
+	
+     <release date='2006-09-28' version='3.1.4'>
+      <action type='update' dev='eiki'>
+      	Added a new framework, RSSProducer for producing RSS feeds via plugable interface and a RSS servlet.
+		Read the wiki entry http://trac.idega.is/projects/idegaweb/wiki/RSSProducer for details.
+		updated to com.idega.slide v.3.1.2 
+      </action>
+    </release>
+	
+  <release date='2006-07-24' version='3.1.3'>
+      <action type='fix' dev='eiki'>
+      	RSSTicker and RSSViewer hidden layer bugfixes
+      </action>
+    </release>
+    
+  <release date='2006-07-17' version='3.1.2'>
+      <action type='update' dev='eiki'>
+      	Many RSSTicker improvements and bugfixes.
+		Now the date for each rss item is read from dc:date and the datestring can be formatted by a pattern.
+		Live interval updating the RSS via ajax is now implemented for the RSSTicker.
+      </action>
+    </release>
+    
+  	<release date='2006-07-13' version='3.1.1'>
+      <action type='fix' dev='eiki'>
+      Fixed URI bug in the RSSTicker
+      </action>
+    </release>
+    
+	<release date='2006-06-19' version='3.1.0'>
+      <action type='update' dev='eiki'>
+      	First release of module to be included in ePlatform 3.1 Release.
+      </action>
+	  <action type='update' dev='eiki'>
+	  	Built on the Rome API for supporting RSS 1.0,2.0 and Atom formats.
+      </action>
+	  <action type='update' dev='eiki'>
+	  	Fetches and aggregates feeds into the Local WebDav repository.
+      </action>
+    </release>
+  
+  </body>
+</document>
+
