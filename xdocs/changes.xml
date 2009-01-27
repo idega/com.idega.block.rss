@@ -1,4 +1,4 @@
-<document>
+<document xmlns="http://maven.apache.org/changes/1.0.0">
   <properties>
     <title>RSS Block changes</title>
     <author email="eiki@idega.com">Eirikur S. Hrafnsson</author>
