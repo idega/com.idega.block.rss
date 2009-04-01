@@ -7,8 +7,8 @@
 <web-app>
 
   <servlet>
-    <servlet-name>IWRSSProducerServlet</servlet-name>
     <display-name>IWRSSProducerServlet</display-name>
+    <servlet-name>IWRSSProducerServlet</servlet-name>
     <servlet-class>com.idega.block.rss.servlet.IWRSSProducerServlet</servlet-class>
   </servlet>
 
