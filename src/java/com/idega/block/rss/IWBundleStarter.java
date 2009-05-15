@@ -154,7 +154,7 @@ public class IWBundleStarter implements IWBundleStartable {
 	 */
 	protected RSSBusiness getRSSBusiness() throws IBOLookupException {
 		if (this._business == null) {
-			this._business = (RSSBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
+			this._business = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 					RSSBusiness.class);
 		}
 		return this._business;

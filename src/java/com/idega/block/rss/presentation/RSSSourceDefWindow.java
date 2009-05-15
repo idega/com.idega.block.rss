@@ -41,6 +41,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		super();
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		setTitle(iwrb.getLocalizedString("edit.rss.sources.title","Edit Source Definition"));
@@ -175,9 +176,10 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	 * @throws RemoteException
 	 */
 	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+		return IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
 	}
 	
+	@Override
 	public String getBundleIdentifier(){
 		return IW_BUNDLE_IDENTIFIER;
 	}

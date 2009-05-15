@@ -1,5 +1,5 @@
 /*
- * $Id: RSSAbstractProducer.java,v 1.5 2007/11/13 09:31:03 laddi Exp $
+ * $Id: RSSAbstractProducer.java,v 1.6 2009/05/15 07:23:44 valdas Exp $
  * Created on Sep 13, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.slide.business.IWSlideSession;
 /**
  * @see com.idega.block.rss.business.RSSProducer
  * 
- *  Last modified: $Date: 2007/11/13 09:31:03 $ by $Author: laddi $
+ *  Last modified: $Date: 2009/05/15 07:23:44 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public abstract class RSSAbstractProducer implements RSSProducer {
 
@@ -131,7 +131,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	 * @throws RemoteException
 	 */
 	public RSSBusiness getRSSBusiness() throws RemoteException {
-		return (RSSBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), RSSBusiness.class);
+		return IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), RSSBusiness.class);
 	}
 	
 	
@@ -142,7 +142,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	 * @throws RemoteException
 	 */
 	public IWSlideService getIWSlideService(RSSRequest rssRequest) throws RemoteException {
-		service = (IWSlideService) IBOLookup.getServiceInstance(IWMainApplication.getIWMainApplication(rssRequest.getRequest().getSession().getServletContext()).getIWApplicationContext(), IWSlideService.class);
+		service = IBOLookup.getServiceInstance(IWMainApplication.getIWMainApplication(rssRequest.getRequest().getSession().getServletContext()).getIWApplicationContext(), IWSlideService.class);
 		return service;
 	}
 	
@@ -153,7 +153,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	 * @throws RemoteException
 	 */
 	public IWSlideSession getIWSlideSession(RSSRequest rssRequest) throws RemoteException {
-		session = (IWSlideSession) IBOLookup.getSessionInstance(rssRequest.getRequest().getSession(), IWSlideSession.class);
+		session = IBOLookup.getSessionInstance(rssRequest.getRequest().getSession(), IWSlideSession.class);
 		return session;
 	}
 	

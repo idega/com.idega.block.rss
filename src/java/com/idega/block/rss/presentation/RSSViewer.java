@@ -335,7 +335,7 @@ public class RSSViewer extends Block {
 	 * @throws RemoteException
 	 */
 	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException {
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);
+		return IBOLookup.getServiceInstance(iwc, RSSBusiness.class);
 	}
 
 	public void setLayerID(String layerID) {

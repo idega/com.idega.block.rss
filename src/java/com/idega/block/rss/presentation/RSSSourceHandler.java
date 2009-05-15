@@ -90,6 +90,6 @@ public class RSSSourceHandler implements ICPropertyHandler {
 	 * @throws RemoteException
 	 */
 	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
-		return (RSSBusiness) IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+		return IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
 	}
 }
