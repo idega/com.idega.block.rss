@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -57,10 +58,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2008/10/15 14:53:54 $ by $Author: valdas $
+ * Last modified: $Date: 2009/05/25 13:37:09 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -569,7 +570,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			URL url = new URL(pathToFeed);
 			feed = getFeedFetcher().retrieveFeed(url);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(getClass().getName()).warning("Error getting Feed from: " + pathToFeed + ", by user: " + user);
 		}
 		
 		return feed;
