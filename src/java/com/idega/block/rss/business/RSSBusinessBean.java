@@ -31,6 +31,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.URIUtil;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCModuleImpl;
 import com.sun.syndication.feed.module.Module;
@@ -58,10 +59,10 @@ import com.sun.syndication.io.SyndFeedOutput;
 /**
  * This service bean does all the real rss handling work
  * 
- * Last modified: $Date: 2009/05/25 13:37:09 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/15 15:05:17 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
@@ -545,8 +546,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			return link;
 		}
 		
-		return new StringBuilder(link).append("?").append(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID).append("=").append(user.getUniqueId()).append("&")
-			.append(LoginBusinessBean.LoginStateParameter).append("=").append(LoginBusinessBean.LOGIN_EVENT_LOGIN).toString();
+		URIUtil uri = new URIUtil(link);
+		uri.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, user.getUniqueId());
+		uri.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
+		
+		return uri.getUri();
 	}
 	
 	/**
