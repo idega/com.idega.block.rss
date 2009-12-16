@@ -55,10 +55,10 @@ public class RSSTicker extends RSSViewer {
 		IWBundle iwb = this.getBundle(iwc);
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/rss.css"));
 		
-		if(getSourceId()>-1){
+		if (getSources() != null){
 			RSSBusiness business = getRSSBusiness(iwc);
 			
-			RSSSource rssSource = business.getRSSSourceBySourceId(getSourceId());
+			RSSSource rssSource = business.getRSSSourceBySourceId(getSources().iterator().next());
 			//ADD /content
 			String rssSourceURL = business.getRSSLocalURIWithContextAndSlideServletNoServerURL(rssSource);
 			String options = "title";
@@ -68,7 +68,6 @@ public class RSSTicker extends RSSViewer {
 			if(showDescription()){
 				options+="+description";
 			}
-			
 			
 			Layer layer = new Layer();
 			layer.setStyleClass("rssTicker");
@@ -99,16 +98,11 @@ public class RSSTicker extends RSSViewer {
 			script.addFunction("", scriptString);
 			
 			layer.add(script);
-	
 			
 	//		document.write("CNN News: (Fade Effect enabled. Title+date shown)")
 	//		document.write("<br />BBC News: (Title+date+description shown)")
 	//		new rssticker_ajax("BBC", 1200, "ddbox", "bbcclass", 3500, "date+description")
-	
-			
 		}
-		
-		
 	}
 	
 	/**
@@ -118,7 +112,6 @@ public class RSSTicker extends RSSViewer {
 		return this.tickerId;
 	}
 
-	
 	/**
 	 * @param tickerId The tickerId to set.
 	 */
@@ -126,7 +119,6 @@ public class RSSTicker extends RSSViewer {
 		this.tickerId = tickerId;
 	}
 
-	
 	/**
 	 * @return Returns the tickerIntervalInMS.
 	 */
@@ -134,7 +126,6 @@ public class RSSTicker extends RSSViewer {
 		return this.tickerIntervalInMS;
 	}
 
-	
 	/**
 	 * @param tickerIntervalInMS The tickerIntervalInMS to set.
 	 */
@@ -142,14 +133,12 @@ public class RSSTicker extends RSSViewer {
 		this.tickerIntervalInMS = tickerIntervalInMS;
 	}
 
-	
 	/**
 	 * @return Returns the tickerStyleClass.
 	 */
 	public String getTickerStyleClass() {
 		return this.tickerStyleClass;
 	}
-
 	
 	/**
 	 * @param tickerStyleClass The tickerStyleClass to set.
@@ -158,16 +147,12 @@ public class RSSTicker extends RSSViewer {
 		this.tickerStyleClass = tickerStyleClass;
 	}
 
-
-	
 	/**
 	 * @return Returns the tickerPollingIntervalInMinutes.
 	 */
 	public int getTickerPollingIntervalInMinutes() {
 		return this.tickerPollingIntervalInMinutes;
 	}
-
-
 	
 	/**
 	 * @param tickerPollingIntervalInMinutes The tickerPollingIntervalInMinutes to set.
@@ -190,5 +175,4 @@ public class RSSTicker extends RSSViewer {
 	public void setDateFormatPattern(String dateFormatPattern) {
 		this.dateFormatPattern = dateFormatPattern;
 	}
-		
 }

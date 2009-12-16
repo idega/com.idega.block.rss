@@ -6,23 +6,29 @@
  */
 package com.idega.block.rss.presentation;
 
+import java.io.FileInputStream;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.FileInput;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.slide.business.IWSlideService;
+import com.idega.util.FileUtil;
 
 /**
  * An editor for available rss feeds
@@ -51,9 +57,32 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		if (iwc.isParameterSet(PARAM_SOURCE)) {
 			String rssName = iwc.getParameter(PARAM_NAME);
 			String rssSourceURL = iwc.getParameter(PARAM_SOURCE);
+			String rssIconURI = null;
+
+			UploadFile uploadFile = iwc.getUploadedFile();
+			if (uploadFile != null && uploadFile.getName() != null && uploadFile.getName().length() > 0) {
+				try {
+					FileInputStream input = new FileInputStream(uploadFile.getRealPath());
+					IWSlideService slide = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
+					slide.uploadFile("/files/cms/rss/icons/", uploadFile.getName(), "text/xml", input);
+					rssIconURI = "/content/files/cms/rss/icons/" + uploadFile.getName();
+					
+					try {
+						FileUtil.delete(uploadFile);
+					}
+					catch (Exception ex) {
+						System.err.println("MediaBusiness: deleting the temporary file at " + uploadFile.getRealPath() + " failed.");
+					}
+				}
+				catch (RemoteException e) {
+					e.printStackTrace(System.err);
+					uploadFile.setId(-1);
+				}
+			}
+
 			boolean ok = false;
 			try {
-				ok = business.createNewRSSSource(rssName, rssSourceURL);
+				ok = business.createNewRSSSource(rssName, rssSourceURL, rssIconURI);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -99,7 +128,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		add(removeForm);
 		addBreak();
 		add(getSyndic8Link());
-		if(actionMsg!=null) {
+		if (actionMsg!=null) {
 			addBreak();
 			add(iwrb.getLocalizedString("result.from.action","Result from last action: "));
 			Text text = new Text(actionMsg);
@@ -118,6 +147,8 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 
 	private PresentationObject createAddForm() {
 		Form addForm = new Form();
+		addForm.setMultiPart();
+		
 		Text nameText = new Text("Name for RSS Source");
 		TextInput nameInput = new TextInput(PARAM_NAME);
 		nameInput.keepStatusOnAction();
@@ -135,13 +166,23 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		addForm.addBreak();
 		addForm.add(sourceInput);
 		addForm.addBreak();
+
+		Text iconText = new Text("Icon for RSS Source");
+		FileInput iconInput = new FileInput();
+		iconInput.keepStatusOnAction();
+		addForm.add(iconText);
+		addForm.addBreak();
+		addForm.add(iconInput);
+		addForm.addBreak();
+
+		
 		addForm.add(new SubmitButton("Add"));
 		return addForm;
 	}
 	
 	private PresentationObject createSourceMenu(String name, IWContext iwc) {
 		DropdownMenu menu = new DropdownMenu( name );
-		menu.addMenuElement( "", "Select source to remove:" );
+		menu.addMenuElement("", "Select source to remove:");
 		try {
 			RSSBusiness business = getRSSBusiness(iwc);
 			List sources = business.getAllRSSSources();

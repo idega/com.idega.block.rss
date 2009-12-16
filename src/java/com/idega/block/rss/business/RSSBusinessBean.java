@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -116,8 +117,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 *            The RSSSource
 	 * @return A Collection of RSSHeadlines for the given RSSSource
 	 */
-	public Collection getRSSHeadlinesByRSSSource(RSSSource rssSource) {
-		Collection headlines = Collections.EMPTY_LIST;
+	public Collection<RSSSyndEntry> getRSSHeadlinesByRSSSource(RSSSource rssSource) {
+		Collection<RSSSyndEntry> list = new ArrayList<RSSSyndEntry>();
+		
+		Collection<RSSSyndEntry> headlines = Collections.EMPTY_LIST;
 		if (rssSource != null) {
 			try {
 				headlines = getEntriesByRSSSource(rssSource);
@@ -131,7 +134,14 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 				headlines = ListUtil.getEmptyList();
 			}
 		}
-		return headlines;
+		
+		Iterator it = headlines.iterator();
+		while (it.hasNext()) {
+			SyndEntry entry = (SyndEntry) it.next();
+			list.add(new RSSSyndEntry(rssSource, entry));
+		}
+		
+		return list;
 	}
 
 	/**
@@ -161,7 +171,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return true if a new source was created, otherwise false (for example,
 	 *         if an equivalent source already existed)
 	 */
-	public boolean createNewRSSSource(String name, String url) {
+	public boolean createNewRSSSource(String name, String url, String iconURI) {
 		if (url != null && url.trim().length() != 0) {
 			url = url.trim();
 			if (name == null || name.trim().length() == 0) {
@@ -185,6 +195,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			}
 			source.setName(name);
 			source.setSourceURL(url);
+			source.setIconURI(iconURI);
 			source.store();
 			processFeed(getFeedFetcher().retrieveFeed(new URL(url)), url);
 		}
@@ -204,7 +215,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return A Collection of all SyndEntry for the given RSSSource
 	 * @throws RemoteException
 	 */
-	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
+	public Collection<RSSSyndEntry> getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			
 			String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
@@ -446,11 +457,12 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	/**
 	 * Returns the list of SyndEntry's or an empty list
 	 */
-	public List getSyndEntries(SyndFeed feed) {
+	public List<RSSSyndEntry> getSyndEntries(SyndFeed feed) {
 		List entries = feed.getEntries();
 		if (entries == null) {
 			entries = ListUtil.getEmptyList();
 		}
+		
 		return entries;
 	}
 

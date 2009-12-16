@@ -57,7 +57,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSHeadlinesByRSSSource
 	 */
-	public Collection getRSSHeadlinesByRSSSource(RSSSource rssSource) throws RemoteException;
+	public Collection<RSSSyndEntry> getRSSHeadlinesByRSSSource(RSSSource rssSource) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getAllRSSSources
@@ -67,7 +67,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewRSSSource
 	 */
-	public boolean createNewRSSSource(String name, String url) throws RemoteException;
+	public boolean createNewRSSSource(String name, String url, String iconURI) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getEntriesByRSSSource

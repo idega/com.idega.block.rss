@@ -26,6 +26,7 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 	public static final String COLUMN_TITLE = "TITLE";
 	public static final String COLUMN_LOCAL_SOURCE_URI = "LOCAL_SOURCE_URI";
 	public static final String COLUMN_SOURCE_URL = "SOURCE_URL";
+	public static final String COLUMN_ICON_URI = "ICON_URI";
 
 	/*
 	 * (non-Javadoc)
@@ -47,6 +48,7 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 		addAttribute(COLUMN_TITLE, "Title of RSS Source", String.class);
 		addAttribute(COLUMN_SOURCE_URL, "RSS Source URL", String.class);
 		addAttribute(COLUMN_LOCAL_SOURCE_URI, "RSS Local Source URI (no context) in Slide", String.class);
+		addAttribute(COLUMN_ICON_URI, "Icon URI (in Slide)", String.class);
 	}
 
 	public Collection ejbFindSources() throws FinderException {
@@ -129,6 +131,20 @@ public class RSSSourceBMPBean extends GenericEntity implements RSSSource {
 	 */
 	public String getLocalSourceURI() {
 		return getStringColumnValue(COLUMN_LOCAL_SOURCE_URI);
+	}
+
+	/**
+	 * @param The URI (without context) to the icon file in slide
+	 */
+	public void setIconURI(String uri) {
+		setColumn(COLUMN_ICON_URI, uri);
+	}
+	
+	/**
+	 * @return The URI (without context) to the icon file in slide
+	 */
+	public String getIconURI() {
+		return getStringColumnValue(COLUMN_ICON_URI);
 	}
 
 	/*

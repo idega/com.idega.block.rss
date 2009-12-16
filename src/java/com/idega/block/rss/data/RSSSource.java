@@ -62,6 +62,16 @@ public interface RSSSource extends IDOEntity {
 	public String getLocalSourceURI();
 
 	/**
+	 * @see com.idega.block.rss.data.RSSSourceBMPBean#setIconURI
+	 */
+	public void setIconURI(String uri);
+	
+	/**
+	 * @see com.idega.block.rss.data.RSSSourceBMPBean#getIconURI
+	 */
+	public String getIconURI();
+
+	/**
 	 * @see com.idega.block.rss.data.RSSSourceBMPBean#equals
 	 */
 	public boolean equals(Object obj);

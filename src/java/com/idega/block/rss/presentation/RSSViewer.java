@@ -4,18 +4,23 @@
 package com.idega.block.rss.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import com.idega.block.rss.business.RSSBusiness;
+import com.idega.block.rss.business.RSSSyndEntry;
+import com.idega.block.rss.business.RSSSyndEntryComparator;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
@@ -37,7 +42,7 @@ public class RSSViewer extends Block {
 
 	// Member variables
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-	private int sourceId = -1;
+	private Collection<Integer> sources = null;
 	private int maxLinks = 0;
 	private String description = null;
 	private String linkTargetType = Link.TARGET_NEW_WINDOW;
@@ -69,7 +74,7 @@ public class RSSViewer extends Block {
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/rss.css"));
 
 		// if no selected rss source display an error message
-		if (this.sourceId == -1) {
+		if (this.sources == null) {
 			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected",
 					"No RSS source selected, please select one in the property window."));
 			msg.setBold();
@@ -80,8 +85,17 @@ public class RSSViewer extends Block {
 			try {
 				// get the data with the business bean
 				RSSBusiness business = getRSSBusiness(iwc);
-				RSSSource rssSource = business.getRSSSourceBySourceId(this.sourceId);
-				Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
+				List<RSSSyndEntry> allEntries = new ArrayList<RSSSyndEntry>();
+				
+				Iterator it = sources.iterator();
+				while (it.hasNext()) {
+					Integer sourceID = (Integer) it.next();
+					RSSSource rssSource = business.getRSSSourceBySourceId(sourceID.intValue());
+					Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
+					allEntries.addAll(entries);
+				}
+				Collections.sort(allEntries, new RSSSyndEntryComparator());
+				
 				Layer layer = new Layer();
 				layer.setStyleClass("rss");
 				if(this.layerID!=null){
@@ -102,23 +116,25 @@ public class RSSViewer extends Block {
 					// if maxLinks is zero (or negative), no limit
 					maxLinksTmp = 10000;
 				}
-				for (Iterator loop = entries.iterator(); row <= maxLinksTmp && loop.hasNext();) {
-					SyndEntry rssEntry = (SyndEntry) loop.next();
+				for (Iterator loop = allEntries.iterator(); row <= maxLinksTmp && loop.hasNext();) {
+					RSSSyndEntry rssEntry = (RSSSyndEntry) loop.next();
+					SyndEntry entry = rssEntry.getEntry();
+					RSSSource source = rssEntry.getSource();
 					row++;
 			
-					String entryLink = rssEntry.getLink();
-					String entryTitle = rssEntry.getTitle();
+					String entryLink = entry.getLink();
+					String entryTitle = entry.getTitle();
 					// TODO USE ALL SYNDFEED ITEMS
 //					List entryAuthors = rssEntry.getAuthors();
 //					List entryContributors = rssEntry.getContributors();
-					List entryContents = rssEntry.getContents();
-					Date entryPublishedDate = rssEntry.getPublishedDate();
+					List entryContents = entry.getContents();
+					Date entryPublishedDate = entry.getPublishedDate();
 					if(entryPublishedDate==null){
-						entryPublishedDate = rssEntry.getUpdatedDate();
+						entryPublishedDate = entry.getUpdatedDate();
 					}
 					
 //					Date entryUpdatedDate = rssEntry.getUpdatedDate();
-					SyndContent entryDescription = rssEntry.getDescription();
+					SyndContent entryDescription = entry.getDescription();
 					String description = "";
 					if (entryDescription != null) {
 						//String descriptionType = entryDescription.getType();
@@ -144,6 +160,13 @@ public class RSSViewer extends Block {
 					
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
+					
+					if (source.getIconURI() != null) {
+						Image image = new Image(source.getIconURI());
+						image.setStyleClass("feedIcon");
+						item.add(image);
+					}
+					
 					String originalTitle = entryTitle;
 					if (entryTitle.length() > getMaximumNumberOfLettersInHeadline()
 							&& getMaximumNumberOfLettersInHeadline() != 0) {
@@ -259,12 +282,9 @@ public class RSSViewer extends Block {
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-
-	/**
-	 * @return
-	 */
-	public int getSourceId() {
-		return this.sourceId;
+	
+	public Collection<Integer> getSources() {
+		return this.sources;
 	}
 
 	/**
@@ -272,14 +292,18 @@ public class RSSViewer extends Block {
 	 */
 	public void setSourceId(String id) {
 		try {
-			this.sourceId = Integer.parseInt(id);
+			int sourceID = Integer.parseInt(id);
+			if (sources == null) {
+				sources = new ArrayList<Integer>();
+			}
+			sources.add(new Integer(sourceID));
 		}
 		catch (Exception e) {
 			System.err.println("Couldn't save new source id value");
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * @return
 	 */

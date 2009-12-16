@@ -195,7 +195,7 @@
                 <key>
                   <name>iw_method_option_multiv</name>
                   <type>java.lang.Boolean</type>
-                  <value>false</value>
+                  <value>true</value>
                 </key>
                 <key>
                   <name>iw_method_description</name>
