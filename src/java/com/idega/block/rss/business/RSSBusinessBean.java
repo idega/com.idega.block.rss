@@ -24,6 +24,7 @@ import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.idgenerator.business.UUIDBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.slide.business.IWSlideService;
@@ -581,6 +582,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		SyndFeed feed = null;
 		try {
 			if (user != null) {
+				if (user.getUniqueId() == null) {
+					UUIDBusiness uuidBusiness = getServiceInstance(UUIDBusiness.class);
+					uuidBusiness.addUniqueKeyIfNeeded(user, null);
+				}
+				
 				pathToFeed = getLinkToFeedWithUUIDParameters(pathToFeed, user);
 			}
 			URL url = new URL(pathToFeed);
