@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
@@ -25,8 +26,6 @@ import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.idgenerator.business.UUIDBusiness;
-import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.slide.business.IWSlideService;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -51,6 +50,7 @@ import com.sun.syndication.feed.synd.SyndPerson;
 import com.sun.syndication.feed.synd.SyndPersonImpl;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.FetcherEvent;
+import com.sun.syndication.fetcher.FetcherException;
 import com.sun.syndication.fetcher.FetcherListener;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
@@ -69,6 +69,8 @@ import com.sun.syndication.io.SyndFeedOutput;
 public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, FetcherListener {
 
 	private static final long serialVersionUID = -4108662712781008003L;
+
+	private static final Logger LOGGER = Logger.getLogger(RSSBusinessBean.class.getName());
 	
 	public static final String RSS_FOLDER_URI = "/files/cms/rss/";
 	private IWSlideService slideService;
@@ -222,7 +224,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
 			
 			URL theURL = new URL(localRSSFileURL);
-			log("Getting feed from local URL :" + theURL.toExternalForm());
+			LOGGER.info("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
 		catch (Exception e) {
@@ -279,7 +281,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			if (source != null) {
 				// remove source definition
 				source.remove();
-				System.out.println("Removed RSS source: ");
 			}
 		}
 		catch (Exception e) {
@@ -297,7 +298,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	protected IWSlideService getIWSlideService() {
 		if (this.slideService == null) {
 			try {
-				this.slideService = (IWSlideService) getServiceInstance(IWSlideService.class);
+				this.slideService = getServiceInstance(IWSlideService.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -319,16 +320,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			SyndFeed feed = event.getFeed();
 			// Only when we are not fetching it locally
 			processFeed(feed, event.getUrlString());
-			// try {
-			// SyndFeedInfo feedInfo = getFeedFetcherCache().getFeedInfo(new
-			// URL(event.getUrlString()));
-			// if(feedInfo!=null){
-			// log(feedInfo.toString());
-			// }
-			// }
-			// catch (MalformedURLException e) {
-			// e.printStackTrace();
-			// }
 		}
 		else if (FetcherEvent.EVENT_TYPE_FEED_UNCHANGED.equals(eventType)) {
 			logDebug("Rss feed Unchanged. URL = " + event.getUrlString());
@@ -474,14 +465,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return
 	 */
 	public String convertFeedToAtomXMLString(SyndFeed feed) {
-		// SyndFeedInput input = new SyndFeedInput();
 		feed.setFeedType("atom_1.0");
 		SyndFeedOutput output = new SyndFeedOutput();
 		String xmlFeed = null;
 		try {
 			xmlFeed = output.outputString(feed);
-			// System.out.println(xmlFeed);
-			// output.output(feed,new PrintWriter(System.out));
 		}
 		catch (FeedException e) {
 			e.printStackTrace();
@@ -496,16 +484,12 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return
 	 */
 	public String convertFeedToRSS2XMLString(SyndFeed feed) {
-		// SyndFeedInput input = new SyndFeedInput();
-	//	System.out.println("FEED TYPE: "+feed.getFeedType());
 		feed.setFeedType("rss_2.0");
 		SyndFeedOutput output = new SyndFeedOutput();
 		
 		String xmlFeed = null;
 		try {
 			xmlFeed = output.outputString(feed);
-			// System.out.println(xmlFeed);
-			// output.output(feed,new PrintWriter(System.out));
 		}
 		catch (FeedException e) {
 			e.printStackTrace();
@@ -589,23 +573,21 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 				
 				pathToFeed = getLinkToFeedWithUUIDParameters(pathToFeed, user);
 			}
+			
 			URL url = new URL(pathToFeed);
 			feed = getFeedFetcher().retrieveFeed(url);
+		} catch (FetcherException fe) {
+			LOGGER.warning("Error getting Feed from: " + pathToFeed + ", by user: " + user + ". Error: " + fe.getMessage());
 		} catch (Exception e) {
-			Logger.getLogger(getClass().getName()).warning("Error getting Feed from: " + pathToFeed + ", by user: " + user);
+			LOGGER.log(Level.WARNING, "Error getting Feed from: " + pathToFeed + ", by user: " + user, e);
 		}
 		
 		return feed;
 	}
 	
 	public SyndFeed getFeedAuthenticatedByAdmin(String pathToFeed) {
-		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
-		if (iwac == null) {
-			return null;
-		}
-		
 		try {
-			return getFeedAuthenticatedByUser(pathToFeed, iwac.getIWMainApplication().getAccessController().getAdministratorUser());
+			return getFeedAuthenticatedByUser(pathToFeed, getIWMainApplication().getAccessController().getAdministratorUser());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
