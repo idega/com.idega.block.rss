@@ -405,14 +405,23 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
 		if (feedURL.endsWith(".xml")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
+			if (source != null) {
+				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
+			}
 		}
 		else if (feedURL.endsWith(".atom")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
 			fileName = fileName.replaceAll(".atom", ".xml");
+			if (source != null) {
+				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
+			}
 		}
 		else if (feedURL.endsWith(".rss")) {
 			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
 			fileName = fileName.replaceAll(".rss", ".xml");
+			if (source != null) {
+				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
+			}
 		}
 		else if (source != null) {
 			String name = source.getName();

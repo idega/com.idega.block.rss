@@ -5,7 +5,6 @@ import java.util.Date;
 
 public class RSSSyndEntryComparator implements Comparator<RSSSyndEntry> {
 
-	@Override
 	public int compare(RSSSyndEntry o1, RSSSyndEntry o2) {
 		Date date1 = o1.getEntry().getPublishedDate();
 		if (date1 == null) {
