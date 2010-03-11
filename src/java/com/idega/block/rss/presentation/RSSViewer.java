@@ -54,6 +54,7 @@ public class RSSViewer extends Block {
 	private boolean showDescription = true;
 	private boolean stripHTMLFromContent = false;
 	private boolean stripHTMLFromDescription = false;
+	private int daysBack = -1;
 	
 	
 
@@ -116,11 +117,17 @@ public class RSSViewer extends Block {
 					// if maxLinks is zero (or negative), no limit
 					maxLinksTmp = 10000;
 				}
+				
+				IWTimestamp stamp = null;
+				if (daysBack > 0) {
+					stamp = new IWTimestamp();
+					stamp.addDays(-daysBack);
+				}
+				
 				for (Iterator loop = allEntries.iterator(); row <= maxLinksTmp && loop.hasNext();) {
 					RSSSyndEntry rssEntry = (RSSSyndEntry) loop.next();
 					SyndEntry entry = rssEntry.getEntry();
 					RSSSource source = rssEntry.getSource();
-					row++;
 			
 					String entryLink = entry.getLink();
 					String entryTitle = entry.getTitle();
@@ -131,6 +138,10 @@ public class RSSViewer extends Block {
 					Date entryPublishedDate = entry.getPublishedDate();
 					if(entryPublishedDate==null){
 						entryPublishedDate = entry.getUpdatedDate();
+					}
+					
+					if (stamp != null && stamp.isLaterThan(new IWTimestamp(entryPublishedDate))) {
+						continue;
 					}
 					
 //					Date entryUpdatedDate = rssEntry.getUpdatedDate();
@@ -463,4 +474,7 @@ public class RSSViewer extends Block {
 		this.stripHTMLFromDescription = stripHTMLFromDescription;
 	}
 
+	public void setDaysBack(int days) {
+		this.daysBack = days;
+	}	
 }
