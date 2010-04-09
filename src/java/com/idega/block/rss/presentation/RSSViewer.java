@@ -274,6 +274,7 @@ public class RSSViewer extends Block {
 					}
 					
 					layer.add(item);
+					row++;
 				}
 			}
 			catch (RemoteException e) {
