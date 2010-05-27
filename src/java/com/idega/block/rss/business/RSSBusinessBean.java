@@ -588,7 +588,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		} catch (FetcherException fe) {
 			LOGGER.warning("Error getting Feed from: " + pathToFeed + ", by user: " + user + ". Error: " + fe.getMessage());
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting Feed from: " + pathToFeed + ", by user: " + user, e);
+			LOGGER.log(Level.WARNING, "Error getting Feed from: " + pathToFeed + ", by user: " + user + ": Error: ", e.getMessage());
 		}
 		
 		return feed;
