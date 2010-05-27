@@ -598,7 +598,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		try {
 			return getFeedAuthenticatedByUser(pathToFeed, getIWMainApplication().getAccessController().getAdministratorUser());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
 		}
 		
 		return null;
