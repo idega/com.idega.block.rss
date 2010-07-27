@@ -88,16 +88,19 @@ public class IWBundleStarter implements IWBundleStartable {
 				try {
 					feedUrl = new URL(source.getSourceURL());
 				
-				// Feed Poll and then Retrieved event will happen (assuming the
-				// feed is valid)
-				// we do nothing here, all is handled in the event handling in
-				// RSSBusiness
-				SyndFeed feed = getRSSBusiness().getFeedFetcher().retrieveFeed(feedUrl);
-				System.out.println(feedUrl + " has a title: " + feed.getTitle() + " and contains "
+					// Feed Poll and then Retrieved event will happen (assuming the
+					// feed is valid)
+					// we do nothing here, all is handled in the event handling in
+					// RSSBusiness
+					SyndFeed feed = getRSSBusiness().getFeedFetcher().retrieveFeed(feedUrl);
+					System.out.println(feedUrl + " has a title: " + feed.getTitle() + " and contains "
 						+ feed.getEntries().size() + " entries.");
 				}
+				catch (IllegalArgumentException e) {
+					System.out.println("Source (" + source.getSourceURL() + ") has errors: " + e.getMessage());
+				}
 				catch (MalformedURLException e) {
-					//todo remove
+					System.out.println("Source (" + source.getSourceURL() + ") has errors: " + e.getMessage());
 				}
 			}
 		}
