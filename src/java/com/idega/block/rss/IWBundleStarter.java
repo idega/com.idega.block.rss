@@ -54,7 +54,7 @@ public class IWBundleStarter implements IWBundleStartable {
 	
 	public void start(IWBundle starterBundle) {
 		//START THE RSS FEED POLLING/AGGREGATING
-		startPoller(starterBundle);
+		//startPoller(starterBundle);
 	}
 	
 
