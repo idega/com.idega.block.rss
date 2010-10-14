@@ -56,12 +56,22 @@ public class RSSViewer extends Block {
 	private boolean stripHTMLFromDescription = false;
 	private int daysBack = -1;
 	
-	
-
-	// TODO implement caching and displaying of multiple sources
 	public RSSViewer() {
 		super();
-		// setCacheable...
+		setCacheable(getCacheKey(), (60 * 60 * 1000));
+	}
+
+	@Override
+	public String getCacheKey() {
+		return "rss_cache";
+	}
+	
+	@Override
+	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(cacheStatePrefix);
+		
+		return buffer.toString();
 	}
 
 	/**
