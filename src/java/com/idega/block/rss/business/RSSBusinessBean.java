@@ -197,9 +197,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			
-			String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
+/*			String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
 			
-			URL theURL = new URL(localRSSFileURL);
+			URL theURL = new URL(localRSSFileURL);*/
+			URL theURL = new URL(rssSource.getSourceURL());
 			log("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}

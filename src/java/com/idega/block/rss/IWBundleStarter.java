@@ -56,7 +56,7 @@ public class IWBundleStarter implements IWBundleStartable {
 		GlobalIncludeManager includeManager = GlobalIncludeManager.getInstance();
 		includeManager.addBundleStyleSheet("com.idega.block.rss", "/style/rss.css");
 		//START THE RSS FEED POLLING/AGGREGATING
-		startPoller(starterBundle);
+		//startPoller(starterBundle);
 	}
 	
 
