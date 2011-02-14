@@ -225,11 +225,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			
 			URL theURL = new URL(localRSSFileURL);*/
 			URL theURL = new URL(rssSource.getSourceURL());
-			LOGGER.info("Getting feed from local URL :" + theURL.toExternalForm());
+			//LOGGER.info("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//Something failed, don't really care...
 		}
 		return ListUtil.getEmptyList();
 	}
