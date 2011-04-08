@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.data.RSSSource;
 import com.idega.business.IBOLookup;
@@ -27,7 +29,6 @@ import com.idega.presentation.ui.FileInput;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.slide.business.IWSlideService;
 import com.idega.util.FileUtil;
 
 /**
@@ -35,18 +36,18 @@ import com.idega.util.FileUtil;
  * @author <a href="mailto:jonas@idega.is>Jonas K. Blandon</a>
  */
 public class RSSSourceDefWindow extends IWAdminWindow {
-	
+
 	private final static String PARAM_SOURCE = "rss_url";
 	private final static String PARAM_NAME = "rss_name";
 	private final static String PARAM_REMOVE = "rss_remove";
-	
+
 	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-	
+
 	//TODO localize all strings
 	public RSSSourceDefWindow() {
 		super();
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
@@ -63,10 +64,9 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 			if (uploadFile != null && uploadFile.getName() != null && uploadFile.getName().length() > 0) {
 				try {
 					FileInputStream input = new FileInputStream(uploadFile.getRealPath());
-					IWSlideService slide = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
-					slide.uploadFile("/files/cms/rss/icons/", uploadFile.getName(), "text/xml", input);
+					getRepositoryService().uploadFile("/files/cms/rss/icons/", uploadFile.getName(), "text/xml", input);
 					rssIconURI = "/content/files/cms/rss/icons/" + uploadFile.getName();
-					
+
 					try {
 						FileUtil.delete(uploadFile);
 					}
@@ -74,7 +74,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 						System.err.println("MediaBusiness: deleting the temporary file at " + uploadFile.getRealPath() + " failed.");
 					}
 				}
-				catch (RemoteException e) {
+				catch (RepositoryException e) {
 					e.printStackTrace(System.err);
 					uploadFile.setId(-1);
 				}
@@ -120,7 +120,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 				actionMsg = iwrb.getLocalizedString("success.removed","RSS Source has been removed");
 			}
 		}
-		
+
 		PresentationObject addForm = createAddForm();
 		PresentationObject removeForm = createRemoveForm(iwc);
 		add(addForm);
@@ -136,7 +136,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 			add(text);
 		}
 	}
-	
+
 	private PresentationObject createRemoveForm(IWContext iwc) {
 		PresentationObject sourceMenu = createSourceMenu(PARAM_REMOVE, iwc);
 		Form removeForm = new Form();
@@ -148,7 +148,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 	private PresentationObject createAddForm() {
 		Form addForm = new Form();
 		addForm.setMultiPart();
-		
+
 		Text nameText = new Text("Name for RSS Source");
 		TextInput nameInput = new TextInput(PARAM_NAME);
 		nameInput.keepStatusOnAction();
@@ -175,11 +175,11 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		addForm.add(iconInput);
 		addForm.addBreak();
 
-		
+
 		addForm.add(new SubmitButton("Add"));
 		return addForm;
 	}
-	
+
 	private PresentationObject createSourceMenu(String name, IWContext iwc) {
 		DropdownMenu menu = new DropdownMenu( name );
 		menu.addMenuElement("", "Select source to remove:");
@@ -197,7 +197,7 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		}
 		return menu;
 	}
-	
+
 	private PresentationObject getSyndic8Link() {
 		Link link = new Link(new Text("www.Syndic8.com"), "http://www.syndic8.com/");
 		link.setTarget(Link.TARGET_NEW_WINDOW);
@@ -209,17 +209,17 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 		container.add(text2);
 		return container;
 	}
-	
+
 	/**
 	 * Gets a RSSBusiness instance from a IWContext, used by the presentation classes
 	 * @param iwc The IWContext
 	 * @return A RSSBusiness instance
 	 * @throws RemoteException
 	 */
-	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{        
-		return IBOLookup.getServiceInstance(iwc, RSSBusiness.class);        
+	public RSSBusiness getRSSBusiness(IWContext iwc) throws RemoteException{
+		return IBOLookup.getServiceInstance(iwc, RSSBusiness.class);
 	}
-	
+
 	@Override
 	public String getBundleIdentifier(){
 		return IW_BUNDLE_IDENTIFIER;

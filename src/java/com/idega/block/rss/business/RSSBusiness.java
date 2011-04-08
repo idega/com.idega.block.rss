@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.ejb.FinderException;
+import javax.jcr.RepositoryException;
 
 import org.jdom.Document;
 
@@ -31,9 +32,9 @@ import com.sun.syndication.fetcher.FetcherListener;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2008/10/15 14:53:54 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.16 $
  */
@@ -92,6 +93,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#fetcherEvent
 	 */
+	@Override
 	public void fetcherEvent(FetcherEvent event);
 
 	/**
@@ -103,33 +105,34 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	 * @see com.idega.block.rss.business.RSSBusinessBean#convertFeedToAtomXMLString
 	 */
 	public String convertFeedToAtomXMLString(SyndFeed feed) throws RemoteException;
-	
+
 	/**
+	 * @throws RepositoryException
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createFileInSlide
 	 */
-	public String createFileInSlide(String feedXML, String fileName) throws java.rmi.RemoteException;
-	
+	public String createFileInSlide(String feedXML, String fileName) throws RepositoryException;
+
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getFeed
 	 */
 	public SyndFeed getFeed(String pathToFeed);
-	
+
 	public SyndFeed getFeedAuthenticatedByUser(String pathToFeed, User user);
-	
+
 	public SyndFeed getFeedAuthenticatedByAdmin(String pathToFeed);
-	
+
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewFeed
 	 */
 	public SyndFeed createNewFeed(String title, String serverName, String description, String type, String language, Timestamp date);
-	
+
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewEntry
 	 */
 	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
 			String description, String bodyType, String body, String author, String language, List<String> categories, String source,
 			String comment, String linkToComments, String creator);
-	
+
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#convertFeedToRSS2XMLString
 	 */

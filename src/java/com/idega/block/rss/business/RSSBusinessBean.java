@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
+import javax.jcr.RepositoryException;
 
 import org.jdom.Document;
 
@@ -25,7 +26,6 @@ import com.idega.block.rss.data.RSSSourceHome;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.idgenerator.business.UUIDBusiness;
-import com.idega.slide.business.IWSlideService;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
@@ -72,7 +72,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	private static final Logger LOGGER = Logger.getLogger(RSSBusinessBean.class.getName());
 
 	public static final String RSS_FOLDER_URI = "/files/cms/rss/";
-	private IWSlideService slideService;
 	private FeedFetcherCache feedInfoCache;
 	private FeedFetcher fetcher;
 
@@ -245,7 +244,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException {
 		String localRSSFileURL = rssSource.getLocalSourceURI();
 
-		String serverURLWithContent = getIWSlideService().getWebdavServerURL().toString();
+		String serverURLWithContent = getRepositoryService().getWebdavServerURL();
 		if(!serverURLWithContent.endsWith("/")){
 			serverURLWithContent+="/";
 		}
@@ -268,7 +267,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	@Override
 	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException {
 		String localRSSFileURL = rssSource.getLocalSourceURI();
-		String serverURLWithContent = getIWSlideService().getURI(localRSSFileURL);
+		String serverURLWithContent = getRepositoryService().getURI(localRSSFileURL);
 		return serverURLWithContent;
 	}
 
@@ -294,23 +293,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Gets an instance of IWSlideService
-	 *
-	 * @return An instance of IWSlideService
-	 */
-	protected IWSlideService getIWSlideService() {
-		if (this.slideService == null) {
-			try {
-				this.slideService = getServiceInstance(IWSlideService.class);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return this.slideService;
 	}
 
 	/**
@@ -346,11 +328,11 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			RSSSource source = getRSSSourceHome().findSourceByURL(feedURL);
 			String localSourceURI = createFileInSlide(feed, feedURL, source);
 			updateRSSSource(source, feed, feedURL, localSourceURI);
-		}
-		catch (RemoteException e) {
+		} catch (RepositoryException e) {
 			e.printStackTrace();
-		}
-		catch (FinderException ex) {
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException ex) {
 			// it is most likely a local fetch! no matter just skip the storing
 			// in slide part and the updating
 		}
@@ -391,7 +373,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param atomXML
 	 * @throws RemoteException
 	 */
-	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RemoteException {
+	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RepositoryException {
 		//String atomXML = convertFeedToAtomXMLString(feed);
 		String xml = null;
 		try{
@@ -448,7 +430,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	@Override
-	public String createFileInSlide(String feedXML, String fileName) throws RemoteException {
+	public String createFileInSlide(String feedXML, String fileName) throws RepositoryException {
 		if (feedXML == null || fileName == null) {
 			return null;
 		}
@@ -458,8 +440,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		char[] except = { '.' };
 		fileName = StringHandler.stripNonRomanCharacters(fileName, except);
 		// "true" : delete the previous version of the file  (do not create millions of versions)
-		IWSlideService ss = getIWSlideService();
-		ss.uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, feedXML, true);
+		getRepositoryService().uploadXMLFileAndCreateFoldersFromStringAsRoot(RSS_FOLDER_URI, fileName, feedXML);
 		return RSS_FOLDER_URI + fileName;
 	}
 

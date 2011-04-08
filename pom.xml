@@ -61,7 +61,7 @@
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.slide</artifactId>
+      <artifactId>com.idega.jackrabbit</artifactId>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
