@@ -129,9 +129,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#createNewEntry
 	 */
-	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
-			String description, String bodyType, String body, String author, String language, List<String> categories, String source,
-			String comment, String linkToComments, String creator);
+	public SyndEntry createNewEntry(EntryData data);
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#convertFeedToRSS2XMLString

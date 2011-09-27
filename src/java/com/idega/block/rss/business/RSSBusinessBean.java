@@ -35,6 +35,9 @@ import com.idega.util.URIUtil;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCModuleImpl;
 import com.sun.syndication.feed.module.Module;
+import com.sun.syndication.feed.module.mediarss.MediaModuleImpl;
+import com.sun.syndication.feed.module.mediarss.types.Metadata;
+import com.sun.syndication.feed.module.mediarss.types.Text;
 import com.sun.syndication.feed.module.wfw.CommentAPIModule;
 import com.sun.syndication.feed.module.wfw.CommentAPIModuleImpl;
 import com.sun.syndication.feed.synd.SyndCategory;
@@ -226,11 +229,10 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public Collection<SyndEntry> getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			URL theURL = new URL(rssSource.getSourceURL());
-			LOGGER.info("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//Something failed, don't really care...
 		}
 		return ListUtil.getEmptyList();
 	}
@@ -295,9 +297,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		return true;
 	}
 
-	/**
-	 * @see com.sun.syndication.fetcher.FetcherListener#fetcherEvent(com.sun.syndication.fetcher.FetcherEvent)
-	 */
 	@Override
 	public void fetcherEvent(FetcherEvent event) {
 		String eventType = event.getEventType();
@@ -627,38 +626,25 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	}
 
 	/**
-	 * @param title
-	 * @param link
-	 * @param published
-	 * @param descriptionType: for example "text/plain"
-	 * @param description
-	 * @param descriptionType
-	 * @param body
-	 * @param author
-	 * @param language
-	 * @param categories
-	 * @param bodyType
-	 * @param updated
-	 * @param source
-	 * @param comment
-	 * @param linkToComments
+	 * @param data the data that will be writen to entry
 	 * @return creates new instance of SyndEntry
 	 */
 	@Override
-	public SyndEntry createNewEntry(String title, String link, Timestamp updated, Timestamp published, String descriptionType,
-			String description, String bodyType, String body, String author, String language, List<String> categories, String source,
-			String comment, String linkToComments, String creator) {
+	public SyndEntry createNewEntry(EntryData data) {
 		SyndEntry entry = null;
 		SyndContent descr = null;
 		SyndContent content = null;
 
 		entry = new SyndEntryImpl();
-		entry.setTitle(title);
-		entry.setLink(link);
-		entry.setUri(link);
-		entry.setPublishedDate(published);
-		entry.setUpdatedDate(updated);
 
+		entry.setTitle(data.getTitle());
+		entry.setLink(data.getLink());
+		entry.setUri(data.getLink());
+		entry.setPublishedDate(data.getPublished());
+		entry.setUpdatedDate(data.getUpdated());
+
+
+		List<String> categories = data.getCategories();
 		if (categories != null) {
 			List<SyndCategory> categoriesList = new ArrayList<SyndCategory>();
 			SyndCategory category = null;
@@ -671,35 +657,56 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		}
 
 		descr = new SyndContentImpl();
-		descr.setType(descriptionType);
-		descr.setValue(description);
+		descr.setType(data.getDescriptionType());
+		descr.setValue(data.getDescription());
 		entry.setDescription(descr);
 
 		content = new SyndContentImpl();
-		content.setType(bodyType);
-		content.setValue(body);
+		content.setType(data.getBodyType());
+		content.setValue(data.getBody());
 		List<SyndContent> contents = new ArrayList<SyndContent>();
 		contents.add(content);
 		entry.setContents(contents);
 
 		List<Module> modules = new ArrayList<Module>();
 		DCModule dcModule = new DCModuleImpl();
-		dcModule.setSource(source);
-		dcModule.setCreator(creator);
-		dcModule.setDate(published);
+		dcModule.setSource(data.getSource());
+		dcModule.setCreator(data.getCreator());
+		dcModule.setDate(data.getPublished());
 		modules.add(dcModule);
 
+		String comment = data.getComment();
+		String linkToComments = data.getLinkToComments();
 		if (comment != null || linkToComments != null) {
 			CommentAPIModule commentModule = new CommentAPIModuleImpl();
 			commentModule.setComment(comment);
 			commentModule.setCommentRss(linkToComments);
 			modules.add(commentModule);
 		}
+
+		// Adding attachments as media metadata text
+		List <String> attachments = data.getAttachments();
+		if(!ListUtil.isEmpty(attachments)){
+			MediaModuleImpl media = new MediaModuleImpl();
+			Metadata meta = new Metadata();
+
+
+			Text [] attachmentArray = new Text[attachments.size()];
+			int i = 0;
+			for(String attachment : attachments){
+				attachmentArray[i++] = new Text(attachment);
+			}
+			meta.setText(attachmentArray);
+			media.setMetadata(meta);
+			modules.add(media);
+		}
+
+
 		entry.setModules(modules);
 
 		List<SyndPerson> authors = new ArrayList<SyndPerson>();
 		SyndPerson authorPerson = new SyndPersonImpl();
-		authorPerson.setName(author);
+		authorPerson.setName(data.getAuthor());
 		authors.add(authorPerson);
 		entry.setAuthors(authors);
 
