@@ -119,7 +119,7 @@ public class RSSViewer extends Block {
 					Paragraph paragraph = new Paragraph();
 					paragraph.setStyleClass("description");
 					paragraph.add(new Text(this.description));
-					add(paragraph);
+					layer.add(paragraph);
 				}
 				int row = 1;
 				int maxLinksTmp = this.maxLinks;
