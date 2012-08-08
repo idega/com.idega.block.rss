@@ -16,8 +16,6 @@ import javax.jcr.RepositoryException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.idega.block.rss.data.RSSRequest;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
@@ -37,9 +35,6 @@ import com.idega.util.expression.ELUtil;
 public abstract class RSSAbstractProducer implements RSSProducer {
 
 	public static final String RSS_CONTENT_TYPE = "application/rss+xml";
-
-	@Autowired
-	private RepositoryService repository;
 
 	public RSSAbstractProducer() {
 	}
@@ -153,9 +148,6 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	}
 
 	protected RepositoryService getRepository() {
-		if (repository == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-		return repository;
+		return ELUtil.getInstance().getBean(RepositoryService.class);
 	}
 }
