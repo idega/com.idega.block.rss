@@ -229,7 +229,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	public Collection<SyndEntry> getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			URL theURL = new URL(rssSource.getSourceURL());
-			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
 		catch (Exception e) {
 			//Something failed, don't really care...
@@ -247,18 +246,18 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		String localRSSFileURL = rssSource.getLocalSourceURI();
 
 		String serverURLWithContent = getRepositoryService().getWebdavServerURL();
-		if(!serverURLWithContent.endsWith("/")){
-			serverURLWithContent+="/";
+		if(!serverURLWithContent.endsWith(CoreConstants.SLASH)){
+			serverURLWithContent+=CoreConstants.SLASH;
 		}
 
-		if (localRSSFileURL.endsWith("/")) {
+		if (localRSSFileURL.endsWith(CoreConstants.SLASH)) {
 			localRSSFileURL = localRSSFileURL.substring(0, localRSSFileURL.length() - 1);
 		}
 
 		if(localRSSFileURL.startsWith(CoreConstants.WEBDAV_SERVLET_URI)){
 			localRSSFileURL = localRSSFileURL.substring(9);
 		}
-		else if(localRSSFileURL.startsWith("/")){
+		else if(localRSSFileURL.startsWith(CoreConstants.SLASH)){
 			localRSSFileURL = localRSSFileURL.substring(1);
 		}
 
@@ -297,6 +296,9 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		return true;
 	}
 
+	/**
+	 * @see com.sun.syndication.fetcher.FetcherListener#fetcherEvent(com.sun.syndication.fetcher.FetcherEvent)
+	 */
 	@Override
 	public void fetcherEvent(FetcherEvent event) {
 		String eventType = event.getEventType();
@@ -392,20 +394,20 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		String fileName = null;
 		feedURL = feedURL.substring(0, Math.max(feedURL.length(), feedURL.lastIndexOf("?") + 1));
 		if (feedURL.endsWith(".xml")) {
-			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
+			fileName = feedURL.substring(feedURL.lastIndexOf(CoreConstants.SLASH) + 1);
 			if (source != null) {
 				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
 			}
 		}
 		else if (feedURL.endsWith(".atom")) {
-			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
+			fileName = feedURL.substring(feedURL.lastIndexOf(CoreConstants.SLASH) + 1);
 			fileName = fileName.replaceAll(".atom", ".xml");
 			if (source != null) {
 				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
 			}
 		}
 		else if (feedURL.endsWith(".rss")) {
-			fileName = feedURL.substring(feedURL.lastIndexOf("/") + 1);
+			fileName = feedURL.substring(feedURL.lastIndexOf(CoreConstants.SLASH) + 1);
 			fileName = fileName.replaceAll(".rss", ".xml");
 			if (source != null) {
 				fileName = StringHandler.stripNonRomanCharacters(source.getName()) + "_" + fileName;
@@ -636,7 +638,6 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		SyndContent content = null;
 
 		entry = new SyndEntryImpl();
-
 		entry.setTitle(data.getTitle());
 		entry.setLink(data.getLink());
 		entry.setUri(data.getLink());

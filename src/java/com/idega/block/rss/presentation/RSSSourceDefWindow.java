@@ -62,8 +62,9 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 
 			UploadFile uploadFile = iwc.getUploadedFile();
 			if (uploadFile != null && uploadFile.getName() != null && uploadFile.getName().length() > 0) {
+				FileInputStream input = null;
 				try {
-					FileInputStream input = new FileInputStream(uploadFile.getRealPath());
+					input = new FileInputStream(uploadFile.getRealPath());
 					getRepositoryService().uploadFile("/files/cms/rss/icons/", uploadFile.getName(), "text/xml", input);
 					rssIconURI = "/content/files/cms/rss/icons/" + uploadFile.getName();
 
@@ -77,6 +78,9 @@ public class RSSSourceDefWindow extends IWAdminWindow {
 				catch (RepositoryException e) {
 					e.printStackTrace(System.err);
 					uploadFile.setId(-1);
+				}
+				finally {
+					input.close();
 				}
 			}
 
