@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import javax.ejb.FinderException;
 import javax.jcr.RepositoryException;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
@@ -32,6 +32,7 @@ import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.URIUtil;
+import com.idega.util.xml.XmlUtil;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCModuleImpl;
 import com.sun.syndication.feed.module.Module;
@@ -513,7 +514,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		}
 		SyndFeedOutput output = new SyndFeedOutput();
 		try {
-			return output.outputJDom(feed);
+			return XmlUtil.getJDOMXMLDocument(output.outputW3CDom(feed));
 		} catch (FeedException e) {
 			e.printStackTrace();
 		}

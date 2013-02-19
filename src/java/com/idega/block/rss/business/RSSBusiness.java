@@ -18,7 +18,7 @@ import java.util.List;
 import javax.ejb.FinderException;
 import javax.jcr.RepositoryException;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
