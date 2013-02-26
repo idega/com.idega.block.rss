@@ -77,7 +77,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	 * @param URI
 	 * @return true if the file exists, checks as root
 	 */
-	public boolean existsInSlide(String URI,RSSRequest rssRequest){
+	public boolean existsInRepository(String URI,RSSRequest rssRequest){
 		try {
 			return getRepository().getExistence(URI);
 		} catch (RepositoryException e) {
@@ -89,9 +89,9 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	/**
 	 *
 	 * @param URI
-	 * @return true if the uri points to a folder in slide or false if it does not or the user has no access priviledges to it
+	 * @return true if the uri points to a folder in repository or false if it does not or the user has no access priviledges to it
 	 */
-	public boolean isAFolderInSlide(String URI,RSSRequest rssRequest){
+	public boolean isAFolderInRepository(String URI,RSSRequest rssRequest){
 		try {
 			return getRepository().isFolder(URI);
 		} catch (RepositoryException e) {
