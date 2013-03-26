@@ -1,0 +1,12 @@
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd" 
+        version="2.1">
+
+	<tlib-version>2.1</tlib-version>
+    <short-name>RSS</short-name>
+    <uri>http://xmlns.idega.com/com.idega.block.rss</uri>
+    <display-name>IdegaWeb RSS Tag Library</display-name>
+    <description>JSF Idega RSS tag library</description>
+
+</taglib>

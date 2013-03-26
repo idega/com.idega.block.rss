@@ -127,6 +127,21 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	@Override
 	public Collection<RSSSyndEntry> getRSSHeadlinesByRSSSource(RSSSource rssSource) {
+		if (rssSource != null) {
+			return getRSSHeadlinesByURL(rssSource.getSourceURL(), rssSource);
+		}
+
+		return new ArrayList<RSSSyndEntry>();
+	}
+	/**
+	 * Gets all RSSHeadlines for a given URL
+	 *
+	 * @param rssSource
+	 *            The RSSSource
+	 * @return A Collection of RSSHeadlines for the given RSSSource
+	 */
+	@Override
+	public Collection<RSSSyndEntry> getRSSHeadlinesByURL(String url, RSSSource rssSource) {
 		Collection<RSSSyndEntry> list = new ArrayList<RSSSyndEntry>();
 
 		Collection<SyndEntry> headlines = ListUtil.getEmptyList();
@@ -226,12 +241,22 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @return A Collection of all SyndEntry for the given RSSSource
 	 * @throws RemoteException
 	 */
-	@Override
 	public Collection<SyndEntry> getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
 		try {
 			URL theURL = new URL(rssSource.getSourceURL());
+			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
+		} catch (Exception e) {
+			//Something failed, don't really care...
 		}
-		catch (Exception e) {
+		return ListUtil.getEmptyList();
+	}
+
+	@Override
+	public Collection<SyndEntry> getEntriesByRSSSource(String rssSourceUrl) throws RemoteException, FinderException {
+		try {
+			URL theURL = new URL(rssSourceUrl);
+			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
+		} catch (Exception e) {
 			//Something failed, don't really care...
 		}
 		return ListUtil.getEmptyList();

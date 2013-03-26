@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+	version="1.2">
+
+	<component>
+		<component-type>rssViewer</component-type>
+		<component-class>com.idega.block.rss.presentation.RSSViewer</component-class>
+		<property>
+			<display-name>Source URL</display-name>
+			<property-name>sourceURL</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>Description</display-name>
+			<property-name>description</property-name>
+			<property-class>java.lang.Integer</property-class>
+		</property>
+		<property>
+			<display-name>Max number of links</display-name>
+			<property-name>maxLinks</property-name>
+			<property-class>java.lang.Integer</property-class>
+		</property>
+		<property>
+			<display-name>Show date</display-name>
+			<property-name>showDate</property-name>
+			<property-class>boolean</property-class>
+		</property>
+		<property>
+			<display-name>Show description</display-name>
+			<property-name>showDescription</property-name>
+			<property-class>boolean</property-class>
+		</property>
+		<property>
+			<display-name>Open links in new window</display-name>
+			<property-name>newWindow</property-name>
+			<property-class>boolean</property-class>
+		</property>
+	</component>
+
+</faces-config>
