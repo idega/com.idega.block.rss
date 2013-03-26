@@ -60,6 +60,11 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	public Collection<RSSSyndEntry> getRSSHeadlinesByRSSSource(RSSSource rssSource) throws RemoteException;
 
 	/**
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSHeadlinesByRSSSource
+	 */
+	public Collection<RSSSyndEntry> getRSSHeadlinesByURL(String url, RSSSource rssSource) throws RemoteException;
+
+	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getAllRSSSources
 	 */
 	public List getAllRSSSources() throws RemoteException;
@@ -72,7 +77,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getEntriesByRSSSource
 	 */
-	public Collection getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException, RemoteException;
+	public Collection getEntriesByRSSSource(String rssSourceURL) throws RemoteException, FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndSlideServlet

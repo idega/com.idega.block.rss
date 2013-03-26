@@ -3,6 +3,7 @@
  */
 package com.idega.block.rss.presentation;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +11,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.el.ValueExpression;
+import javax.faces.context.FacesContext;
 
 import com.idega.block.rss.business.RSSBusiness;
 import com.idega.block.rss.business.RSSSyndEntry;
@@ -56,6 +60,15 @@ public class RSSViewer extends Block {
 	private boolean stripHTMLFromDescription = false;
 	private int daysBack = -1;
 	
+	private String sourceURL;
+	
+	private static final String SOURCE_URL_PROPERTY = "sourceURL";
+	private static final String DESCRIPTION_PROPERTY = "description";
+	private static final String MAX_LINKS_PROPERTY = "maxLinks";
+	private static final String SHOW_DATE_PROPERTY = "showDate";
+	private static final String SHOW_DESCRIPTION_PROPERTY = "showDescription";
+	private static final String NEW_WINDOW_PROPERTY = "newWindow";
+
 	public RSSViewer() {
 		super();
 		setCacheable(getCacheKey(), (60 * 60 * 1000));
@@ -69,11 +82,77 @@ public class RSSViewer extends Block {
 	@Override
 	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(cacheStatePrefix);
+		buffer.append(cacheStatePrefix + (sourceURL != null ? "_" + sourceURL : ""));
 		
 		return buffer.toString();
 	}
 
+	@Override
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[7];
+		values[0] = super.saveState(ctx);
+		values[1] = this.sourceURL;
+		values[2] = this.description;
+		values[3] = new Integer(this.maxLinks);
+		values[4] = new Boolean(this.showDate);
+		values[5] = new Boolean(this.showDescription);
+		values[6] = this.linkTargetType;
+		return values;
+	}
+
+	@Override
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		this.sourceURL = (String) values[1];
+		this.description = (String) values[2];
+		this.maxLinks = ((Integer) values[3]).intValue();
+		this.showDate = ((Boolean) values[4]).booleanValue();
+		this.showDescription = ((Boolean) values[5]).booleanValue();
+		this.linkTargetType = (String) values[6];
+	}
+    
+	@Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+		ValueExpression ve = getValueExpression(SOURCE_URL_PROPERTY);
+    	if (ve != null) {
+	    	String url = (String) ve.getValue(context.getELContext());
+	    	setSourceURL(url);
+    	}    
+    	
+		ve = getValueExpression(DESCRIPTION_PROPERTY);
+    	if (ve != null) {
+	    	String description = (String) ve.getValue(context.getELContext());
+    		setDescription(description);
+    	}
+
+		ve = getValueExpression(MAX_LINKS_PROPERTY);
+    	if (ve != null) {
+	    	int maxLinks = Integer.parseInt(ve.getValue(context.getELContext()).toString());
+    		setMaxLinks(maxLinks);
+    	}    
+    	
+		ve = getValueExpression(SHOW_DATE_PROPERTY);
+    	if (ve != null) {
+	    	boolean showDate = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setShowDate(showDate);
+    	}
+
+		ve = getValueExpression(SHOW_DESCRIPTION_PROPERTY);
+    	if (ve != null) {
+	    	boolean showDescription = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setShowDescription(showDescription);
+    	}
+
+		ve = getValueExpression(NEW_WINDOW_PROPERTY);
+    	if (ve != null) {
+	    	boolean newWindow = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setOpenInNewWindow(newWindow);
+    	}
+    	
+    	super.encodeBegin(context);
+	}
+    
 	/**
 	 * This is where everything happens.
 	 */
@@ -85,7 +164,7 @@ public class RSSViewer extends Block {
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/rss.css"));
 
 		// if no selected rss source display an error message
-		if (this.sources == null) {
+		if (this.sources == null && this.sourceURL == null) {
 			Text msg = new Text(iwrb.getLocalizedString("no.rss.source.selected",
 					"No RSS source selected, please select one in the property window."));
 			msg.setBold();
@@ -98,12 +177,17 @@ public class RSSViewer extends Block {
 				RSSBusiness business = getRSSBusiness(iwc);
 				List<RSSSyndEntry> allEntries = new ArrayList<RSSSyndEntry>();
 				
-				Iterator it = sources.iterator();
-				while (it.hasNext()) {
-					Integer sourceID = (Integer) it.next();
-					RSSSource rssSource = business.getRSSSourceBySourceId(sourceID.intValue());
-					Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
-					allEntries.addAll(entries);
+				if (this.sources != null) {
+					Iterator it = sources.iterator();
+					while (it.hasNext()) {
+						Integer sourceID = (Integer) it.next();
+						RSSSource rssSource = business.getRSSSourceBySourceId(sourceID.intValue());
+						Collection entries = business.getRSSHeadlinesByRSSSource(rssSource);
+						allEntries.addAll(entries);
+					}
+				}
+				else if (this.sourceURL != null) {
+					allEntries.addAll(business.getRSSHeadlinesByURL(this.sourceURL, null));
 				}
 				Collections.sort(allEntries, new RSSSyndEntryComparator());
 				
@@ -182,7 +266,7 @@ public class RSSViewer extends Block {
 					Layer item = new Layer();
 					item.setStyleClass("rssItem");
 					
-					if (source.getIconURI() != null) {
+					if (source != null && source.getIconURI() != null) {
 						Image image = new Image(source.getIconURI());
 						image.setStyleClass("feedIcon");
 						item.add(image);
@@ -487,5 +571,13 @@ public class RSSViewer extends Block {
 
 	public void setDaysBack(int days) {
 		this.daysBack = days;
+	}
+
+	public String getSourceURL() {
+		return sourceURL;
+	}
+
+	public void setSourceURL(String sourceURL) {
+		this.sourceURL = sourceURL;
 	}	
 }

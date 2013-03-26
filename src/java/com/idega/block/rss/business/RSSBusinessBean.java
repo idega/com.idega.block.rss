@@ -128,21 +128,34 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 */
 	@Override
 	public Collection<RSSSyndEntry> getRSSHeadlinesByRSSSource(RSSSource rssSource) {
+		if (rssSource != null) {
+			return getRSSHeadlinesByURL(rssSource.getSourceURL(), rssSource);
+		}
+		
+		return new ArrayList<RSSSyndEntry>();
+	}
+	/**
+	 * Gets all RSSHeadlines for a given URL
+	 *
+	 * @param rssSource
+	 *            The RSSSource
+	 * @return A Collection of RSSHeadlines for the given RSSSource
+	 */
+	@Override
+	public Collection<RSSSyndEntry> getRSSHeadlinesByURL(String url, RSSSource rssSource) {
 		Collection<RSSSyndEntry> list = new ArrayList<RSSSyndEntry>();
 
 		Collection<RSSSyndEntry> headlines = Collections.EMPTY_LIST;
-		if (rssSource != null) {
-			try {
-				headlines = getEntriesByRSSSource(rssSource);
-			}
-			catch (RemoteException re) {
-				re.printStackTrace();
-				headlines = ListUtil.getEmptyList();
-			}
-			catch (FinderException fe) {
-				fe.printStackTrace();
-				headlines = ListUtil.getEmptyList();
-			}
+		try {
+			headlines = getEntriesByRSSSource(url);
+		}
+		catch (RemoteException re) {
+			re.printStackTrace();
+			headlines = ListUtil.getEmptyList();
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+			headlines = ListUtil.getEmptyList();
 		}
 
 		Iterator it = headlines.iterator();
@@ -228,13 +241,13 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	@Override
-	public Collection<RSSSyndEntry> getEntriesByRSSSource(RSSSource rssSource) throws RemoteException, FinderException {
+	public Collection<RSSSyndEntry> getEntriesByRSSSource(String rssSourceUrl) throws RemoteException, FinderException {
 		try {
 
 			/*String localRSSFileURL = getRSSLocalURIWithContextAndSlideServlet(rssSource);
 
 			URL theURL = new URL(localRSSFileURL);*/
-			URL theURL = new URL(rssSource.getSourceURL());
+			URL theURL = new URL(rssSourceUrl);
 			//LOGGER.info("Getting feed from local URL :" + theURL.toExternalForm());
 			return getSyndEntries(getFeedFetcher().retrieveFeed(theURL));
 		}
