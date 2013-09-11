@@ -31,12 +31,12 @@ RssProducer interface contains only one method<br>
 RSSRequest <br>
 Is a wrapper object for the HttpRequest and HttpResponse objects along with the URL from the request, the identifier and the extrauri.<br>
 
-A typical RssProducer would first check the extrauri to see what is supposed to be returned. Then it would check if the result already exists e.g. in Slide as an xml file. If so it would dispatch the request to the existing file. If not it would create the file first and then dispatch the request to it.
+A typical RssProducer would first check the extrauri to see what is supposed to be returned. Then it would check if the result already exists e.g. in repository as an xml file. If so it would dispatch the request to the existing file. If not it would create the file first and then dispatch the request to it.
 <br>
 To avoid writing the same code over and over again for dispatching and setting the correct content type etc. there is a default abstract RSSProducer implementation available to subclass called RSSAbstractProducer.
 <br>
 RSSAbstractProducer<br>
-This class has methods to; dispatch, check existance of a file in slide or the file system, set the standard xml + rss content type to the response and a method to write a string to the response, save a ROME rss object to a file in Slide.
+This class has methods to; dispatch, check existance of a file in repository or the file system, set the standard xml + rss content type to the response and a method to write a string to the response, save a ROME rss object to a file in repository.
 <br>
 
 Example RSS feeds produced could be (not necessarily implemented at this time)<br><br>
@@ -44,13 +44,13 @@ Example RSS feeds produced could be (not necessarily implemented at this time)<b
 Articles rss feed for a certain category (or just /articles/ for all articles)<br>
 
 /rss/category/mycategory<br>
-All files in a category in Slide<br>
+All files in a category in repository<br>
 
 /rss/folder/files/public<br>
 All files from the folder /files/public<br>
 
 /rss/meta/tagname/tagvalue<br>
-All files with the tagname and/or tagvalue as metadata from Slide<br>
+All files with the tagname and/or tagvalue as metadata from repository<br>
 
 /rss/calendar/categoryname or id<br>
 Rss view of the calendar block<br>
@@ -59,17 +59,17 @@ Rss view of the calendar block<br>
 RSS view of a datatable<br>
 
 /rss/podcast/files/public/podcasts/<br>
-Rss podcast from that folder in Slide<br>
+Rss podcast from that folder in repository<br>
 
 etc...<br>
- * 
+ *
  *  Last modified: $Date: 2007/04/27 12:52:13 $ by $Author: justinas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.4 $
  */
 public interface RSSProducer {
-	
+
 	public void handleRSSRequest(RSSRequest rssRequest) throws IOException;
 
 }

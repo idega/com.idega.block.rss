@@ -73,7 +73,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	}
 
 	/**
-	 * Checks if the file or folder in slide the uri points to exists or not
+	 * Checks if the file or folder in repository the uri points to exists or not
 	 * @param URI
 	 * @return true if the file exists, checks as root
 	 */

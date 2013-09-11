@@ -36,33 +36,35 @@ import com.sun.syndication.fetcher.FeedFetcher;
  * rss feed files for them that are store in the webdav repository under /files/cms/rss/.
  * It is of course started when the server starts and
  * runs at specific intervals.
- * 
+ *
  *  Last modified: $Date$ by $Author$
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
  * @version $Revision$
  */
 public class IWBundleStarter implements IWBundleStartable {
 
 //	private static String IW_BUNDLE_IDENTIFIER = "com.idega.block.rss";
-//	private boolean started = false;	
+//	private boolean started = false;
 	private RSSBusiness _business = null;
 	private static int pollInterval = 20; // polling interval in minutes
 	private static TimerManager tManager = null;
 	private static TimerEntry pollTimerEntry = null;
 	private static final String BUNDLE_PROPERTY_NAME_POLL_INTERVAL = "iw_bundle_rss_poll_interval";
-	
+
+	@Override
 	public void start(IWBundle starterBundle) {
 		//START THE RSS FEED POLLING/AGGREGATING
 		//startPoller(starterBundle);
 	}
-	
+
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.idegaweb.IWBundleStartable#stop(com.idega.idegaweb.IWBundle)
 	 */
+	@Override
 	public void stop(IWBundle starterBundle) {
 		if (tManager != null) {
 			if (pollTimerEntry != null) {
@@ -74,7 +76,7 @@ public class IWBundleStarter implements IWBundleStartable {
 
 
 	/**
-	 * Goes through all defined RSSSources and updates the stored (in slide)
+	 * Goes through all defined RSSSources and updates the stored (in repository)
 	 * feeds on this server if needed
 	 */
 	protected void pollAllRSSFeeds() {
@@ -87,7 +89,7 @@ public class IWBundleStarter implements IWBundleStartable {
 				URL feedUrl;
 				try {
 					feedUrl = new URL(source.getSourceURL());
-				
+
 					// Feed Poll and then Retrieved event will happen (assuming the
 					// feed is valid)
 					// we do nothing here, all is handled in the event handling in
@@ -136,6 +138,7 @@ public class IWBundleStarter implements IWBundleStartable {
 				try {
 					pollTimerEntry = tManager.addTimer(pollInterval, true, new TimerListener() {
 
+						@Override
 						public void handleTimer(TimerEntry entry) {
 							pollAllRSSFeeds();
 						}
@@ -151,7 +154,7 @@ public class IWBundleStarter implements IWBundleStartable {
 
 	/**
 	 * Gets an instance of RSSBusiness
-	 * 
+	 *
 	 * @return An instance of RSSBusiness
 	 * @throws IBOLookupException
 	 */

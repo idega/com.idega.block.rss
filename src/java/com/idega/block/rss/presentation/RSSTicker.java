@@ -60,7 +60,7 @@ public class RSSTicker extends RSSViewer {
 			
 			RSSSource rssSource = business.getRSSSourceBySourceId(getSources().iterator().next());
 			//ADD /content
-			String rssSourceURL = business.getRSSLocalURIWithContextAndSlideServletNoServerURL(rssSource);
+			String rssSourceURL = business.getRSSLocalURIWithContextAndRepositoryServletNoServerURL(rssSource);
 			String options = "title";
 			if(showDate()){
 				options+="+date";

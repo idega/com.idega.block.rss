@@ -268,7 +268,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	@Override
-	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException {
+	public String getRSSLocalURIWithContextAndRepositoryServlet(RSSSource rssSource) throws RemoteException {
 		String localRSSFileURL = rssSource.getLocalSourceURI();
 
 		String serverURLWithContent = getRepositoryService().getWebdavServerURL();
@@ -292,7 +292,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	}
 
 	@Override
-	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException {
+	public String getRSSLocalURIWithContextAndRepositoryServletNoServerURL(RSSSource rssSource) throws RemoteException {
 		String localRSSFileURL = rssSource.getLocalSourceURI();
 		String serverURLWithContent = getRepositoryService().getURI(localRSSFileURL);
 		return serverURLWithContent;
@@ -344,7 +344,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 
 	/**
 	 * If needed this method creates an Atom 1.0 formatted xml feed from the rss
-	 * response and stores in Slide and then update RSSSource
+	 * response and stores in repository and then update RSSSource
 	 *
 	 * @param feed
 	 * @param feedURL
@@ -353,7 +353,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 		try {
 			// upload the xml as a file
 			RSSSource source = getRSSSourceHome().findSourceByURL(feedURL);
-			String localSourceURI = createFileInSlide(feed, feedURL, source);
+			String localSourceURI = createFileInRepository(feed, feedURL, source);
 			updateRSSSource(source, feed, feedURL, localSourceURI);
 		} catch (RepositoryException e) {
 			e.printStackTrace();
@@ -361,7 +361,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			e.printStackTrace();
 		} catch (FinderException ex) {
 			// it is most likely a local fetch! no matter just skip the storing
-			// in slide part and the updating
+			// in repository part and the updating
 		}
 	}
 
@@ -400,7 +400,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @param atomXML
 	 * @throws RemoteException
 	 */
-	protected String createFileInSlide(SyndFeed feed, String feedURL, RSSSource source) throws RepositoryException {
+	protected String createFileInRepository(SyndFeed feed, String feedURL, RSSSource source) throws RepositoryException {
 		//String atomXML = convertFeedToAtomXMLString(feed);
 		String xml = null;
 		try{
@@ -447,7 +447,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 			String title = feed.getTitle();
 			fileName = title + ".xml";
 		}
-		return createFileInSlide(xml, fileName);
+		return createFileInRepository(xml, fileName);
 	}
 
 	/**
@@ -457,7 +457,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	 * @throws RemoteException
 	 */
 	@Override
-	public String createFileInSlide(String feedXML, String fileName) throws RepositoryException {
+	public String createFileInRepository(String feedXML, String fileName) throws RepositoryException {
 		if (feedXML == null || fileName == null) {
 			return null;
 		}

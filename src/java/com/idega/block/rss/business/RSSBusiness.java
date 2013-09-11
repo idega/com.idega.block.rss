@@ -81,14 +81,14 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	public Collection getEntriesByRSSSource(String rssSourceURL) throws RemoteException, FinderException, RemoteException;
 
 	/**
-	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndSlideServlet
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndRepositoryServlet
 	 */
-	public String getRSSLocalURIWithContextAndSlideServlet(RSSSource rssSource) throws RemoteException, RemoteException;
+	public String getRSSLocalURIWithContextAndRepositoryServlet(RSSSource rssSource) throws RemoteException, RemoteException;
 
 	/**
-	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndSlideServletNoServerURL
+	 * @see com.idega.block.rss.business.RSSBusinessBean#getRSSLocalURIWithContextAndRepositoryServletNoServerURL
 	 */
-	public String getRSSLocalURIWithContextAndSlideServletNoServerURL(RSSSource rssSource) throws RemoteException, RemoteException;
+	public String getRSSLocalURIWithContextAndRepositoryServletNoServerURL(RSSSource rssSource) throws RemoteException, RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#removeSourceById
@@ -113,9 +113,9 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 
 	/**
 	 * @throws RepositoryException
-	 * @see com.idega.block.rss.business.RSSBusinessBean#createFileInSlide
+	 * @see com.idega.block.rss.business.RSSBusinessBean#createFileInRepository
 	 */
-	public String createFileInSlide(String feedXML, String fileName) throws RepositoryException;
+	public String createFileInRepository(String feedXML, String fileName) throws RepositoryException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getFeed
