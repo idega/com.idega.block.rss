@@ -23,6 +23,7 @@ import org.jdom2.Document;
 
 import com.idega.block.rss.data.RSSSource;
 import com.idega.block.rss.data.RSSSourceHome;
+import com.idega.block.rss.fetcher.IWHttpURLFeedFetcher;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.idgenerator.business.UUIDBusiness;
@@ -57,7 +58,6 @@ import com.sun.syndication.fetcher.FetcherException;
 import com.sun.syndication.fetcher.FetcherListener;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 
@@ -552,7 +552,7 @@ public class RSSBusinessBean extends IBOServiceBean implements RSSBusiness, Fetc
 	@Override
 	public FeedFetcher getFeedFetcher() {
 		if (this.fetcher == null) {
-			this.fetcher = new HttpURLFeedFetcher(getFeedFetcherCache());
+			this.fetcher = new IWHttpURLFeedFetcher(getFeedFetcherCache());
 		}
 		return this.fetcher;
 	}
