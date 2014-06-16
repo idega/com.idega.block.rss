@@ -18,35 +18,35 @@ import com.idega.repository.data.Singleton;
 
 /**
  * @see com.idega.block.rss.business.RSSProducer
- * 
+ *
  *  Last modified: $Date: 2007/02/04 20:42:26 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.2 $
  */
 public class RSSProducerRegistry implements Singleton {
-	
-	
+
+
 	protected Map rssProducersMap;
 	public static String RSS_PRODUCER_FACTORY_APPLICATION_STORAGE_PARAM = "RSSProducerRegistry";
-	
-	
+
+
 	private RSSProducerRegistry(){}
-	
+
 	public static RSSProducerRegistry getInstance(){
 		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
-		
+
 		RSSProducerRegistry factory = (RSSProducerRegistry)iwac.getApplicationAttribute(RSS_PRODUCER_FACTORY_APPLICATION_STORAGE_PARAM);
 		if(factory==null){
 			factory =new RSSProducerRegistry();
 			iwac.setApplicationAttribute(RSS_PRODUCER_FACTORY_APPLICATION_STORAGE_PARAM,factory);
 		}
 		return factory;
-	} 
-	
-	
+	}
+
+
 	/**
-	 * 
+	 *
 	 * @return the map of RSSProducers keyed by their identifiers
 	 */
 	public Map getRSSProducers() {
@@ -55,26 +55,26 @@ public class RSSProducerRegistry implements Singleton {
 		}
 		return this.rssProducersMap;
 	}
-	
+
 	/**
 	 * Replaces the current RSSProducers Map
 	 * @param rssProducersMap
 	 */
-	public synchronized void setRSSProducers(Map rssProducersMap) {
+	public void setRSSProducers(Map rssProducersMap) {
 		this.rssProducersMap = rssProducersMap;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param identifier the identifier part of an RSSProducer URI e.g. "/rss/identifier/extrauri"
 	 * @param rssProducer An instance of a RSSProducer
 	 */
-	public synchronized void addRSSProducer(String identifier, RSSProducer rssProducer){
+	public void addRSSProducer(String identifier, RSSProducer rssProducer){
 		getRSSProducers().put(identifier,rssProducer);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param identifer
 	 * @return Looks up and return the RSSProducer instance registered to the identifier
 	 * @throws NoSuchRSSProducerException if the RSSProducer is not found for the identifier
@@ -88,4 +88,3 @@ public class RSSProducerRegistry implements Singleton {
 	}
 
 }
-
