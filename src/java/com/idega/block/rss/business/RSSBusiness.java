@@ -104,7 +104,7 @@ public interface RSSBusiness extends IBOService, FetcherListener {
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#getSyndEntries
 	 */
-	public List getSyndEntries(SyndFeed feed) throws RemoteException;
+	public List<SyndEntry> getSyndEntries(SyndFeed feed) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.rss.business.RSSBusinessBean#convertFeedToAtomXMLString
