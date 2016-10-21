@@ -22,6 +22,8 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -107,10 +109,17 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 	 * @param rssRequest
 	 * @return the full URL with the http protocol, servername and port with the URI suffixed
 	 */
-	public String getServerURLWithURI(String URI, RSSRequest rssRequest){
+	public String getServerURLWithURI(String uri, RSSRequest rssRequest){
 		HttpServletRequestWrapper wrapped = rssRequest.getRequestWrapped();
 
-		return "http://"+wrapped.getServerName()+":"+wrapped.getServerPort()+URI;
+		IWContext iwc = CoreUtil.getIWContext();
+		String serverURL = iwc == null ? null : iwc.getServerURL();
+		serverURL = serverURL == null ? "http://"+wrapped.getServerName() + CoreConstants.COLON + wrapped.getServerPort() + CoreConstants.SLASH : serverURL;
+
+		if (uri.startsWith(CoreConstants.SLASH)) {
+			uri = uri.substring(1);
+		}
+		return serverURL + uri;
 	}
 
 
