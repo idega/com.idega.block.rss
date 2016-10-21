@@ -113,7 +113,7 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 		HttpServletRequestWrapper wrapped = rssRequest.getRequestWrapped();
 
 		IWContext iwc = CoreUtil.getIWContext();
-		String serverURL = iwc == null ? null : iwc.getServerURL();
+		String serverURL = iwc == null ? null : CoreUtil.getServerURL(iwc.getRequest());
 		serverURL = serverURL == null ? "http://"+wrapped.getServerName() + CoreConstants.COLON + wrapped.getServerPort() + CoreConstants.SLASH : serverURL;
 
 		if (uri.startsWith(CoreConstants.SLASH)) {
