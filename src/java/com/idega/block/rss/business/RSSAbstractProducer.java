@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.idega.block.rss.data.RSSRequest;
@@ -133,25 +135,32 @@ public abstract class RSSAbstractProducer implements RSSProducer {
 		return IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), RSSBusiness.class);
 	}
 
+	private ServletContext getServletContext(RSSRequest rssRequest) {
+		HttpServletRequest request = rssRequest.getRequest();
+		ServletContext context = request.getServletContext();
+		if (context == null) {
+			context = request.getSession().getServletContext();
+		}
+		return context;
+	}
+
 	/**
 	 * Fetches the IWApplicationContext using the RSSRequest and IWMainApplication
 	 * @param rssRequest
 	 * @return IWApplicationContext
 	 */
-	public IWApplicationContext getIWApplicationContext(RSSRequest rssRequest){
-		return IWMainApplication.getIWMainApplication(rssRequest.getRequest().getSession().getServletContext()).getIWApplicationContext();
+	public IWApplicationContext getIWApplicationContext(RSSRequest rssRequest) {
+		return IWMainApplication.getIWMainApplication(getServletContext(rssRequest)).getIWApplicationContext();
 	}
 
 	public IWContext getIWContext(RSSRequest rss){
 		IWContext iwc = null;
 		try {
 			iwc = IWContext.getInstance();
-		} catch (Exception e) {
-//		e.printStackTrace();
-		}
+		} catch (Exception e) {}
 
-		if(iwc==null){
-			iwc = new IWContext(rss.getRequest(), rss.getResponse(), rss.getRequest().getSession().getServletContext());
+		if (iwc == null) {
+			iwc = new IWContext(rss.getRequest(), rss.getResponse(), getServletContext(rss));
 		}
 		return iwc;
 	}
